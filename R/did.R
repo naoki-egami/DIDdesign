@@ -1,6 +1,9 @@
 
 
 #' DiD 
+#' 
+#' Estimate average treatment effect on the treated .
+#' 
 #' @param formula A formula. \code{outcome ~ treatment}. Covariates can be added by \code{outcome ~ treatment | covariates}.
 #' @param data \code{\link{did_data}} object
 #' @param method Either \code{"parametric"} or \code{"nonparametric"}.
@@ -38,13 +41,13 @@
 #' # load  data 
 #' data(anzia2012)
 #' 
-#' # nonparametric version without covariates
+#' # nonparametric estimator without covariates
 #' fit1 <- did(
 #'   formula = lnavgsalary_cpi ~ oncycle,
 #'   data = anzia2012,
 #'   id_subject = "district", id_time = "year",
 #'   post_treatment = c(2007, 2008, 2009),
-#'   method = 'nonparametric',
+#'   method = "nonparametric",
 #'   se_boot = FALSE
 #' )
 #' 

@@ -49,7 +49,7 @@ A \code{diddesign} class object, which is a list of results for each post treatm
  }
 }
 \description{
-DiD
+Estimate average treatment effect on the treated .
 }
 \examples{
 # load package
