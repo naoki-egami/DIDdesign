@@ -20,7 +20,7 @@ arma::mat loss_loop(
   
   arma::mat Xe(nobs, p);
   for (int i = 0; i < nobs; i++) {
-    // subset id_suject 
+    // subset id_subject 
     arma::uvec use_id  = arma::find(is_na == 0);
     arma::uvec use_id2 = arma::find(id_subject(use_id) == uid(i));
     arma::mat Xi = X.rows(use_id2);
