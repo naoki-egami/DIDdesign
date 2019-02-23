@@ -11,7 +11,23 @@
 #' @param n_boot Number of bootstrap iterations. 
 #' @param boot_min If \code{TRUE} bootstrap is carried out only for the selected model.
 #' @param select Selection criteria.
-#' @param
+#' @return A \code{diddesign} class object, which is a list of results for each post treatment period.
+#'  A result for one period contains:
+#'  \itemize{
+#'    \item \code{results_estimates}: 
+#'    \item \code{results_bootstraps}: bootstrap estimates.
+#'    \item \code{BIC}: BIC for all models .
+#'    \item \code{HQIC}: HQIC for all models.
+#'    \item \code{BIC_min}: BIC for the selected model. 
+#'      This is the smallest BIC among values reported in \code{BIC}.
+#'    \item \code{HQIC_min}: HQIC for the selected model. 
+#'      This is the smallest HQIC among values reported in \code{HQIC}.
+#'    \item \code{min_model}: Selected model.
+#'    \item \code{select}: A criteria used to select the model.
+#'    \item \code{ATT}: Estimated average treatment effect on the treated.
+#'    \item \code{ci95}: 95\% confidence intervals.
+#'    \item \code{ci90}: 90\% confidence intervals.
+#'  }
 #' @importFrom dplyr %>% pull tbl_df
 #' @importFrom Formula as.Formula
 #' @importFrom utils getFromNamespace
@@ -42,7 +58,12 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
   getFormula <- getFromNamespace("formula.Formula", "Formula")  
 
   ## input checks 
-  if (!("tbl_df" %in% class(data))) data <- data %>% tbl_df()
+  if (!(any(class(data) %in% c("tbl_df", "data.frame")))) {
+    stop("input data should be data.frame or tbl_df class object")
+  }
+  if (!("tbl_df" %in% class(data))) {
+    data <- data %>% tbl_df()
+  }
   if (!exists(id_subject, data)) {
     stop("variable specified for id_subject does not exsit in data")
   }
@@ -56,6 +77,9 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
     stop("Either `parametric' or `nonparametric' is allowed for method option")
   }
 
+  if (!all(all.vars(formula) %in% colnames(data))) {
+    stop('variable(s) in formula does not match variables in data')
+  }
 
   # ********************************************************* #
   #                                                           #

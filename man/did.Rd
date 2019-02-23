@@ -29,6 +29,25 @@ did(formula, data, id_subject, id_time, post_treatment,
 
 \item{select}{Selection criteria.}
 }
+\value{
+A \code{diddesign} class object, which is a list of results for each post treatment period.
+ A result for one period contains:
+ \itemize{
+   \item \code{results_estimates}: 
+   \item \code{results_bootstraps}: bootstrap estimates.
+   \item \code{BIC}: BIC for all models .
+   \item \code{HQIC}: HQIC for all models.
+   \item \code{BIC_min}: BIC for the selected model. 
+     This is the smallest BIC among values reported in \code{BIC}.
+   \item \code{HQIC_min}: HQIC for the selected model. 
+     This is the smallest HQIC among values reported in \code{HQIC}.
+   \item \code{min_model}: Selected model.
+   \item \code{select}: A criteria used to select the model.
+   \item \code{ATT}: Estimated average treatment effect on the treated.
+   \item \code{ci95}: 95\% confidence intervals.
+   \item \code{ci90}: 90\% confidence intervals.
+ }
+}
 \description{
 DiD
 }

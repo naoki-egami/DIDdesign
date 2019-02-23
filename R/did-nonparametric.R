@@ -135,7 +135,7 @@ did_nonparametric <- function(
       'results_bootstraps' = tmp_min,
       'results_standardDiD' = did_save,
       'BIC' = BIC, "HQIC" = HQIC,
-      'BIC.min' = min(BIC), 'HQIC.min' = min(HQIC),
+      'BIC_min' = min(BIC), 'HQIC_min' = min(HQIC),
       'min_model' = min_model,
       'select' = select,
       'ATT' = tmp[[min_model]]$ATT,

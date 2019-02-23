@@ -48,8 +48,8 @@ summary.diddesign <- function(obj) {
     # rownames(res_tab) <- c("Status", "Y:Treated", "Y:Control")
   } else if ('diddesign' %in% class(obj)){
     ATT <- sapply(obj, function(x) round(x$ATT, 3))
-    BIC <- sapply(obj, function(x) round(x$BIC.min, 3))
-    HQIC <- sapply(obj, function(x) round(x$HQIC.min, 3))
+    BIC <- sapply(obj, function(x) round(x$BIC_min, 3))
+    HQIC <- sapply(obj, function(x) round(x$HQIC_min, 3))
     selected <- paste("M", sapply(obj, function(x) as.character(x$min_model)), sep = '')
 
     if (isTRUE(attr(obj[[1]], 'boot'))) {
