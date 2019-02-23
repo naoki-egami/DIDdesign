@@ -4,7 +4,7 @@
 \alias{plot.diddesign}
 \title{Plot function}
 \usage{
-\method{plot}{diddesign}(data, xlim = NULL, ylim = NULL,
+\method{plot}{diddesign}(data, xlim = NULL, ylim = NULL, col = NULL,
   full = FALSE, ...)
 }
 \arguments{

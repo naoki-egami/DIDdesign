@@ -40,7 +40,7 @@
 #' 
 #' # nonparametric version without covariates
 #' fit1 <- did(
-#'   formula = "lnavgsalary_cpi ~ oncycle",
+#'   formula = lnavgsalary_cpi ~ oncycle,
 #'   data = anzia2012,
 #'   id_subject = "district", id_time = "year",
 #'   post_treatment = c(2007, 2008, 2009),
@@ -76,7 +76,6 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
   if (!(method %in% c("parametric", "nonparametric"))) {
     stop("Either `parametric' or `nonparametric' is allowed for method option")
   }
-
   if (!all(all.vars(formula) %in% colnames(data))) {
     stop('variable(s) in formula does not match variables in data')
   }

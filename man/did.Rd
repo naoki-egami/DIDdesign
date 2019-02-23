@@ -60,7 +60,7 @@ data(anzia2012)
 
 # nonparametric version without covariates
 fit1 <- did(
-  formula = "lnavgsalary_cpi ~ oncycle",
+  formula = lnavgsalary_cpi ~ oncycle,
   data = anzia2012,
   id_subject = "district", id_time = "year",
   post_treatment = c(2007, 2008, 2009),

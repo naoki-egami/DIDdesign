@@ -26,7 +26,7 @@ summarize.diddesign <- function(data) {
   ## compute mean outcome
   Y <- cbind(Y_pre, Y_post)
   ymean <- apply(Y, 2, function(x) tapply(x, treat, mean, na.rm = TRUE))
-
+  ymean <- apply(ymean, 2, rev) ## first row is TREATED | second row is CONTROL
   return(list("ymean" = ymean, 'id_time' = id_time))
 
 }
@@ -97,6 +97,43 @@ summary.diddesign <- function(obj) {
   return(res_tab)
 }
 
+#' DiD plot 
+#' @examples
+#' # load package 
+#' require(DIDdesign)
+#' 
+#' # load data 
+#' data(anzia2012)
+#' 
+#' # plot
+#' did_plot(
+#'   outcome = anzia2012$lnavgsalary_cpi,
+#'   treatment = anzia2012$oncycle,
+#'   post_treatment = c(2007, 2008, 2009),
+#'   id_subject = anzia2012$district,
+#'   id_time = anzia2012$year,
+#'   ylim = c(10.5, 10.8)
+#' )
+#' @export
+did_plot <- function(outcome, treatment, post_treatment, id_subject, id_time,
+  xlim = NULL, ylim = NULL, col = NULL, ...
+) {
+  
+  ## FORMAT DATA 
+  dat <- did_data(
+    outcome = outcome,
+    treatment = treatment,
+    post_treatment = post_treatment,
+    id_subject = id_subject,
+    id_time = id_time,
+    long = TRUE
+  )
+  
+  ## CALL plot.diddesign
+  # par(mfrow = c(1, 3))
+  plot(dat, xlim = xlim, ylim = ylim, col = col, ...)
+
+}
 
 
 #' Plot function
@@ -109,11 +146,12 @@ summary.diddesign <- function(obj) {
 #' @param ylim ylim in plot function. If left \code{NULL}, it's automatically set.
 #' @param ... additional arguments supplied to the plot function.
 #' @export
-plot.diddesign <- function(data, xlim = NULL, ylim = NULL, full = FALSE, ...) {
+plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NULL, full = FALSE, ...) {
   if('diddesign_data' %in% class(data)) {
     ##
     ## plot for raw data
     ##
+    
     summary_dat <- summarize.diddesign(data)
     ymean <- summary_dat$ymean
     id_time <- summary_dat$id_time
@@ -121,13 +159,17 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, full = FALSE, ...) {
     ## plot
     if (is.null(xlim)) xlim <- c(min(id_time), max(id_time))
     if (is.null(ylim)) ylim <- c(min(ymean), max(ymean))
+    if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray60')
+    if (is.null(lwd)) lwd <- 1.5
+    
     time_use <- which(attr(data[[1]], 'post_treat') == id_time)
-    plot(1, 1, ylim = ylim, xlim = xlim,
-      xlab = "", ylab = "Mean Outcome", ...)
+    
+    ## plot 
+    plot(1, 1, type = 'n', ylim = ylim, xlim = xlim, xlab = "", ylab = "Mean Outcome", ...)
     abline(v = mean(id_time[(time_use-1):time_use]), col = 'red', lty = 3, lwd = 1.3)
-    lines(id_time, ymean[1,], col = '#006284', pch = 16, type = 'b', lwd = 1.5)
-    lines(id_time, ymean[2,], col = 'gray60',  pch = 17, type = 'b', lwd = 1.5)
-    legend('topleft', legend = c("treated", 'control'), col = c('#006284', 'gray60'),
+    lines(id_time, ymean[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
+    lines(id_time, ymean[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
+    legend('topleft', legend = c("treated", 'control'), col = col[1:2],
       lty = 1, pch = c(16, 17), bty = 'n')
 
   } else if ('diddesign' %in% class(data)) {
