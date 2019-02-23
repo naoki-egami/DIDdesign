@@ -74,6 +74,15 @@ fit_p1 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
  							method = "parametric",
  							se_boot = FALSE, select = "HQIC")
 
+```
 
 
+```{r}
+# summary function 
+summary(fit_p1)
+
+# plot function 
+plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.02))
+
+```
 
