@@ -4,9 +4,12 @@
 \alias{did}
 \title{DiD}
 \usage{
-did(data, method = "parametric")
+did(formula, data, id_subject, id_time, post_treatment,
+  method = "parametric")
 }
 \arguments{
+\item{formula}{A formula. \code{outcome ~ treatment}. Covariates can be added by \code{outcome ~ treatment | covariates}.}
+
 \item{data}{\code{\link{did_data}} object}
 
 \item{method}{Either \code{"parametric"} or \code{"nonparametric"}.}
