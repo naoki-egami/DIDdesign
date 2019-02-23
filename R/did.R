@@ -149,8 +149,15 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
   } else if (method == "nonparametric" & isTRUE(is_covariates)) {
     warning("Nonparametric option is not available with covariates. 
              Parametiric method is used instead\n")
+    fit <- did_parametric(
+      data = dat_use, 
+      se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
+      select  = select, est_did = TRUE)             
   } else {
-    
+    fit <- did_parametric(
+      data = dat_use, 
+      se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
+      select  = select, est_did = TRUE)    
   }
   
   

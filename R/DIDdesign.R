@@ -9,3 +9,8 @@
 #'   \item \code{\link{did}}: estimate treatment effects 
 #' }
 "_PACKAGE"
+
+
+#' @useDynLib DIDdesign
+#' @importFrom Rcpp sourceCpp
+NULL
