@@ -58,13 +58,13 @@ require(DIDdesign)
 # load  data 
 data(anzia2012)
 
-# nonparametric version without covariates
+# nonparametric estimator without covariates
 fit1 <- did(
   formula = lnavgsalary_cpi ~ oncycle,
   data = anzia2012,
   id_subject = "district", id_time = "year",
   post_treatment = c(2007, 2008, 2009),
-  method = 'nonparametric',
+  method = "nonparametric",
   se_boot = FALSE
 )
 
