@@ -2,10 +2,49 @@
 % Please edit documentation in R/did_data.R
 \name{did_data}
 \alias{did_data}
-\title{Prepare Data for did Function}
+\title{Transform data into did_double format}
 \usage{
-did_data(outcome)
+did_data(outcome, treatment, post_treatment = NULL, id_subject = NULL,
+  id_time = NULL, long = TRUE, Xcov = NULL)
+}
+\arguments{
+\item{outcome}{Outcome vector when \code{long = TRUE} or outcome matrix when \code{long = FALSE}.}
+
+\item{treatment}{Treatment vector. When \code{long = TRUE}, the length of this vector should be the same as the length of \code{outcome} vector, while the length of \code{treatment} should be the same as the number of rows (i.e. the number of subjects) in \code{outcome} when the input is in the wide format.}
+
+\item{post_treatment}{A scalar or a vector of time index that indicats the post treatment period(s).
+If left as \code{NULL}, the last period in a variable given as \code{id_time} is used as the post treatment period.}
+
+\item{id_subject}{A vector of subject index. Required if \code{long = TRUE}.}
+
+\item{id_time}{A vector of time index. Required if \code{long = TRUE}.}
+
+\item{long}{A boolean input indicating whether the input is in the long format or not.
+Default is \code{long = TRUE}.}
+}
+\value{
+A \code{diddesign} class object.
 }
 \description{
-Prepare Data for did Function
+A function to transform panel data into did double format.
+}
+\examples{
+ # load data from didrobust package
+ data(anzia2012)
+
+ # convert data into did double format
+ out <- did_data(
+   outcome = anzia2012$lnavgsalary_cpi,
+   treatment = anzia2012$oncycle,
+   post_treatment = c(2007, 2008, 2009),
+   id_subject = anzia2012$district,
+   id_time = anzia2012$year,
+   long = TRUE
+ )
+
+ # make a plot
+ plot(out)
+
+ # view a summary
+ summary(out)
 }
