@@ -1,6 +1,6 @@
 Package: DIDdesign
 Type: Package
-Title: R package for analysing and diagnosing difference-in-differences design.
+Title: R package for analyzing and diagnosing difference-in-differences design.
 Version: 0.1.0
 Authors@R: c(
   person("Naoki", "Egami", email = "email@gmail.com", role = c("aut")),
@@ -11,3 +11,9 @@ License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
+Imports: 
+    Rcpp,
+    RcppArmadillo
