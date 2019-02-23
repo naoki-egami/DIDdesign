@@ -1,0 +1,15 @@
+---
+title: "DIDdesign"
+output: 
+  md_document:
+    variant: markdown_github
+---
+
+# DIDdesign: Double Difference-in-Differences 
+
+Authors: 
+
+- [Naoki Egami](https://scholar.princeton.edu/negami/home)
+- Soichiro Yamauchi
+
+
