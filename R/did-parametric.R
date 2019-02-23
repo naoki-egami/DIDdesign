@@ -36,6 +36,7 @@
 #' # fit the model
 #' fit <- double_did_parametric(dat)
 #'
+#' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE, select = "HQIC"
 ) {
 
@@ -50,7 +51,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
 
 
   n_post <- length(data)
-  out <- list()
+  result <- list()
   for (tt in 1:n_post) {
 
     # ********************************************************* #
@@ -82,27 +83,81 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       fit[[ff]]       <- plm(fm_list[[ff]], data = dat_use, model = 'within', effect = 'twoways')
       dat_trans[[ff]] <- getX(fm_list[[ff]], fit[[ff]], dat_use)
     }
-
+    
     # ********************************************************* #
     #                                                           #
-    #                          GMM                              #
+    #             GMM: point estimate and variance              #
     #                                                           #
     # ********************************************************* #    
-
-
-
-
-
-    if (isTRUE(se_boot)) {
-      boot_out <- list()
-      for (ff in 1:length(fm_list)) {
-        boot_out[[ff]] <- plm.boot(fm_list[[ff]], data = dat_use, n_boot)
+    ## for each methods 
+    ##  - M1: D0y ~ DTy
+    ##  - M2: D1y ~ DTy 
+    cat("\n... estimating treatment effect for ", attr(data[[tt]], 'post_treat'), " ...\n")
+    
+    tmp <- tmp_min <- list()
+    for (m in m_vec) {
+      use_moments <- m_vec[m:length(m_vec)]
+      
+      ## initialize 
+      coef_vec <- lapply(fit[use_moments], function(x) x$coef)
+      if (length(coef_vec[[1]]) == 1) {
+        par_init <- mean(unlist(coef_vec))
+      } else {
+        par_init <- cbind(mean(sapply(coef_vec, function(x) x[1])), 
+                          sapply(coef_vec, function(x) x[-1]))          
       }
+      
+      ## estimate 
+      est <- didgmmT_parametric(dat_trans[use_moments], dat_use$id_subject, par_init)
+      tmp[[m]] <- est$par
+      
+      ## compute variance 
+      if (isTRUE(se_boot)) {
+        boot_out <- list()
+      } else {
+        # cat("... computing GMM variance ...\n")
+        
+        ## compute asymptotic variance 
+        att_var <- cugmm_var_parametric(par = est$par, dat = dat_trans[use_moments], 
+                                        id_subject = dat_use$id_subject)
+        
+        ## compute Ci 
+        tmp_ci95     <- c(est$par - 1.96 * sqrt(att_var), est$par + 1.96 * sqrt(att_var))
+        tmp_ci90     <- c(est$par - 1.64 * sqrt(att_var), est$par + 1.64 * sqrt(att_var))
+        tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90)  
+      }
+      
     }
-    out[[tt]] <- fit
+    
+    ci95 <- tmp_min[[min_model]]$ci95
+    ci90 <- tmp_min[[min_model]]$ci90
+  
+    
+    # ********************************************************* #
+    #                                                           #
+    #                     save results                          #
+    #                                                           #
+    # ********************************************************* #    
+    
+    result[[tt]] <- list(
+      'results_estimates' = tmp,
+      'results_bootstraps' = tmp_min,
+      # 'results_standardDiD' = did_save,
+      'BIC' = BIC, "HQIC" = HQIC,
+      'BIC_min' = min(BIC), 'HQIC_min' = min(HQIC),
+      'min_model' = min_model,
+      'select' = select,
+      'ATT' = tmp[[min_model]],
+      'ci95' = ci95,
+      'ci90' = ci90
+    )
+    
+    attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
+    attr(result[[tt]], 'boot') <- TRUE    
   }
 
-  return(out)
+  class(result) <- "diddesign"
+  return(result)
 }
 
 
@@ -113,39 +168,112 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
 ##
 
 #' Get demeaned X and y 
-#'@importFrom plm model.matrix.pFormula pmodel.response
+#' @importFrom plm pmodel.response
+#' @importFrom utils getFromNamespace
 getX <- function(fm, fit, dat) {
+
+  # import function 
+  model.matrix <- getFromNamespace("model.matrix.pFormula", "plm")
   
   ## get y_bar
-  y_bar  <- rep(NA, nrow(dat))
+  # y_bar  <- rep(NA, nrow(dat))
   outvar <- all.vars(fm)[1]
   is_na  <- is.na(dat[,outvar])
-  y_bar[!is_na] <- pmodel.response(fit)
+  # y_bar[!is_na] <- pmodel.response(fit)
+  y_bar         <- pmodel.response(fit)
   names(y_bar)  <- outvar
   
   ## get X_bar
-  X_bar <- model.matrix(fit)
-  
-  return(list("y" = y_bar, "X" = X_bar))
+  X_bar <- model.matrix(fm, data = dat, model = 'within', effect = 'twoways')
+  # dat[!is_na, colnames(X_bar)] <- X_bar
+  return(list("y" = y_bar, "X" = X_bar, 'is_na' = is_na))
 }
 
 
 #' Estimate GMM 
 #'
-didgmmT_parametric <- function(dat) {
-  k <- length(dat)            ## number of y types 
+didgmmT_parametric <- function(dat, id_subject, par_init = NULL) {
+  
+  ## prepara inputs 
+  k <- length(dat)            ## number of y types = number of models 
   p <- ncol(dat[[1]]$X)       ## number of covariates 
   
+  if(is.null(par_init)) par_init <- runif(1 + k * (p - 1))
+  est <- optim(par = par_init, fn = cugmm_loss_parametric, method = "BFGS",
+               dat = dat, id_subject = id_subject, k = k, p = p)
   
-  
-  par <- matrix(0, nrow = k, ncol = p)
-  
-  
-  
-  for (j in 1:k) {
-    t(dat[[j]]$X) %*% (dat[[j]]$y - t(dat[[j]]$X) %*% par[,k])
-  }
+  return(est)
 }
+
+#' gmm loss function 
+#' @param par parameter vector.
+#' @param dat list of data. List of outputs from \code{getX} function. 
+#' @param id_subject vector of subject id.
+#' @param k number of outcome types (models)
+#' @param p number of variables 
+cugmm_loss_parametric <- function(par, dat, id_subject, k, p) {
+  
+  ## format parameter: first element is beta 
+  par_mat      <- matrix(NA, nrow = k, ncol = p)
+  par_mat[,1]  <- par[1]
+  par_mat[,-1] <- par[-1]
+  
+  ## comput E[X'(y - Xb)] = 0 condition 
+  uid  <- unique(id_subject)
+  nobs <- length(uid)
+  
+  XXe <- list()
+  for (j in 1:k) {
+    is_na <- dat[[j]]$is_na
+    XXe[[j]] <- loss_loop(X = dat[[j]]$X, y = dat[[j]]$y, par = par_mat[j,],
+                          id_subject = id_subject, uid = uid,
+                          is_na = as.numeric(is_na), nobs = nobs, p = p )
+  }  
+  
+  MXe   <- do.call("cbind", XXe)
+  gbar  <- colMeans(MXe)
+  Omega <- (t(MXe) %*% MXe)
+  diag(Omega) <- diag(Omega)
+  loss  <- as.vector(t(gbar) %*% solve(Omega / nobs, gbar))
+  # cat("loss = ", loss, '\n')
+  return(loss)
+}
+
+#' compute asymptotic GMM variance 
+cugmm_var_parametric <- function(par, dat, id_subject) {
+  ## prepara inputs 
+  k <- length(dat)            ## number of y types = number of models 
+  p <- ncol(dat[[1]]$X)       ## number of covariates 
+  
+  ## format parameter: first element is beta 
+  par_mat      <- matrix(NA, nrow = k, ncol = p)
+  par_mat[,1]  <- par[1]
+  par_mat[,-1] <- par[-1]
+  
+  ## comput E[X'(y - Xb)] = 0 condition 
+  uid  <- unique(id_subject)
+  nobs <- length(uid)
+  
+  XXe <- list()
+  for (j in 1:k) {
+    is_na <- dat[[j]]$is_na
+    XXe[[j]] <- loss_loop(X = dat[[j]]$X, y = dat[[j]]$y, par = par_mat[j,],
+                          id_subject = id_subject, uid = uid,
+                          is_na = as.numeric(is_na), nobs = nobs, p = p )
+  }  
+  
+  MXe   <- do.call("cbind", XXe)
+  gbar  <- colMeans(MXe)
+  Omega <- crossprod(MXe, MXe) / nobs
+  
+  G     <- matrix(0, nrow = k * p, ncol = 1)
+  G[seq(1, k * p, p),1] <- 1 
+  
+  gmm_var <- as.vector(solve(t(G) %*%  solve(Omega, G)))
+  att_var <- gmm_var / nobs 
+  return(att_var)
+}
+
 
 
 
