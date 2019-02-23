@@ -16,3 +16,12 @@ The package has two main functions:
   \item \code{\link{did}}: estimate treatment effects 
 }
 }
+\author{
+\strong{Maintainer}: Soichiro Yamauchi \email{email@gmail.com}
+
+Authors:
+\itemize{
+  \item Naoki Egami \email{email@gmail.com}
+}
+
+}
