@@ -1,0 +1,152 @@
+#' Double Difference-in-Differences Estimator
+#'
+#' @param data did_double.data object. See \code{\link{did_double_data}}.
+#' @param se_boot A boolean argument.
+#'  If set to \code{TRUE}, standard errors are computed by the block bootstrap.
+#'  Bootstrap iterations are set by \code{n_boot} argument.
+#' @param n_boot The number of bootstrap iterations. Required when \code{se_boot == TRUE}.
+#' @param boot_min If \code{TRUE}, bootstrap is used only for the selected model.
+#'  This option helps reduce computational burdens.
+#' @param select The criteria used to select the best model. The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
+#'  Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).
+#' @param est_did If \code{TRUE}, standard difference-in-differences estimates are computed. Default is \code{TRUE}.
+#' @examples
+#'  # load packages
+#'  require(didrobust)
+#'
+#'  # load data from didrobust
+#'  data(anzia2012)
+#'
+#'  # transform data
+#'  dat1 <- did_double_data(
+#'    outcome = anzia2012$lnavgsalary_cpi,
+#'    treatment = anzia2012$oncycle,
+#'    post_treatment = c(2007, 2008, 2009),
+#'    id_subject = anzia2012$district,
+#'    id_time = anzia2012$year
+#'  )
+#'
+#'  # fit the model
+#'  set.seed(1234)
+#'  fit <- did_double(dat1, se_boot = TRUE, n_boot = 100, select = "HQIC")
+#'  summary(fit)
+#'  plot(fit)
+#'
+#'  # run bootstrap for all models
+#'  set.seed(1234)
+#'  fit2 <- did_double(dat1, se_boot = TRUE, n_boot = 100, boot_min = FALSE)
+#'  plot(fit2, ylim = c(-0.05, 0.05), full = TRUE)
+#'  abline(h = 0, col = 'red', lty = 3)
+did_nonparametric <- function(
+  data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE, select = "HQIC",
+  est_did = TRUE
+) {
+  ## input checks
+  if (!('diddesign_data' %in% class(data))) {
+    stop("diddesign_data object should be provided as data.")
+  }
+
+  t_pre <- ncol(data[[1]]$Y) - 1
+  if (t_pre <= 1) {
+    stop("We reuqire more than two pre-treatment periods.\n")
+  }
+
+  # ********************************************************* #
+  #                                                           #
+  #       estimate effect for each post-treatment period      #
+  #                                                           #
+  # ********************************************************* #    
+  result <- list()
+  for (j in 1:length(data)) {
+    cat("\n... estimating treatment effect for ", attr(data[[j]], 'post_treat'), " ...\n")
+
+  
+    ## ==== point estimate ==== ##
+    ## set m_vec
+    m_vec <- 1:t_pre
+    tmp <- list()
+    for (m in m_vec) {
+      tmp[[m]] <- didgmmT(Y = data[[j]]$Y, D = data[[j]]$D, M = m)
+    }
+
+    ## ==== model selection ==== ##
+    select_tmp <- gmm_selection(
+      Y = data[[j]]$Y, D = data[[j]]$D,
+      mvec = m_vec, t_pre = t_pre, select = select, n_boot = n_boot
+    )
+    
+    HQIC       <- select_tmp$HQIC
+    BIC        <- select_tmp$BIC
+    min_model  <- select_tmp$min_model
+
+    ## ==== bootstrap ==== ##
+    if (isTRUE(se_boot) & isTRUE(boot_min)) {
+      ## do bootstrap if necessary for the selected model
+      cat("... bootstraping to compute standard errors ...\n")
+      tmp_min <- didgmmT.boot(
+        Y = data[[j]]$Y, D = data[[j]]$D, M = min_model, n_boot = n_boot)
+
+      se95 <- quantile(tmp_min, prob = c(0.025, 0.975))
+      se90 <- quantile(tmp_min, prob = c(0.05, 0.95))
+    } else if (isTRUE(se_boot)) {
+      ## do bootstrap for all models
+      cat("... bootstraping to compute standard errors ...\n")
+      tmp_min <- list()
+      for (m in m_vec) {
+        tmp_est <- didgmmT.boot(Y = data[[j]]$Y, D = data[[j]]$D, M = m, n_boot = n_boot)
+        tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
+        tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
+        tmp_min[[m]] <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+      }
+
+      se95 <- tmp_min[[min_model]]$ci95
+      se90 <- tmp_min[[min_model]]$ci90
+
+    } else {
+      tmp_min <- se95 <- se90  <- NULL
+    }
+
+    ## ==== standard DiD estimate ==== ##
+    if (isTRUE(est_did)) {
+      cat("... computing the standard DiD estimate ...\n")
+
+      ## point estimate
+      did_est <- std_did(Y = data[[j]]$Y, D = data[[j]]$D)
+
+      ## bootstrap
+      if (isTRUE(se_boot)) {
+        tmp_est <- std_did_boot(Y = data[[j]]$Y, D = data[[j]]$D, n_boot = n_boot)
+        tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
+        tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
+        did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+      } else {
+        did_boot_list <- NULL
+      }
+
+      ## save obj
+      did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
+    } else {
+      did_save <- NULL
+    }
+
+    ## ==== save results ==== ##
+    result[[j]] <- list(
+      'results_estimates' = tmp,
+      'results_bootstraps' = tmp_min,
+      'results_standardDiD' = did_save,
+      'BIC' = BIC, "HQIC" = HQIC,
+      'BIC.min' = min(BIC), 'HQIC.min' = min(HQIC),
+      'min_model' = min_model,
+      'select' = select,
+      'ATT' = tmp[[min_model]]$ATT,
+      'ci95' = se95,
+      'ci90' = se90
+    )
+
+    attr(result[[j]], 'post_treat') <- attr(data[[j]], 'post_treat')
+    attr(result[[j]], 'boot') <- se_boot
+  }
+
+  class(result) <- "diddesign"
+  return(result)
+}

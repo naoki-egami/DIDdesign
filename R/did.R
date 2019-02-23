@@ -8,8 +8,9 @@
 #' @importFrom Formula as.Formula
 #' @importFrom utils getFromNamespace
 #' @export 
-did <- function(formula, data, id_subject, id_time, 
-  post_treatment, method = 'parametric'
+did <- function(formula, data, id_subject, id_time, post_treatment, 
+  method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE, 
+  select = 'HQIC'
 ) {
 
   ## import function
@@ -25,6 +26,9 @@ did <- function(formula, data, id_subject, id_time,
   }
   if (!is.numeric(post_treatment)) {
     stop("non-numeric variable is supplied to post_treatment")
+  }
+  if (!(method %in% c("parametric", "nonparametric"))) {
+    stop("Either `parametric' or `nonparametric' is allowed for method option")
   }
 
 
@@ -55,6 +59,8 @@ did <- function(formula, data, id_subject, id_time,
       Xcov           = NULL
     )
     
+    is_covariates <- FALSE
+    
   } else {
     ## extract covariates names 
     f2 <- getFormula(formula, lhs = 0, rhs = 2)
@@ -71,9 +77,32 @@ did <- function(formula, data, id_subject, id_time,
       Xcov           = data %>% select(x_colnames)
     )
     
+    is_covariates <- TRUE  
   }
 
-
+  # ********************************************************* #
+  #                                                           #
+  #             estimate treatment effect                     #
+  #                                                           #
+  # ********************************************************* #    
+  if(method == "nonparametric" & !isTRUE(is_covariates)) {
+    # TO USE NONPARAMETRIC METHOD, BOTH CONDITIONS SHOULD BE MET:
+    # 1. method should be 'nonparametric', AND
+    # 2. is_covariates should be FALSE (NO COVARIATES ALLOWED)
+    fit <- did_nonparametric(
+      data = dat_use, 
+      se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
+      select  = select, est_did = TRUE
+    )
+  } else if (method == "nonparametric" & isTRUE(is_covariates)) {
+    warning("Nonparametric option is not available with covariates. 
+             Parametiric method is used instead\n")
+  } else {
+    
+  }
+  
+  
+  
   
   return(dat_use)
 }

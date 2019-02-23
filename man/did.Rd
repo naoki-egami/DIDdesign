@@ -5,7 +5,8 @@
 \title{DiD}
 \usage{
 did(formula, data, id_subject, id_time, post_treatment,
-  method = "parametric")
+  method = "parametric", se_boot = FALSE, n_boot = 1000,
+  boot_min = TRUE, select = "HQIC")
 }
 \arguments{
 \item{formula}{A formula. \code{outcome ~ treatment}. Covariates can be added by \code{outcome ~ treatment | covariates}.}
