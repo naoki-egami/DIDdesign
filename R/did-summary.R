@@ -100,8 +100,8 @@ summary.diddesign <- function(obj) {
 
 
 #' Plot function
-#' @param data Input object. This should be either did_double object or did_double.data object.
-#'  If did_double object is provided, ATT estimates with 95% confidence intervals are plotted.
+#' @param data Input object. This should be either diddesign object or diddesign_data object.
+#'  If diddesign object is provided, ATT estimates with 95% confidence intervals are plotted.
 #'  If did_double.data objec is provided, mean outcomes for the treated and the control are plotted.
 #' @param full A boolean argument, if \code{TRUE} ATT estimates for all models are plotted,
 #'  otherwise only estimates from the selected model will be shown. Default is \code{FALSE}.
@@ -110,7 +110,7 @@ summary.diddesign <- function(obj) {
 #' @param ... additional arguments supplied to the plot function.
 #' @export
 plot.diddesign <- function(data, xlim = NULL, ylim = NULL, full = FALSE, ...) {
-  if('did_double.data' %in% class(data)) {
+  if('diddesign_data' %in% class(data)) {
     ##
     ## plot for raw data
     ##
@@ -130,7 +130,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, full = FALSE, ...) {
     legend('topleft', legend = c("treated", 'control'), col = c('#006284', 'gray60'),
       lty = 1, pch = c(16, 17), bty = 'n')
 
-  } else if ('did_double' %in% class(data)) {
+  } else if ('diddesign' %in% class(data)) {
     ##
     ## plot for estimation result
     ##

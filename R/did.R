@@ -4,9 +4,34 @@
 #' @param formula A formula. \code{outcome ~ treatment}. Covariates can be added by \code{outcome ~ treatment | covariates}.
 #' @param data \code{\link{did_data}} object
 #' @param method Either \code{"parametric"} or \code{"nonparametric"}.
+#' @param id_subject subject id.
+#' @param id_time time id.
+#' @param post_treatment time index for post treatment periods.
+#' @param se_boot If \code{TRUE} blockbootstrap is used for computing standard errors.
+#' @param n_boot Number of bootstrap iterations. 
+#' @param boot_min If \code{TRUE} bootstrap is carried out only for the selected model.
+#' @param select Selection criteria.
+#' @param
 #' @importFrom dplyr %>% pull tbl_df
 #' @importFrom Formula as.Formula
 #' @importFrom utils getFromNamespace
+#' @examples
+#' # load package
+#' require(DIDdesign)
+#' 
+#' # load  data 
+#' data(anzia2012)
+#' 
+#' # nonparametric version without covariates
+#' fit1 <- did(
+#'   formula = "lnavgsalary_cpi ~ oncycle",
+#'   data = anzia2012,
+#'   id_subject = "district", id_time = "year",
+#'   post_treatment = c(2007, 2008, 2009),
+#'   method = 'nonparametric',
+#'   se_boot = FALSE
+#' )
+#' 
 #' @export 
 did <- function(formula, data, id_subject, id_time, post_treatment, 
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE, 
@@ -85,6 +110,7 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
   #             estimate treatment effect                     #
   #                                                           #
   # ********************************************************* #    
+  
   if(method == "nonparametric" & !isTRUE(is_covariates)) {
     # TO USE NONPARAMETRIC METHOD, BOTH CONDITIONS SHOULD BE MET:
     # 1. method should be 'nonparametric', AND
@@ -104,5 +130,5 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
   
   
   
-  return(dat_use)
+  return(fit)
 }

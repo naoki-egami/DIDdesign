@@ -8,8 +8,8 @@
   full = FALSE, ...)
 }
 \arguments{
-\item{data}{Input object. This should be either did_double object or did_double.data object.
-If did_double object is provided, ATT estimates with 95% confidence intervals are plotted.
+\item{data}{Input object. This should be either diddesign object or diddesign_data object.
+If diddesign object is provided, ATT estimates with 95% confidence intervals are plotted.
 If did_double.data objec is provided, mean outcomes for the treated and the control are plotted.}
 
 \item{xlim}{xlim in plot function. If left \code{NULL}, it's automatically set.}

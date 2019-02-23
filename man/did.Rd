@@ -13,8 +13,40 @@ did(formula, data, id_subject, id_time, post_treatment,
 
 \item{data}{\code{\link{did_data}} object}
 
+\item{id_subject}{subject id.}
+
+\item{id_time}{time id.}
+
+\item{post_treatment}{time index for post treatment periods.}
+
 \item{method}{Either \code{"parametric"} or \code{"nonparametric"}.}
+
+\item{se_boot}{If \code{TRUE} blockbootstrap is used for computing standard errors.}
+
+\item{n_boot}{Number of bootstrap iterations.}
+
+\item{boot_min}{If \code{TRUE} bootstrap is carried out only for the selected model.}
+
+\item{select}{Selection criteria.}
 }
 \description{
 DiD
+}
+\examples{
+# load package
+require(DIDdesign)
+
+# load  data 
+data(anzia2012)
+
+# nonparametric version without covariates
+fit1 <- did(
+  formula = "lnavgsalary_cpi ~ oncycle",
+  data = anzia2012,
+  id_subject = "district", id_time = "year",
+  post_treatment = c(2007, 2008, 2009),
+  method = 'nonparametric',
+  se_boot = FALSE
+)
+
 }
