@@ -37,7 +37,8 @@
 #' fit <- double_did_parametric(dat)
 #'
 #' @export
-did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE, select = "HQIC"
+did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE, 
+                           select = "HQIC", est_did = TRUE
 ) {
 
   ## input checks
@@ -53,6 +54,34 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
   n_post <- length(data)
   result <- list()
   for (tt in 1:n_post) {
+    
+    # ********************************************************* #
+    #                                                           #
+    #                 standard did estimates                    #
+    #                                                           #
+    # ********************************************************* #    
+    if (isTRUE(est_did)) {
+      # cat("... computing the standard DiD estimate ...\n")
+
+      ## point estimate
+      did_est <- std_did(Y = data[[tt]]$Y, D = data[[tt]]$D)
+
+      ## bootstrap
+      # if (isTRUE(se_boot)) {
+      tmp_est <- std_did_boot(Y = data[[tt]]$Y, D = data[[tt]]$D, n_boot = n_boot)
+      tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
+      tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
+      did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+      # } else {
+      #   did_boot_list <- NULL
+      # }
+
+      ## save obj
+      did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
+    } else {
+      did_save <- NULL
+    }
+
 
     # ********************************************************* #
     #                                                           #
@@ -109,7 +138,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       
       ## estimate 
       est <- didgmmT_parametric(dat_trans[use_moments], dat_use$id_subject, par_init)
-      tmp[[m]] <- est$par
+      tmp[[m]] <- list('ATT' = est$par)
       
       ## compute variance 
       if (isTRUE(se_boot)) {
@@ -142,12 +171,12 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     result[[tt]] <- list(
       'results_estimates' = tmp,
       'results_bootstraps' = tmp_min,
-      # 'results_standardDiD' = did_save,
+      'results_standardDiD' = did_save,
       'BIC' = BIC, "HQIC" = HQIC,
       'BIC_min' = min(BIC), 'HQIC_min' = min(HQIC),
       'min_model' = min_model,
       'select' = select,
-      'ATT' = tmp[[min_model]],
+      'ATT' = tmp[[min_model]]$ATT,
       'ci95' = ci95,
       'ci90' = ci90
     )
