@@ -70,12 +70,12 @@ summary(fit_np)
 
     ##                                2007             2008             2009
     ## 1   D-DiD      ATT           -0.007           -0.012           -0.012
-    ## 2           95% CI [-0.013, -0.002]  [-0.02, -0.004] [-0.023, -0.001]
+    ## 2           95% CI [-0.012, -0.002] [-0.023, -0.003] [-0.023, -0.001]
     ## 3              BIC          -18.018          -18.018          -18.018
     ## 4             HQIC           -9.147           -9.147           -9.147
     ## 5         Selected               M1               M1               M1
     ## 6 Std-DiD      ATT           -0.007           -0.011           -0.011
-    ## 7           95% CI [-0.011, -0.002] [-0.019, -0.004]  [-0.02, -0.001]
+    ## 7           95% CI      [-0.013, 0] [-0.019, -0.003]  [-0.022, 0.001]
 
 ``` r
 # plot results 
@@ -115,7 +115,8 @@ summary(fit_p1)
 
 ``` r
 # plot function 
-plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.02))
+plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5))
+abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
@@ -150,10 +151,10 @@ summary(fit_p2)
 
 ``` r
 # plot function 
-par(mfrow = c(1,2))
-plot(fit_p1, full = TRUE, ylim = c(-0.03, 0.005), xlim = c(-0.5, 3.5), main = "With Covariates")
+par(mfrow = c(1,2), mar = c(4, 4, 3.5, 1))
+plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5), main = "With Covariates")
 abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
-plot(fit_p2, full = TRUE, ylim = c(-0.03, 0.005), xlim = c(-0.5, 3.5), main = 'Without Covariates')
+plot(fit_p2, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5), main = 'Without Covariates')
 abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
 ```
 

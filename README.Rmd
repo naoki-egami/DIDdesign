@@ -79,8 +79,8 @@ fit_p1 <- did(lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
 summary(fit_p1)
 
 # plot function 
-plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.02))
-
+plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5))
+abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
 ```
 
 
@@ -95,14 +95,14 @@ fit_p2 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 ```
 
 
-```{r}
+```{r, fig.height=3.5, fig.width=6}
 # summary function 
 summary(fit_p2)
 
 # plot function 
-par(mfrow = c(1,2))
-plot(fit_p1, full = TRUE, ylim = c(-0.03, 0.005), xlim = c(-0.5, 3.5), main = "With Covariates")
+par(mfrow = c(1,2), mar = c(4, 4, 3.5, 1))
+plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5), main = "With Covariates")
 abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
-plot(fit_p2, full = TRUE, ylim = c(-0.03, 0.005), xlim = c(-0.5, 3.5), main = 'Without Covariates')
+plot(fit_p2, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5), main = 'Without Covariates')
 abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
 ```
