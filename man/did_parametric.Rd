@@ -19,7 +19,7 @@ Bootstrap iterations are set by \code{n_boot} argument.}
 \item{boot_min}{If \code{TRUE}, bootstrap is used only for the selected model.
 This option helps reduce computational burdens.}
 
-\item{select}{Selection criteria used, 
+\item{select}{Selection criteria used,
 one of "HQIC", "BIC", "tt1" (T-test), "tt2" (T-test with Bonferroni correction).
 The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.}
 }
