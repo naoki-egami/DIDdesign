@@ -95,12 +95,12 @@ fit_p2 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 ```
 
 
-```{r, fig.height=3.5, fig.width=6}
+```{r}
 # summary function 
 summary(fit_p2)
 
 # plot function 
-par(mfrow = c(1,2), mar = c(4, 4, 3.5, 1))
+par(mfrow = c(1,2), mar = c(4, 2.5, 3.5, 1))
 plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5), main = "With Covariates")
 abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
 plot(fit_p2, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5), main = 'Without Covariates')
