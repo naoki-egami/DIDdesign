@@ -16,6 +16,13 @@ The package has two main functions:
   \item \code{\link{did}}: estimate treatment effects 
 }
 }
+\seealso{
+Useful links:
+\itemize{
+  \item Report bugs at \url{https://github.com/naoki-egami/DIDdesign/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Soichiro Yamauchi \email{email@gmail.com}
 

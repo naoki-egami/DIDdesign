@@ -9,9 +9,10 @@ did(formula, data, id_subject, id_time, post_treatment,
   boot_min = TRUE, select = "HQIC")
 }
 \arguments{
-\item{formula}{A formula. \code{outcome ~ treatment}. Covariates can be added by \code{outcome ~ treatment | covariates}.}
+\item{formula}{A formula. \code{y ~ d} where \code{y} is the outcome and \code{d} is the (time-varying) treatment indicator. 
+Covariates can be added by \code{y ~ d | x1 + x2} where \code{x1} and \code{x2} are covariates.}
 
-\item{data}{\code{\link{did_data}} object}
+\item{data}{Data matrix. Either a \code{data.frame} object or  \cdoe{tbl_df} object.}
 
 \item{id_subject}{subject id.}
 

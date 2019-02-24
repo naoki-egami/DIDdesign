@@ -19,8 +19,9 @@ Bootstrap iterations are set by \code{n_boot} argument.}
 \item{boot_min}{If \code{TRUE}, bootstrap is used only for the selected model.
 This option helps reduce computational burdens.}
 
-\item{select}{The criteria used to select the best model. The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
-Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).}
+\item{select}{Selection criteria used, 
+one of "HQIC", "BIC", "tt1" (T-test), "tt2" (T-test with Bonferroni correction).
+The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.}
 }
 \description{
 Parametric Version of Double DiD

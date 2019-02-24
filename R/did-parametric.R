@@ -10,8 +10,9 @@
 #' @param n_boot The number of bootstrap iterations. Required when \code{se_boot == TRUE}.
 #' @param boot_min If \code{TRUE}, bootstrap is used only for the selected model.
 #'  This option helps reduce computational burdens.
-#' @param select The criteria used to select the best model. The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
-#'  Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).
+#' @param select Selection criteria used, 
+#'  one of "HQIC", "BIC", "tt1" (T-test), "tt2" (T-test with Bonferroni correction).
+#'  The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
 #' @importFrom plm plm 
 #' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE, 
@@ -67,8 +68,15 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     #                                                           #
     # ********************************************************* #
     m_vec <- 1:t_pre
-    select_tmp <- gmm_selection(Y = data[[tt]]$Y, D = data[[tt]]$D,
-                                mvec = m_vec, t_pre = t_pre, select = select, n_boot = n_boot)
+    # select_tmp <- gmm_selection(Y = data[[tt]]$Y, D = data[[tt]]$D,
+    #                             mvec = m_vec, t_pre = t_pre, select = select, n_boot = n_boot)
+    # HQIC       <- select_tmp$HQIC
+    # BIC        <- select_tmp$BIC
+    # min_model  <- select_tmp$min_model
+    
+    dat_use    <- data[[tt]]$pdata
+    fm_list    <- data[[tt]]$formula
+    select_tmp <- fe_selection(dat_use, fm_list, attr(data[[1]], 'post_treat'))
     HQIC       <- select_tmp$HQIC
     BIC        <- select_tmp$BIC
     min_model  <- select_tmp$min_model
@@ -79,9 +87,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     #       run fixed effect model: get demeaned data           #
     #                                                           #
     # ********************************************************* #
-    dat_use  <- data[[tt]]$pdata
-    fm_list  <- data[[tt]]$formula
-
+    
     ## fit individual twoway fixed effect model
     ## get demeand matrix and response 
     fit <- dat_trans <- list()

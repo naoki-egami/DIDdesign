@@ -4,8 +4,9 @@
 #' 
 #' Estimate average treatment effect on the treated .
 #' 
-#' @param formula A formula. \code{outcome ~ treatment}. Covariates can be added by \code{outcome ~ treatment | covariates}.
-#' @param data \code{\link{did_data}} object
+#' @param formula A formula. \code{y ~ d} where \code{y} is the outcome and \code{d} is the (time-varying) treatment indicator. 
+#' Covariates can be added by \code{y ~ d | x1 + x2} where \code{x1} and \code{x2} are covariates.
+#' @param data Data matrix. Either a \code{data.frame} object or  \cdoe{tbl_df} object.
 #' @param method Either \code{"parametric"} or \code{"nonparametric"}.
 #' @param id_subject subject id.
 #' @param id_time time id.
@@ -141,27 +142,24 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
     # TO USE NONPARAMETRIC METHOD, BOTH CONDITIONS SHOULD BE MET:
     # 1. method should be 'nonparametric', AND
     # 2. is_covariates should be FALSE (NO COVARIATES ALLOWED)
-    fit <- did_nonparametric(
-      data = dat_use, 
+    fit <- did_nonparametric( data = dat_use, 
       se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
       select  = select, est_did = TRUE
     )
   } else if (method == "nonparametric" & isTRUE(is_covariates)) {
+    # When covariates are supplied, we alwasy fit the parametric model 
     warning("Nonparametric option is not available with covariates. 
              Parametiric method is used instead\n")
-    fit <- did_parametric(
-      data = dat_use, 
+             
+    fit <- did_parametric( data = dat_use, 
       se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
       select  = select, est_did = TRUE)             
   } else {
-    fit <- did_parametric(
-      data = dat_use, 
+    
+    fit <- did_parametric( data = dat_use, 
       se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
       select  = select, est_did = TRUE)    
   }
-  
-  
-  
   
   return(fit)
 }

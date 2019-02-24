@@ -41,3 +41,36 @@ gmm_selection <- function(Y, D, mvec, t_pre, select, n_boot) {
 
     return(list('min_model' = min_model, 'HQIC' = HQIC, 'BIC' = BIC))
 }
+
+
+
+#' Model selectin based on linear FE model 
+#' @importFrom plm plm vcovHC
+#' @keywords internal 
+fe_selection <- function(data, fm_list, post_time, alpha = 0.05) {
+  
+  diff.pseries <- getFromNamespace("diff.pseries", "plm")
+
+  # exclude post-treatment periods 
+  new_treatment      <- diff.pseries(data$treatment)
+  data_use           <- data[data$id_time != post_time, ]
+  data_use$treatment <- na.omit(new_treatment)
+  
+  # run fe 
+  min_model  <- length(fm_list)
+  test_theta <- test_se <- rep(NA, (length(fm_list)-1)) 
+  for (ff in (length(fm_list)-1):1) {
+    tmp <- plm(fm_list[[ff]], data = data_use, method = 'within', effect = 'twoways')
+    test_theta[ff] <- tmp$coef[1]
+    test_se[ff]    <- sqrt(vcovHC(tmp, cluster = 'group', type = 'HC2')[1,1])
+    
+    if (test_theta[ff] + qnorm(alpha/2) * test_se[ff] <= 0 & 
+        test_theta[ff] + qnorm(1 - alpha/2) * test_se[ff] >= 0) {
+      min_model <- ff
+    }
+  }
+  
+  return(list("min_model" = min_model, 'BIC' = NULL, "HQIC" = NULL, 'test_theta' = test_theta,
+              'test_se' = test_se))
+
+}
