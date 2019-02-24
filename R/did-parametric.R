@@ -194,6 +194,8 @@ getX <- function(fm, fit, dat) {
   outvar <- all.vars(fm)[1]
   is_na  <- is.na(dat[,outvar])
   # y_bar[!is_na] <- pmodel.response(fit)
+
+  ## this returns only non-na entries 
   y_bar         <- pmodel.response(fit)
   names(y_bar)  <- outvar
 
@@ -260,7 +262,6 @@ cugmm_loss_parametric <- function(par, dat, id_subject, k, p) {
   cat("loss = ", loss, '\n')
   return(loss)
 }
-
 
 
 ##
