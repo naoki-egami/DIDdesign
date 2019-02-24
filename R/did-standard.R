@@ -22,6 +22,7 @@ std_did <- function(Y, D) {
 
 #' Block Bootstrap Function for Standard DiD Estimator
 #'
+#' @keywords internal
 std_did_boot <- function(Y, D, n_boot) {
   N <- nrow(Y)
   boot_att <- rep(NA, n_boot)

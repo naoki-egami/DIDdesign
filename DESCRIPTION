@@ -1,7 +1,7 @@
 Package: DIDdesign
 Type: Package
 Title: R package for analyzing and diagnosing difference-in-differences design.
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
   person("Naoki", "Egami", email = "email@gmail.com", role = c("aut")),
   person("Soichiro", "Yamauchi", email = "email@gmail.com", role = c("aut", "cre"))
@@ -15,5 +15,10 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 Imports: 
+    Formula, 
+    dplyr, 
+    plm,
+    tidyr,
     Rcpp,
     RcppArmadillo
+BugReports: https://github.com/naoki-egami/DIDdesign/issues

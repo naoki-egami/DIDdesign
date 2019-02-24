@@ -3,6 +3,7 @@
 #' @param D treatment 
 #' @param m_vec moment sets 
 #' @param select selection methods 
+#' @keywords internal
 gmm_selection <- function(Y, D, mvec, t_pre, select, n_boot) {
     select_list <- list()
     for (m in mvec) {

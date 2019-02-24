@@ -9,3 +9,4 @@ didgmmT_parametric(dat, id_subject, par_init = NULL)
 \description{
 Estimate GMM
 }
+\keyword{internal}

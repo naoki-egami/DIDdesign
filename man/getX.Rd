@@ -9,3 +9,4 @@ getX(fm, fit, dat)
 \description{
 Get demeaned X and y
 }
+\keyword{internal}

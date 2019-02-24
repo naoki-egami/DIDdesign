@@ -9,3 +9,4 @@ didgmm_test(Y, D, M, ep = 0.01, max_trial = 100)
 \description{
 Pre-treatment Trend test with GMM
 }
+\keyword{internal}

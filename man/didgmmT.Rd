@@ -2,7 +2,7 @@
 % Please edit documentation in R/didgmmT.R
 \name{didgmmT}
 \alias{didgmmT}
-\title{DID-GMM with mth order parallel treand assumption}
+\title{DID-GMM with m-th order parallel treand assumption}
 \usage{
 didgmmT(Y, D, M, ep = 0.01, max_trial = 100, only_beta = FALSE,
   only_oneM = FALSE)
@@ -21,5 +21,5 @@ If \code{TRUE} ATT is estimated only using moment conditions related to the last
 Default is \code{FALSE}.}
 }
 \description{
-DID-GMM with mth order parallel treand assumption
+DID-GMM with m-th order parallel treand assumption
 }

@@ -13,29 +13,6 @@
 #' @param select The criteria used to select the best model. The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
 #'  Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).
 #' @importFrom plm plm 
-#' @examples
-#'
-#' # load packages
-#' require(didrobust)
-#' require(dplyr)
-#'
-#' # load data
-#' data(anzia2012)
-#'
-#' # prepare for input data
-#' dat <- did_double_data(
-#'   outcome = anzia2012$lnavgsalary_cpi,
-#'   treatment = anzia2012$oncycle,
-#'   post_treatment = c(2007, 2008, 2009),
-#'   id_subject = anzia2012$district,
-#'   id_time = anzia2012$year,
-#'   long = TRUE,
-#'   Xcov = anzia2012 %>% select(lnenrollment, ami_pc, asian_pc, black_pc)
-#' )
-#'
-#' # fit the model
-#' fit <- double_did_parametric(dat)
-#'
 #' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE, 
                            select = "HQIC", est_did = TRUE
@@ -199,6 +176,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
 #' Get demeaned X and y 
 #' @importFrom plm pmodel.response
 #' @importFrom utils getFromNamespace
+#' @keywords internal
 getX <- function(fm, fit, dat) {
 
   # import function 
@@ -220,7 +198,7 @@ getX <- function(fm, fit, dat) {
 
 
 #' Estimate GMM 
-#'
+#' @keywords internal
 didgmmT_parametric <- function(dat, id_subject, par_init = NULL) {
   
   ## prepara inputs 
@@ -240,6 +218,7 @@ didgmmT_parametric <- function(dat, id_subject, par_init = NULL) {
 #' @param id_subject vector of subject id.
 #' @param k number of outcome types (models)
 #' @param p number of variables 
+#' @keywords internal
 cugmm_loss_parametric <- function(par, dat, id_subject, k, p) {
   
   ## format parameter: first element is beta 
@@ -269,6 +248,7 @@ cugmm_loss_parametric <- function(par, dat, id_subject, k, p) {
 }
 
 #' compute asymptotic GMM variance 
+#' @keywords internal
 cugmm_var_parametric <- function(par, dat, id_subject) {
   ## prepara inputs 
   k <- length(dat)            ## number of y types = number of models 

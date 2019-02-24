@@ -6,6 +6,7 @@
 
 //' helper function for the loss computation 
 //' @useDynLib DIDdesign
+//' @keywords internal
 // [[Rcpp::export]]
 arma::mat loss_loop(
   const arma::mat  &X,

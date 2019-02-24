@@ -9,3 +9,4 @@ cugmm_var_parametric(par, dat, id_subject)
 \description{
 compute asymptotic GMM variance
 }
+\keyword{internal}

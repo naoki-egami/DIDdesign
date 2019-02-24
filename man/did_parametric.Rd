@@ -25,27 +25,3 @@ Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni corr
 \description{
 Parametric Version of Double DiD
 }
-\examples{
-
-# load packages
-require(didrobust)
-require(dplyr)
-
-# load data
-data(anzia2012)
-
-# prepare for input data
-dat <- did_double_data(
-  outcome = anzia2012$lnavgsalary_cpi,
-  treatment = anzia2012$oncycle,
-  post_treatment = c(2007, 2008, 2009),
-  id_subject = anzia2012$district,
-  id_time = anzia2012$year,
-  long = TRUE,
-  Xcov = anzia2012 \%>\% select(lnenrollment, ami_pc, asian_pc, black_pc)
-)
-
-# fit the model
-fit <- double_did_parametric(dat)
-
-}

@@ -3,6 +3,7 @@
 
 #' helper function for the loss computation 
 #' @useDynLib DIDdesign
+#' @keywords internal
 loss_loop <- function(X, y, par, id_subject, uid, is_na, nobs, p) {
     .Call('_DIDdesign_loss_loop', PACKAGE = 'DIDdesign', X, y, par, id_subject, uid, is_na, nobs, p)
 }

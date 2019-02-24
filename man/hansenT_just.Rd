@@ -9,3 +9,4 @@ hansenT_just(par, Y, D, M)
 \description{
 Objective function
 }
+\keyword{internal}

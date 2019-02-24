@@ -9,3 +9,4 @@ trendT_test(Y, D, M, boot = FALSE, n_boot = 1000, alpha = 0.05)
 \description{
 Trend test with mean
 }
+\keyword{internal}

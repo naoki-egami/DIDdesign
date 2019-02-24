@@ -1,7 +1,7 @@
 
 
 #' Pre-treatment Trend test with GMM
-#' @export
+#' @keywords internal
 didgmm_test <- function(Y, D, M, ep = 0.01, max_trial = 100) {
 
   ## quantities
@@ -137,7 +137,7 @@ hansenT_tretest_over_init <- function(par, Y, D, M, ep) {
 
 
 #' Trend test with mean
-#' @export
+#' @keywords internal
 trendT_test <- function(Y, D, M, boot = FALSE, n_boot = 1000, alpha = 0.05) {
   T0 <- ncol(Y) - 1; N <- nrow(Y)
 

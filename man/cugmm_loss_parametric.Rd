@@ -20,3 +20,4 @@ cugmm_loss_parametric(par, dat, id_subject, k, p)
 \description{
 gmm loss function
 }
+\keyword{internal}

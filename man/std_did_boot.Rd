@@ -9,3 +9,4 @@ std_did_boot(Y, D, n_boot)
 \description{
 Block Bootstrap Function for Standard DiD Estimator
 }
+\keyword{internal}

@@ -9,3 +9,4 @@ loss_loop(X, y, par, id_subject, uid, is_na, nobs, p)
 \description{
 helper function for the loss computation
 }
+\keyword{internal}

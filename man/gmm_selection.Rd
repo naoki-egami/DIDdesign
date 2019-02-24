@@ -18,3 +18,4 @@ gmm_selection(Y, D, mvec, t_pre, select, n_boot)
 \description{
 Model selection by GMM
 }
+\keyword{internal}

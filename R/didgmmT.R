@@ -2,7 +2,7 @@
 ## general version
 ##
 
-#' DID-GMM with mth order parallel treand assumption
+#' DID-GMM with m-th order parallel treand assumption
 #'
 #' @param Y Outcome matrix.
 #' @param D Treatment vector.
@@ -145,6 +145,7 @@ didgmmT.boot <- function(Y, D, M, n_boot, only_beta = FALSE, only_oneM = FALSE) 
 
 
 #' Objective function
+#' @keywords internal
 hansenT_just <- function(par, Y, D, M) {
   m_use <- M
   tmax <- 1
