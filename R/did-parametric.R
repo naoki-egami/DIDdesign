@@ -115,7 +115,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       if (length(coef_vec[[1]]) == 1) {
         par_init <- mean(unlist(coef_vec))
       } else {
-        par_init <- cbind(mean(sapply(coef_vec, function(x) x[1])), 
+        par_init <- c(mean(sapply(coef_vec, function(x) x[1])), 
                           sapply(coef_vec, function(x) x[-1]))          
       }
       
@@ -228,9 +228,11 @@ didgmmT_parametric <- function(dat, id_subject, par_init = NULL) {
 cugmm_loss_parametric <- function(par, dat, id_subject, k, p) {
   
   ## format parameter: first element is beta 
-  par_mat      <- matrix(NA, nrow = k, ncol = p)
-  par_mat[,1]  <- par[1]
-  par_mat[,-1] <- par[-1]
+  par_mat      <- matrix(NA, nrow = p, ncol = k)
+  
+  par_mat[1,]  <- par[1]
+  par_mat[-1,] <- par[-1]
+  par_mat      <- t(par_mat)
   
   ## comput E[X'(y - Xb)] = 0 condition 
   uid  <- unique(id_subject)
@@ -249,7 +251,7 @@ cugmm_loss_parametric <- function(par, dat, id_subject, k, p) {
   Omega <- (t(MXe) %*% MXe)
   diag(Omega) <- diag(Omega)
   loss  <- as.vector(t(gbar) %*% solve(Omega / nobs, gbar))
-  # cat("loss = ", loss, '\n')
+  cat("loss = ", loss, '\n')
   return(loss)
 }
 
