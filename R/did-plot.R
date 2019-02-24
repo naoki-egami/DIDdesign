@@ -82,7 +82,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
     xlab <- sapply(data, function(x) attr(x, 'post_treat'))
     if (isTRUE(attr(data[[1]], 'boot') & isTRUE(full)) &
         !is.null(data[[1]]$results_standardDiD)) {
-      se_list <- ATT_list<- list()
+      se_list <- ATT_list <- colors <- list()
       for (i in 1:length(data)) {
         se_mat <- matrix(NA, nrow = length(data[[i]]$results_bootstraps) + 1, ncol = 4)
         att_vec <- rep(NA, length(data[[i]]$results_bootstraps) + 1)
@@ -92,13 +92,17 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
         se_mat[1,3:4] <- data[[i]]$results_standardDiD$results_bootstraps$ci95
         att_vec[1] <- data[[i]]$results_standardDiD$ATT
 
+        colors[[i]] <- rep('gray60', length(data[[i]]$results_bootstraps))
         for (j in 1:length(data[[i]]$results_bootstraps)) {
           se_mat[j+1,1:2] <- data[[i]]$results_bootstraps[[j]]$ci90
           se_mat[j+1,3:4] <- data[[i]]$results_bootstraps[[j]]$ci95
           att_vec[j+1]    <- data[[i]]$results_estimates[[j]]$ATT
+          colors[[i]][j+1]  <- ifelse(data[[i]]$min_model == j, "#006284", 'gray40')
         }
         se_list[[i]] <- se_mat
         ATT_list[[i]] <- att_vec
+        
+
       }
 
       ## plot
@@ -113,15 +117,18 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       for (i in 1:length(data)) {
         for (j in 1:(length(data[[i]]$results_bootstraps)+1)) {
           # point
-          points(i+locs[j], ATT_list[[i]][j], pch = points[j])
+          points(i+locs[j], ATT_list[[i]][j], pch = points[j], col = colors[[i]][j])
           # 90%
-          lines(c(i+locs[j],i+locs[j]), c(se_list[[i]][j,1], se_list[[i]][j,2]), lwd = 2.2)
+          lines(c(i+locs[j],i+locs[j]), c(se_list[[i]][j,1], se_list[[i]][j,2]), col = colors[[i]][j], 
+                lwd = 2.2)
           # 95%
-          arrows(i+locs[j], se_list[[i]][j,3], i+locs[j], se_list[[i]][j,4], length=0.05, angle=90, code=3)
+          arrows(i+locs[j], se_list[[i]][j,3], i+locs[j], se_list[[i]][j,4], col = colors[[i]][j],
+            length=0.05, angle=90, code=3)
 
         }
       }
-      legend("topleft", legend = c("DiD", paste("M", 1:length(data[[1]]$results_bootstraps))),
+      lab_method <- ifelse(attr(data[[1]], 'method') == 'parametric', 'TFE', 'DiD')
+      legend("topleft", legend = c(lab_method, paste("M", 1:length(data[[1]]$results_bootstraps))),
         pch = points, lty = 1, bty = 'n')
 
     } else if (isTRUE(attr(data[[1]], 'boot') & isTRUE(full))) {

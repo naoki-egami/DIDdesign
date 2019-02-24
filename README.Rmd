@@ -65,18 +65,15 @@ plot(fit_np, full = TRUE)
 ```
 
 
-### Parametric Estimator (without Covariates)
+### Parametric Estimator (with Covariates)
 
 ```{r}
-fit_p1 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
- 							id_subject = "district", id_time = "year",
- 							post_treatment = c(2007, 2008, 2009),
- 							method = "parametric",
- 							se_boot = FALSE, select = "HQIC")
-
+fit_p1 <- did(lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper + 
+						ami_pc + asian_pc + black_pc + hisp_pc,
+  data = anzia2012, id_subject = 'district', id_time = 'year', 
+  post_treatment = c(2007, 2008, 2009), 
+	method = 'parametric')
 ```
-
-
 ```{r}
 # summary function 
 summary(fit_p1)
@@ -86,3 +83,26 @@ plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.02))
 
 ```
 
+
+We can compare estimates from a model without covariates. 
+
+```{r}
+fit_p2 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
+	id_subject = "district", id_time = "year",
+	post_treatment = c(2007, 2008, 2009),
+	method = "parametric")
+
+```
+
+
+```{r}
+# summary function 
+summary(fit_p2)
+
+# plot function 
+par(mfrow = c(1,2))
+plot(fit_p1, full = TRUE, ylim = c(-0.03, 0.005), xlim = c(-0.5, 3.5), main = "With Covariates")
+abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
+plot(fit_p2, full = TRUE, ylim = c(-0.03, 0.005), xlim = c(-0.5, 3.5), main = 'Without Covariates')
+abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
+```

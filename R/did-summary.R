@@ -59,7 +59,7 @@ summary.diddesign <- function(obj) {
       }
 
       # did estimates
-      if (!is.null(obj[[1]]$results_standardDiD)) {
+      if (!is.null(obj[[1]]$results_standardDiD) & attr(obj[[1]], 'method') == 'nonparametric') {
         DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
         DiD_se_save <- rep(NA, length(DiD))
         for (i in 1:length(ATT)) {
@@ -78,11 +78,37 @@ summary.diddesign <- function(obj) {
         # col labels
         colnames(res_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
         rownames(res_tab) <- NULL
-      } else {
+      } else if(attr(obj[[1]], 'method') == 'nonparametric') {
         res_tab <- data.frame(rbind(
           ATT, se_save, BIC, HQIC, selected
         ), row.names = c("ATT", "95% CI", "BIC", "HQIC", "Selected Model"))
         colnames(res_tab) <- sapply(obj, function(x) attr(x, 'post_treat'))
+        
+      } else if (!is.null(obj[[1]]$results_standardDiD) & attr(obj[[1]], 'method') == 'parametric') {
+        DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
+        DiD_se_save <- rep(NA, length(DiD))
+        for (i in 1:length(ATT)) {
+          DiD_se_save[i] <- paste("[",
+            paste(round(obj[[i]]$results_standardDiD$results_bootstraps$ci95, 3),
+            collapse = ', '), "]", sep = '')
+        }
+
+        # make a table
+        tabs_var <- c("D-DiD", "", "", "2way-FE", "")
+        labs_var <- c("ATT", "95% CI", "Selected", "ATT",  "95% CI")
+        res_tab <- data.frame(cbind(tabs_var, labs_var,
+          rbind(ATT, se_save, selected, DiD, DiD_se_save))
+        )
+
+        # col labels
+        colnames(res_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
+        rownames(res_tab) <- NULL        
+      } else {
+        res_tab <- data.frame(rbind(
+          ATT, se_save, selected
+        ), row.names = c("ATT", "95% CI", "Selected Model"))
+        colnames(res_tab) <- sapply(obj, function(x) attr(x, 'post_treat'))
+        
       }
 
     } else {

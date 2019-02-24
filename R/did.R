@@ -153,12 +153,12 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
              
     fit <- did_parametric( data = dat_use, 
       se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
-      select  = select, est_did = TRUE)             
+      select  = select, est_did = FALSE, is_covariates = is_covariates)             
   } else {
     
     fit <- did_parametric( data = dat_use, 
       se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
-      select  = select, est_did = TRUE)    
+      select  = select, est_did = FALSE, is_covariates = is_covariates)    
   }
   
   return(fit)

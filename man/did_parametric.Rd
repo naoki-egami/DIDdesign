@@ -5,7 +5,7 @@
 \title{Parametric Version of Double DiD}
 \usage{
 did_parametric(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-  select = "HQIC", est_did = TRUE)
+  select = "HQIC", est_did = FALSE, is_covariates)
 }
 \arguments{
 \item{data}{data}

@@ -13,10 +13,10 @@
 #' @param select Selection criteria used,
 #'  one of "HQIC", "BIC", "tt1" (T-test), "tt2" (T-test with Bonferroni correction).
 #'  The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
-#' @importFrom plm plm
+#' @importFrom plm plm vcovHC
 #' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-                           select = "HQIC", est_did = TRUE
+                           select = "HQIC", est_did = FALSE, is_covariates
 ) {
 
   ## input checks
@@ -35,34 +35,6 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
 
     # ********************************************************* #
     #                                                           #
-    #                 standard did estimates                    #
-    #                                                           #
-    # ********************************************************* #
-    if (isTRUE(est_did)) {
-      # cat("... computing the standard DiD estimate ...\n")
-
-      ## point estimate
-      did_est <- std_did(Y = data[[tt]]$Y, D = data[[tt]]$D)
-
-      ## bootstrap
-      # if (isTRUE(se_boot)) {
-      tmp_est <- std_did_boot(Y = data[[tt]]$Y, D = data[[tt]]$D, n_boot = n_boot)
-      tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
-      tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
-      did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
-      # } else {
-      #   did_boot_list <- NULL
-      # }
-
-      ## save obj
-      did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
-    } else {
-      did_save <- NULL
-    }
-
-
-    # ********************************************************* #
-    #                                                           #
     #         model selection by GMM J-stats or t-test          #
     #         - use only pre-treatment data                     #
     #                                                           #
@@ -77,8 +49,8 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     dat_use    <- data[[tt]]$pdata
     fm_list    <- data[[tt]]$formula
     select_tmp <- fe_selection(dat_use, fm_list, attr(data[[1]], 'post_treat'))
-    HQIC       <- select_tmp$HQIC
-    BIC        <- select_tmp$BIC
+    HQIC       <- 0 #select_tmp$HQIC
+    BIC        <- 0 #select_tmp$BIC
     min_model  <- select_tmp$min_model
 
 
@@ -121,9 +93,14 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       }
 
       ## estimate
-      est <- didgmmT_parametric_resid(dat_trans[use_moments], dat_use$id_subject, par_init)
-      tmp[[m]] <- list('ATT' = est$par)
-
+      if (isTRUE(is_covariates)) {
+        est <- didgmmT_parametric_resid(dat_trans[use_moments], dat_use$id_subject, par_init)        
+      } else {
+        est <- didgmmT_parametric(dat_trans[use_moments], dat_use$id_subject, par_init)
+      }
+      
+      tmp[[m]] <- est
+      
       ## compute variance
       if (isTRUE(se_boot)) {
         boot_out <- list()
@@ -131,12 +108,17 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
         # cat("... computing GMM variance ...\n")
 
         ## compute asymptotic variance
-        att_var <- cugmm_var_parametric(par = est$par, dat = dat_trans[use_moments],
+        if (isTRUE(is_covariates)) {
+          att_var <- cugmm_var_parametric_resid(par = est$ATT, dat = est$data,
+                                          id_subject = dat_use$id_subject)          
+        } else {
+        att_var <- cugmm_var_parametric(par = est$ATT, dat = dat_trans[use_moments],
                                         id_subject = dat_use$id_subject)
+        }
 
         ## compute Ci
-        tmp_ci95     <- c(est$par - 1.96 * sqrt(att_var), est$par + 1.96 * sqrt(att_var))
-        tmp_ci90     <- c(est$par - 1.64 * sqrt(att_var), est$par + 1.64 * sqrt(att_var))
+        tmp_ci95     <- c(est$ATT - 1.96 * sqrt(att_var), est$ATT + 1.96 * sqrt(att_var))
+        tmp_ci90     <- c(est$ATT - 1.64 * sqrt(att_var), est$ATT + 1.64 * sqrt(att_var))
         tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90)
       }
 
@@ -145,6 +127,45 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     ci95 <- tmp_min[[min_model]]$ci95
     ci90 <- tmp_min[[min_model]]$ci90
 
+    # ********************************************************* #
+    #                                                           #
+    #                 standard did estimates                    #
+    #                                                           #
+    # ********************************************************* #
+    if (isTRUE(est_did)) {
+      cat("... computing the standard DiD estimate ...\n")
+
+      ## point estimate
+      did_est <- std_did(Y = data[[tt]]$Y, D = data[[tt]]$D)
+
+      ## bootstrap
+      # if (isTRUE(se_boot)) {
+      tmp_est <- std_did_boot(Y = data[[tt]]$Y, D = data[[tt]]$D, n_boot = n_boot)
+      tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
+      tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
+      did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+      # } else {
+      #   did_boot_list <- NULL
+      # }
+
+      ## save obj
+      did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
+    } else {
+      # RETURN TWO-WAY FIXED EFFECT ESTIMATE 
+      did_est <- fit[[1]]$coef[1]
+      if (isTRUE(is_covariates)) {
+        did_var <- vcovHC(fit[[1]], cluster = 'group', type = 'HC2')[1,1]
+      } else {
+        did_var <- vcovHC(fit[[1]], cluster = 'group', type = 'HC2')
+      }
+      
+      tmp_se95 <- c(did_est + qnorm(0.025) * sqrt(did_var), did_est + qnorm(1 - 0.025) * sqrt(did_var))
+      tmp_se90 <- c(did_est + qnorm(0.050) * sqrt(did_var), did_est + qnorm(1 - 0.050) * sqrt(did_var))
+      
+      did_boot_list <- list('boot_est' = NULL, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+      did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
+
+    }
 
     # ********************************************************* #
     #                                                           #
@@ -167,6 +188,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
 
     attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
     attr(result[[tt]], 'boot') <- TRUE
+    attr(result[[tt]], 'method') <- 'parametric'
   }
 
   class(result) <- "diddesign"
@@ -222,7 +244,7 @@ didgmmT_parametric <- function(dat, id_subject, par_init = NULL) {
   est <- optim(par = par_init, fn = cugmm_loss_parametric, method = "BFGS",
                dat = dat, id_subject = id_subject, k = k, p = p)
 
-  return(est)
+  return(list('est' = est, 'ATT' = est$par))
 }
 
 
@@ -259,8 +281,44 @@ cugmm_loss_parametric <- function(par, dat, id_subject, k, p) {
   Omega <- (t(MXe) %*% MXe)
   diag(Omega) <- diag(Omega)
   loss  <- as.vector(t(gbar) %*% solve(Omega / nobs, gbar))
-  cat("loss = ", loss, '\n')
+  # cat("loss = ", loss, '\n')
   return(loss)
+}
+
+#' compute asymptotic GMM variance
+#' @keywords internal
+cugmm_var_parametric <- function(par, dat, id_subject) {
+  ## prepara inputs
+  k <- length(dat)            ## number of y types = number of models
+  p <- ncol(dat[[1]]$X)       ## number of covariates
+
+  ## format parameter: first element is beta
+  par_mat      <- matrix(NA, nrow = k, ncol = p)
+  par_mat[,1]  <- par[1]
+  par_mat[,-1] <- par[-1]
+
+  ## comput E[X'(y - Xb)] = 0 condition
+  uid  <- unique(id_subject)
+  nobs <- length(uid)
+
+  XXe <- list()
+  for (j in 1:k) {
+    is_na <- dat[[j]]$is_na
+    XXe[[j]] <- loss_loop(X = dat[[j]]$X, y = dat[[j]]$y, par = par_mat[j,],
+                          id_subject = id_subject, uid = uid,
+                          is_na = as.numeric(is_na), nobs = nobs, p = p )
+  }
+
+  MXe   <- do.call("cbind", XXe)
+  gbar  <- colMeans(MXe)
+  Omega <- crossprod(MXe, MXe) / nobs
+
+  G     <- matrix(0, nrow = k * p, ncol = 1)
+  G[seq(1, k * p, p),1] <- 1
+
+  gmm_var <- as.vector(solve(t(G) %*%  solve(Omega, G)))
+  att_var <- gmm_var / nobs
+  return(att_var)
 }
 
 
@@ -283,19 +341,18 @@ didgmmT_parametric_resid <- function(dat, id_subject, par_init = NULL) {
     treatment  <- dat[[d]]$X[, 1]
     covariates <- dat[[d]]$X[, -1]
 
-    dat[[d]]$y_resid <- rep(NA, length(outcome))
-    dat[[d]]$d_resid <- matrix(NA, nrow = length(outcome),  ncol = 1)
-    dat[[d]]$y_resid[!dat[[d]]$is_na] <- lm(outcome ~ covariates)$residuals
-    dat[[d]]$d_resid[!dat[[d]]$is_na, 1] <- lm(treatment ~ covariates)$residuals
+    dat[[d]]$y_resid <- lm(outcome ~ covariates - 1)$residuals
+    dat[[d]]$d_resid <- matrix(lm(treatment ~ covariates - 1)$residuals, 
+                              nrow = length(outcome), ncol = 1)
   }
 
   ## 2. use resideualized outcome to estimate AT
   ##   - moment conditions: E[D(Y- Db)] = 0
   if(is.null(par_init)) par_init <- runif(1)
   est <- optim(par = par_init, fn = cugmm_loss_parametric_resid,
-    method = "BFGS", dat = dat, id_subject = id_subject, k = k, p = p)
+                method = "BFGS", dat = dat, id_subject = id_subject, k = k, p = p)
 
-  return(est)
+  return(list('est' = est, 'ATT' = est$par, 'data' = dat))
 }
 
 
@@ -330,21 +387,20 @@ cugmm_loss_parametric_resid <- function(par, dat, id_subject, k, p = 1) {
   Omega <- (t(MXe) %*% MXe)
   diag(Omega) <- diag(Omega)
   loss  <- as.vector(t(gbar) %*% solve(Omega / nobs, gbar))
-  cat("loss = ", loss, '\n')
+  # cat("loss = ", loss, '\n')
   return(loss)
 }
 
 #' compute asymptotic GMM variance
 #' @keywords internal
-cugmm_var_parametric <- function(par, dat, id_subject) {
+cugmm_var_parametric_resid <- function(par, dat, id_subject, p = 1) {
   ## prepara inputs
   k <- length(dat)            ## number of y types = number of models
-  p <- ncol(dat[[1]]$X)       ## number of covariates
+
 
   ## format parameter: first element is beta
-  par_mat      <- matrix(NA, nrow = k, ncol = p)
-  par_mat[,1]  <- par[1]
-  par_mat[,-1] <- par[-1]
+  par_mat      <- matrix(NA, nrow = k, ncol = 1)
+  par_mat[,1]  <- par
 
   ## comput E[X'(y - Xb)] = 0 condition
   uid  <- unique(id_subject)
@@ -353,7 +409,7 @@ cugmm_var_parametric <- function(par, dat, id_subject) {
   XXe <- list()
   for (j in 1:k) {
     is_na <- dat[[j]]$is_na
-    XXe[[j]] <- loss_loop(X = dat[[j]]$X, y = dat[[j]]$y, par = par_mat[j,],
+    XXe[[j]] <- loss_loop(X = dat[[j]]$d_resid, y = dat[[j]]$y_resid, par = par_mat[j,],
                           id_subject = id_subject, uid = uid,
                           is_na = as.numeric(is_na), nobs = nobs, p = p )
   }

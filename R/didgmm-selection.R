@@ -64,8 +64,8 @@ fe_selection <- function(data, fm_list, post_time, alpha = 0.05) {
     test_theta[ff] <- tmp$coef[1]
     test_se[ff]    <- sqrt(vcovHC(tmp, cluster = 'group', type = 'HC2')[1,1])
     
-    if (test_theta[ff] + qnorm(alpha/2) * test_se[ff] <= 0 & 
-        test_theta[ff] + qnorm(1 - alpha/2) * test_se[ff] >= 0) {
+    if ((test_theta[ff] + qnorm(alpha/2) * test_se[ff]) <= 0 & 
+        (test_theta[ff] + qnorm(1 - alpha/2) * test_se[ff]) >= 0) {
       min_model <- ff
     }
   }
