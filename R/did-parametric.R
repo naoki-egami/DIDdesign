@@ -302,19 +302,23 @@ cugmm_var_parametric <- function(par, dat, id_subject) {
   nobs <- length(uid)
 
   XXe <- list()
+  G   <- matrix(0, nrow = k, ncol = 1)  
   for (j in 1:k) {
     is_na <- dat[[j]]$is_na
     XXe[[j]] <- loss_loop(X = dat[[j]]$X, y = dat[[j]]$y, par = par_mat[j,],
                           id_subject = id_subject, uid = uid,
                           is_na = as.numeric(is_na), nobs = nobs, p = p )
+    G[j,1]   <- sum(as.vector(dat[[j]]$X[,1])^2) / nobs
+    # cat("G[j,i] = ", G[j,1], "\n")
+                      
   }
 
   MXe   <- do.call("cbind", XXe)
   gbar  <- colMeans(MXe)
   Omega <- crossprod(MXe, MXe) / nobs
 
-  G     <- matrix(0, nrow = k * p, ncol = 1)
-  G[seq(1, k * p, p),1] <- 1
+  # G     <- matrix(0, nrow = k * p, ncol = 1)
+  # G[seq(1, k * p, p),1] <- 1
 
   gmm_var <- as.vector(solve(t(G) %*%  solve(Omega, G)))
   att_var <- gmm_var / nobs
@@ -407,19 +411,22 @@ cugmm_var_parametric_resid <- function(par, dat, id_subject, p = 1) {
   nobs <- length(uid)
 
   XXe <- list()
+  G   <- matrix(NA, nrow = k, ncol = 1)
   for (j in 1:k) {
     is_na <- dat[[j]]$is_na
     XXe[[j]] <- loss_loop(X = dat[[j]]$d_resid, y = dat[[j]]$y_resid, par = par_mat[j,],
                           id_subject = id_subject, uid = uid,
                           is_na = as.numeric(is_na), nobs = nobs, p = p )
+    G[j,1]   <- sum(dat[[j]]$d_resid^2) / nobs
   }
 
   MXe   <- do.call("cbind", XXe)
   gbar  <- colMeans(MXe)
   Omega <- crossprod(MXe, MXe) / nobs
 
-  G     <- matrix(0, nrow = k * p, ncol = 1)
-  G[seq(1, k * p, p),1] <- 1
+  ## dgi / d beta = [D^2]
+  # G     <- matrix(0, nrow = k * p, ncol = 1)
+  # G[seq(1, k * p, p),1] <- 1
 
   gmm_var <- as.vector(solve(t(G) %*%  solve(Omega, G)))
   att_var <- gmm_var / nobs
