@@ -150,12 +150,20 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
     # When covariates are supplied, we alwasy fit the parametric model 
     warning("Nonparametric option is not available with covariates. 
              Parametiric method is used instead\n")
+    
+    if (isTRUE(se_boot)) {
+      warning("Currently, we do not support bootstrap for parametric model.\n")
+      se_boot <- FALSE
+    }
              
     fit <- did_parametric( data = dat_use, 
       se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
       select  = select, est_did = FALSE, is_covariates = is_covariates)             
   } else {
-    
+    if (isTRUE(se_boot)) {
+      warning("Currently, we do not support bootstrap for parametric model.\n")
+      se_boot <- FALSE
+    }
     fit <- did_parametric( data = dat_use, 
       se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
       select  = select, est_did = FALSE, is_covariates = is_covariates)    
