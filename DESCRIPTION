@@ -22,3 +22,5 @@ Imports:
     Rcpp,
     RcppArmadillo
 BugReports: https://github.com/naoki-egami/DIDdesign/issues
+Suggests: 
+    testthat
