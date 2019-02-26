@@ -9,7 +9,7 @@ did_parametric_repeatedCS(data, x_colnames)
 \arguments{
 \item{data}{A \code{diddesign_data} object.}
 
-\item{x_colnames}{A vector of covariate variable names. 
+\item{x_colnames}{A vector of covariate variable names.
 Parsed from formula in \code{\link{did}} function.}
 }
 \description{
