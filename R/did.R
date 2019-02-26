@@ -6,7 +6,7 @@
 #' 
 #' @param formula A formula. \code{y ~ d} where \code{y} is the outcome and \code{d} is the (time-varying) treatment indicator. 
 #' Covariates can be added by \code{y ~ d | x1 + x2} where \code{x1} and \code{x2} are covariates.
-#' @param data Data matrix. Either a \code{data.frame} object or  \cdoe{tbl_df} object.
+#' @param data Data matrix. Either a \code{data.frame} object or  \code{tbl_df} object.
 #' @param method Either \code{"parametric"} or \code{"nonparametric"}.
 #' @param id_subject subject id.
 #' @param id_time time id.

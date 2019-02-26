@@ -15,7 +15,9 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 Imports: 
+    CVXR,
     Formula, 
+    genlasso,
     dplyr, 
     plm,
     tidyr,

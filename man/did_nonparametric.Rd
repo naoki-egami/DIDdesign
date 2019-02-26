@@ -27,31 +27,3 @@ Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni corr
 \description{
 Double Difference-in-Differences Estimator
 }
-\examples{
- # load packages
- require(didrobust)
-
- # load data from didrobust
- data(anzia2012)
-
- # transform data
- dat1 <- did_double_data(
-   outcome = anzia2012$lnavgsalary_cpi,
-   treatment = anzia2012$oncycle,
-   post_treatment = c(2007, 2008, 2009),
-   id_subject = anzia2012$district,
-   id_time = anzia2012$year
- )
-
- # fit the model
- set.seed(1234)
- fit <- did_double(dat1, se_boot = TRUE, n_boot = 100, select = "HQIC")
- summary(fit)
- plot(fit)
-
- # run bootstrap for all models
- set.seed(1234)
- fit2 <- did_double(dat1, se_boot = TRUE, n_boot = 100, boot_min = FALSE)
- plot(fit2, ylim = c(-0.05, 0.05), full = TRUE)
- abline(h = 0, col = 'red', lty = 3)
-}
