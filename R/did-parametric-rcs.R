@@ -74,6 +74,10 @@ did_parametric_repeatedCS <- function(data, x_colnames) {
       ## solve the problem
       result <- psolve(problem)
 
+      ## compute estimates
+      ## omega (2 by T+1)
+      omega <- t(matrix(result$getValue(beta_inter_coef), nrow = time_pre+1, ncol = 2))
+      ATT   <- diff(as.vector(t(apply(omega, 1, function(x) tail(diff(x, difference = moment_vec[m]), 1)))))
     }
 
   }
