@@ -18,3 +18,8 @@ Installation
     require(devtools)
     install_github("naoki-egami/DIDdesign", dependencies = TRUE)
     ```
+
+Example Useage of `DIDdesign`
+-----------------------------
+
+-   You can find a detailed example in the package's website
