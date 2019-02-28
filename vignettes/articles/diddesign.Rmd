@@ -1,6 +1,5 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "Example Usage"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -16,9 +15,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Example
 
-### Load Sample Data 
+## Load Sample Data 
 
 
 ```{r}
@@ -31,10 +29,10 @@ data("anzia2012")
 ```
 
 
-### Visualizing Data
+## Visualizing Data
 
 
-### Nonparametric Estimator 
+## Nonparametric Estimator 
 
 
 ```{r}
@@ -55,7 +53,7 @@ plot(fit_np, full = TRUE)
 ```
 
 
-### Parametric Estimator (with Covariates)
+## Parametric Estimator (with Covariates)
 
 ```{r}
 fit_p1 <- did(lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper + 

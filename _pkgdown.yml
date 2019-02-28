@@ -1,0 +1,17 @@
+url: https://datacamp.github.io/testwhat/
+
+template:
+  params:
+    bootswatch: cosmo
+
+
+navbar:
+  title: ~
+  type: default
+  left: 
+    - icon: fa-home fa-lg
+      href: index.html
+    - text: Example
+      href: articles/articles/diddesign.html
+    - text: Reference
+      href: reference/index.html
