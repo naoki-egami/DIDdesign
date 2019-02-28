@@ -1,5 +1,3 @@
-url: https://datacamp.github.io/testwhat/
-
 template:
   params:
     bootswatch: cosmo
@@ -8,7 +6,7 @@ template:
 navbar:
   title: ~
   type: default
-  left: 
+  left:
     - icon: fa-home fa-lg
       href: index.html
     - text: Example
