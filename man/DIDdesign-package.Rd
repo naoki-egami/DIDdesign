@@ -19,12 +19,13 @@ The package has two main functions:
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://github.com/naoki-egami/DIDdesign}
   \item Report bugs at \url{https://github.com/naoki-egami/DIDdesign/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Soichiro Yamauchi \email{email@gmail.com}
+\strong{Maintainer}: Soichiro Yamauchi \email{email@gmail.com} (0000-0003-0554-2717)
 
 Authors:
 \itemize{
