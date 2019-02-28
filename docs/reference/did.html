@@ -81,6 +81,9 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelogi</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
@@ -122,7 +125,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>formula</th>
-      <td><p>A formula. <code>y ~ d</code> where <code>y</code> is the outcome and <code>d</code> is the (time-varying) treatment indicator. 
+      <td><p>A formula. <code>y ~ d</code> where <code>y</code> is the outcome and <code>d</code> is the (time-varying) treatment indicator.
 Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> and <code>x2</code> are covariates.</p></td>
     </tr>
     <tr>
@@ -171,9 +174,9 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
 <li><p><code>results_bootstraps</code>: bootstrap estimates.</p></li>
 <li><p><code>BIC</code>: BIC for all models .</p></li>
 <li><p><code>HQIC</code>: HQIC for all models.</p></li>
-<li><p><code>BIC_min</code>: BIC for the selected model. 
+<li><p><code>BIC_min</code>: BIC for the selected model.
      This is the smallest BIC among values reported in <code>BIC</code>.</p></li>
-<li><p><code>HQIC_min</code>: HQIC for the selected model. 
+<li><p><code>HQIC_min</code>: HQIC for the selected model.
      This is the smallest HQIC among values reported in <code>HQIC</code>.</p></li>
 <li><p><code>min_model</code>: Selected model.</p></li>
 <li><p><code>select</code>: A criteria used to select the model.</p></li>
@@ -188,7 +191,7 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
     <pre class="examples"><div class='input'><span class='co'># load package</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='no'>DIDdesign</span>)
 
-<span class='co'># load  data </span>
+<span class='co'># load  data</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>anzia2012</span>)
 
 <span class='co'># nonparametric estimator without covariates</span>
@@ -208,6 +211,14 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
 #&gt; 
 #&gt; ... estimating treatment effect for  2009  ...
 #&gt; ... computing the standard DiD estimate ...</div><div class='input'>
+<span class='co'># view summary</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt;                   2007    2008    2009
+#&gt; ATT             -0.007  -0.012  -0.012
+#&gt; BIC            -18.018 -18.018 -18.018
+#&gt; HQIC            -9.147  -9.147  -9.147
+#&gt; Selected Model      M1      M1      M1</div><div class='input'>
+<span class='co'># view effect plot</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot.diddesign(fit1): Plot function is not suppored for estimates without bootstrap se's</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

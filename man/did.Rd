@@ -9,7 +9,7 @@ did(formula, data, id_subject, id_time, post_treatment,
   boot_min = TRUE, select = "HQIC")
 }
 \arguments{
-\item{formula}{A formula. \code{y ~ d} where \code{y} is the outcome and \code{d} is the (time-varying) treatment indicator. 
+\item{formula}{A formula. \code{y ~ d} where \code{y} is the outcome and \code{d} is the (time-varying) treatment indicator.
 Covariates can be added by \code{y ~ d | x1 + x2} where \code{x1} and \code{x2} are covariates.}
 
 \item{data}{Data matrix. Either a \code{data.frame} object or  \code{tbl_df} object.}
@@ -34,13 +34,13 @@ Covariates can be added by \code{y ~ d | x1 + x2} where \code{x1} and \code{x2} 
 A \code{diddesign} class object, which is a list of results for each post treatment period.
  A result for one period contains:
  \itemize{
-   \item \code{results_estimates}: 
+   \item \code{results_estimates}:
    \item \code{results_bootstraps}: bootstrap estimates.
    \item \code{BIC}: BIC for all models .
    \item \code{HQIC}: HQIC for all models.
-   \item \code{BIC_min}: BIC for the selected model. 
+   \item \code{BIC_min}: BIC for the selected model.
      This is the smallest BIC among values reported in \code{BIC}.
-   \item \code{HQIC_min}: HQIC for the selected model. 
+   \item \code{HQIC_min}: HQIC for the selected model.
      This is the smallest HQIC among values reported in \code{HQIC}.
    \item \code{min_model}: Selected model.
    \item \code{select}: A criteria used to select the model.
@@ -56,7 +56,7 @@ Estimate average treatment effect on the treated .
 # load package
 require(DIDdesign)
 
-# load  data 
+# load  data
 data(anzia2012)
 
 # nonparametric estimator without covariates
@@ -68,5 +68,11 @@ fit1 <- did(
   method = "nonparametric",
   se_boot = FALSE
 )
+
+# view summary
+summary(fit1)
+
+# view effect plot
+plot(fit1)
 
 }
