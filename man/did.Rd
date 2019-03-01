@@ -4,7 +4,7 @@
 \alias{did}
 \title{DiD}
 \usage{
-did(formula, data, id_subject, id_time, post_treatment,
+did(formula, data, id_subject = NULL, id_time, post_treatment,
   method = "parametric", se_boot = FALSE, n_boot = 1000,
   boot_min = TRUE, select = "HQIC")
 }

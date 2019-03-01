@@ -59,7 +59,7 @@
 #' plot(fit1)
 #'
 #' @export
-did <- function(formula, data, id_subject, id_time, post_treatment,
+did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
   select = 'HQIC'
 ) {
@@ -89,7 +89,12 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
   if (!all(all.vars(formula) %in% colnames(data))) {
     stop('variable(s) in formula does not match variables in data')
   }
-
+  if(is.null(id_subject)) {
+    cat("id_subject is left unspecified. treating data as repeated cross-section.\n")
+    is_rcs <- TRUE
+  } else {
+    is_rcs <- FALSE
+  }
   # ********************************************************* #
   #                                                           #
   #          get variable infor and transform data            #
@@ -106,16 +111,29 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
 
   ## check if covariates are specified or not
   if (length(formula)[2] == 1) {
-    ## subset data
-    dat_use <- did_data(
-      outcome        = data %>% pull(outcome),
-      treatment      = data %>% pull(treatment),
-      id_subject     = data %>% pull(id_subject),
-      id_time        = data %>% pull(id_time),
-      post_treatment = post_treatment,
-      long           = TRUE,
-      Xcov           = NULL
-    )
+    if(isTRUE(is_rcs)) {
+      ## subset data
+      dat_use <- did_data(
+        outcome        = data %>% pull(outcome),
+        treatment      = data %>% pull(treatment),
+        id_subject     = NULL,
+        id_time        = data %>% pull(id_time),
+        post_treatment = post_treatment,
+        long           = TRUE,
+        Xcov           = NULL
+      )
+    } else {
+      ## subset data
+      dat_use <- did_data(
+        outcome        = data %>% pull(outcome),
+        treatment      = data %>% pull(treatment),
+        id_subject     = data %>% pull(id_subject),
+        id_time        = data %>% pull(id_time),
+        post_treatment = post_treatment,
+        long           = TRUE,
+        Xcov           = NULL
+      )
+    }
 
     is_covariates <- FALSE
 
@@ -123,17 +141,29 @@ did <- function(formula, data, id_subject, id_time, post_treatment,
     ## extract covariates names
     f2 <- getFormula(formula, lhs = 0, rhs = 2)
     x_colnames <- all.vars(f2)
-
-    ## subset data
-    dat_use <- did_data(
-      outcome        = data %>% pull(outcome),
-      treatment      = data %>% pull(treatment),
-      id_subject     = data %>% pull(id_subject),
-      id_time        = data %>% pull(id_time),
-      post_treatment = post_treatment,
-      long           = TRUE,
-      Xcov           = data %>% select(x_colnames)
-    )
+    if (isTRUE(is_rcs)) {
+      ## subset data
+      dat_use <- did_data(
+        outcome        = data %>% pull(outcome),
+        treatment      = data %>% pull(treatment),
+        id_subject     = NULL,
+        id_time        = data %>% pull(id_time),
+        post_treatment = post_treatment,
+        long           = TRUE,
+        Xcov           = data %>% select(x_colnames)
+      )
+    } else {
+      ## subset data
+      dat_use <- did_data(
+        outcome        = data %>% pull(outcome),
+        treatment      = data %>% pull(treatment),
+        id_subject     = data %>% pull(id_subject),
+        id_time        = data %>% pull(id_time),
+        post_treatment = post_treatment,
+        long           = TRUE,
+        Xcov           = data %>% select(x_colnames)
+      )
+    }
 
     is_covariates <- TRUE
   }

@@ -42,7 +42,18 @@ did_data <- function(
   post_treatment = NULL, id_subject = NULL, id_time = NULL, long = TRUE,
   Xcov = NULL
 ) {
-  if (isTRUE(long)) {
+
+  if (is.null(id_subject)) {
+    is_tcs <- TRUE
+    warning("treat data as Repeated Cross-Section.")
+  }
+
+  ## data transformation
+  if (isTRUE(is_tcs)) {
+
+    out <- did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov)
+
+  } else if (!isTRUE(is_tcs) & isTRUE(long)) {
     ## if the input is in the long format,
     ## we transform it to the wide format
 
@@ -59,8 +70,8 @@ did_data <- function(
     if (any(c(min(treatment) != 0, max(treatment) != 1))) {
       stop("We currently support the binary treatment. treatment vector should take either 0 or 1.")
     }
-    if (any(c(is.null(id_subject)), is.null(id_time))) {
-      stop("`id_subject` and `id_time` should be provided when long = TRUE.")
+    if (is.null(id_time)) {
+      stop("`id_time` should be provided when long = TRUE.")
     } else {
       id_subject <- na.omit(id_subject)
       id_time <- na.omit(id_time)
@@ -122,7 +133,6 @@ did_data <- function(
           dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
           mutate(id_time = ifelse(id_time == post_treatment[tt], post_treatment[1], id_time)) %>%
           na.omit()
-
       }
       dat_plm <- pdata.frame(dat2, index = c("id_subject", "id_time"))
 
@@ -191,5 +201,104 @@ did_data <- function(
   }
 
   class(out) <- c("diddesign", "diddesign_data")
+  return(out)
+}
+
+
+
+
+#' data processing function for repeated cross-section data
+#' @importFrom zoo zoo
+#' @importFrom utils getFromNamespace
+#' @keywords internal
+did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
+
+  diff.zoo <- getFromNamespace("diff.zoo", "zoo")
+  out <- list()
+
+  if (!is.null(Xcov)) {  ## use this when Xcov is supplied
+    if (is.null(colnames(Xcov))) {
+      colnames(Xcov) <- paste("XR", 1:ncol(Xcov), sep = '')
+    }
+    if (any(colnames(Xcov) %in% c("", " "))) {
+      ## rename colnames if they contain empty name
+      rename_idx <- which(colnames(Xcov) %in% c("", " "))
+      colnames(Xcov)[rename_idx] <- paste('XR', length(rename_idx), sep = '')
+    }
+    x_colname <- colnames(Xcov)
+  }
+
+
+  for (tt in 1:length(post_treatment)) {
+    ## make data
+    if (is.null(Xcov)) {
+      dat2 <- data.frame(outcome, treatment, id_time) %>%
+        tbl_df() %>%
+        dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
+        mutate(id_time = ifelse(id_time == post_treatment[tt], post_treatment[1], id_time)) %>%
+        na.omit()
+    } else {
+      dat2 <- data.frame(outcome, treatment, id_time, Xcov) %>%
+        tbl_df() %>%
+        dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
+        mutate(id_time = ifelse(id_time == post_treatment[tt], post_treatment[1], id_time)) %>%
+        na.omit()
+    }
+
+    ## take diff
+    ymean  <- dat2 %>% group_by(treatment, id_time) %>% summarise(ymean = mean(outcome))
+    y0mean <- ymean %>% filter(treatment == 0) %>% pull(ymean)
+    y1mean <- ymean %>% filter(treatment == 1) %>% pull(ymean)
+
+    pre_time <- length(unique(id_time)) - length(post_treatment)
+    fm <- list()
+
+    ## k = 1
+    dat2 <- dat2 %>% mutate(yd0 = outcome, post = ifelse(id_time == post_treatment[tt], 1, 0))
+    id_time_unique <- unique(dat2$id_time)
+
+    if (is.null(Xcov)) {
+      fm[[1]] <- as.formula(paste("yd",0, " ~ treatment + post + treatment * post", sep = ''))
+    } else {
+      fm[[1]] <- as.formula(paste("yd",0, " ~ treatment + post + treatment * post + ",
+                            paste(x_colname, collapse = "+"), sep = ''))
+    }
+
+
+
+
+    ## k = 2 ~ T
+    for (k in 2:pre_time) {
+      ydiff <- rep(NA, nrow(dat2))
+      for (i in 1:nrow(dat2)) {
+        di <- dat2$treatment[i]
+        ji <- which(id_time_unique == dat2$id_time[i])
+        ytmp <- di * y1mean + (1 - di) * y0mean
+        ytmp[ji] <- dat2$outcome[i]
+        ydiff[i] <- as.vector(diff.zoo(zoo(ytmp), differences = k-1, na.pad=TRUE))[ji]
+      }
+
+      dat2[paste("yd", k-1, sep='')] <- ydiff
+
+      if (is.null(Xcov)) {
+        fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post", sep = ''))
+      } else {
+        fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post + ",
+                              paste(x_colname, collapse = "+"), sep = ''))
+      }
+    }
+
+    ## output
+    out[[tt]] <- list(
+      "Y" = dat2$outcome,
+      "D" = dat2$treatment,
+      'formula' = fm,
+      'pdata' = dat2
+    )
+
+    attr(out[[tt]], 'post_treat') <- post_treatment[tt]
+    attr(out[[tt]], 'id_time') <- sort(unique(id_time))
+  }
+
   return(out)
 }
