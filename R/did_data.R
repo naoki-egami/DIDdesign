@@ -208,6 +208,7 @@ did_data <- function(
 
 
 #' data processing function for repeated cross-section data
+#' @param outcome a vector of outcome observations.
 #' @importFrom zoo zoo
 #' @importFrom utils getFromNamespace
 #' @keywords internal
@@ -278,6 +279,8 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
         ydiff[i] <- as.vector(diff.zoo(zoo(ytmp), differences = k-1, na.pad=TRUE))[ji]
       }
 
+
+      # ydiff <- t(diff.zoo(zoo(t(ytmp)), differences = k-1, na.pad = TRUE))
       dat2[paste("yd", k-1, sep='')] <- ydiff
 
       if (is.null(Xcov)) {
@@ -302,3 +305,6 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
 
   return(out)
 }
+
+
+make_basis <- function(k, total_time) replace(numeric(total_time), k, 1)
