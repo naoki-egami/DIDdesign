@@ -2,145 +2,260 @@
 
 #' Double DiD with Repeated Cross-Section
 #' @param data A \code{diddesign_data} object.
-#' @param x_colnames A vector of covariate variable names.
-#'  Parsed from formula in \code{\link{did}} function.
-#' @importFrom CVXR Variable Minimize Problem
-#' @importFrom genlasso getDtf
-#' @importFrom utils getFromNamespace
-#' @importMethodsFrom CVXR %*% psolve
 #' @export
-did_parametric_repeatedCS <- function(data, x_colnames) {
-
-  ## export function
-  # solve.CVXR <- getFromNamespace("psolve", "CVXR")
-
-  ## get data info
-  time_pre <- ncol(data[[1]]$Y) - 1
-
-  ##
-  ## loop is over the post-treatment periods
-  ##
-  for (tt in 1:length(data)) {
-    pdata  <- data[[tt]]$pdata
-    Xdummy <- gen_dummies(data[[tt]], add_intercept = TRUE)
-    Xcovar <- pdata[,colnames(pdata) %in% x_colnames]
-    # Xbind  <- cbind(Xdummy, Xcovar)
-
-    ## prepare for CVX input
-    gamma_coef      <- Variable(ncol(Xcovar))
-    beta_treat_coef <- Variable(2)
-    beta_time_coef  <- Variable(time_pre+1)
-    beta_inter_coef <- Variable(2 * (time_pre+1))
-    intercept       <- Variable(1)
-    # beta_coef <- c(intercept, beta_treat_coef, beta_time_coef,
-    #                beta_inter_coef, gamma_coef)
-    objective <- Minimize(sum((as.vector(pdata$outcome) -
-      Xdummy$ones %*% intercept -
-      Xdummy$group %*% beta_treat_coef - Xdummy$time %*% beta_time_coef -
-      Xdummy$interaction %*% beta_inter_coef)^2))
-    # objective <- Minimize(sum((data[[tt]]$Y - Xdummy$ones %*% intercept)^2))
+did_parametric_rcs <- function(data) {
 
 
-    ## prepare constraints
-    ## 0. useful quantities
-    n_times <- length(unique(pdata$id_time))
 
-    ## 1. common constraints: need these for identification
-    const_treat  <- sum(beta_treat_coef) == 0
-    const_time   <- sum(beta_time_coef) == 0
-    const_inter  <- sum(beta_inter_coef) == 0
+  ## input checks
+  if (!('diddesign_data' %in% class(data))) {
+    stop("diddesign_data class object should be provided as data.")
+  }
 
-    moment_vec <- 1:time_pre
+  t_pre <- length(data[[1]]$formula)
+  if (t_pre <= 1) {
+    stop("We reuqire more than two pre-treatment periods.\n")
+  }
 
-    diff_mat <- get_diffmat(time_pre)
+  m_vec <- 1:t_pre
 
-    for (m in 1:length(moment_vec)) {
+  n_post <- length(data)
+  result <- list()
+  for (tt in 1:n_post) {
 
-      if (moment_vec[m] == time_pre) {
-        ## cvx problem
-        problem <- Problem(objective,
-          constraints = list(const_treat, const_time, const_inter))
-      } else {
-        ## get differencing operator mat (see genlasso)
-        Dmat <- getDtf(time_pre, moment_vec[m]-1)
-        ## impose additional constraints
-        const_add <- (Dmat %*% (diff_mat %*% beta_inter_coef)) == 0
+    # ********************************************************* #
+    #                                                           #
+    #         model selection by GMM J-stats or t-test          #
+    #         - use only pre-treatment data                     #
+    #                                                           #
+    # ********************************************************* #
 
-        ## cvx problem
-        problem <- Problem(objective,
-          constraints = list(const_treat, const_time, const_inter, const_add))
-      }
+    dat_use    <- data[[tt]]$pdata
+    fm_list    <- data[[tt]]$formula
+    select_tmp <- rcs_selection(dat_use, fm_list, attr(data[[1]], 'post_treat'))
+    HQIC       <- 0 #select_tmp$HQIC
+    BIC        <- 0 #select_tmp$BIC
+    min_model  <- select_tmp$min_model
 
-      ## solve the problem
-      result <- psolve(problem)
+    # ********************************************************* #
+    #                                                           #
+    #       run fixed effect model: get demeaned data           #
+    #                                                           #
+    # ********************************************************* #
 
-      ## compute estimates
-      ## omega (2 by T+1)
-      omega <- t(matrix(result$getValue(beta_inter_coef), nrow = time_pre+1, ncol = 2))
-      ATT   <- diff(as.vector(t(apply(omega, 1, function(x) tail(diff(x, difference = moment_vec[m]), 1)))))
+    ## fit individual twoway fixed effect model
+    ## get demeand matrix and response
+    fit <- dat_trans <- list()
+    for (ff in 1:length(fm_list)) {
+      fit[[ff]]       <- lm(fm_list[[ff]], data = dat_use)
+      y_var_name      <- all.vars(fm_list[[ff]])[1]
+      dat_trans[[ff]] <- getX_rcs(fit[[ff]], dat_use[,y_var_name])
     }
 
+    # att <- sapply(fit, function(x) x$coef['treatment:post'])
+    # result[[tt]] <- att
+    tmp <- tmp_min <- list()
+    for (m in m_vec) {
+      use_moments <- m_vec[m:length(m_vec)]
+      # if (length(use_moments) == 1) {
+      #   ## point estimate
+      #   est <- list("ATT" = fit[[use_moments]]$coef['treatment:post'])
+      #   tmp[[m]] <- est
+      #
+      #   ## variance
+      #   att_var <- summary(fit[[use_moments]])$coef['treatment:post', 2]^2
+      # } else {
+        ## point estimate
+        est <- didgmmT_parametric_rcs(dat_trans[use_moments])
+        tmp[[m]] <- est
+
+        ## compute variance
+        att_var <- cugmm_var_rcs(par = est$ATT, dat = est$data)
+      # }
+
+      ## compute Ci
+      tmp_ci95     <- c(est$ATT - 1.96 * sqrt(att_var), est$ATT + 1.96 * sqrt(att_var))
+      tmp_ci90     <- c(est$ATT - 1.64 * sqrt(att_var), est$ATT + 1.64 * sqrt(att_var))
+      tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90)
+
+    }
+
+    ci95 <- tmp_min[[min_model]]$ci95
+    ci90 <- tmp_min[[min_model]]$ci90
+
+    # ********************************************************* #
+    # standard did
+    # ********************************************************* #
+    # RETURN TWO-WAY FIXED EFFECT ESTIMATE
+    did_est <- fit[[1]]$coef['treatment:post']
+
+    ## variance
+    did_var <- summary(fit[[use_moments]])$coef['treatment:post', 2]^2
+
+    ## confidence interval
+    tmp_se95 <- c(did_est + qnorm(0.025) * sqrt(did_var), did_est + qnorm(1 - 0.025) * sqrt(did_var))
+    tmp_se90 <- c(did_est + qnorm(0.050) * sqrt(did_var), did_est + qnorm(1 - 0.050) * sqrt(did_var))
+
+    did_boot_list <- list('boot_est' = NULL, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+    did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
+
+    # ********************************************************* #
+    #                                                           #
+    #                     save results                          #
+    #                                                           #
+    # ********************************************************* #
+
+    result[[tt]] <- list(
+      'results_estimates' = tmp,
+      'results_bootstraps' = tmp_min,
+      'results_standardDiD' = did_save,
+      'min_model' = min_model,
+      'ATT' = tmp[[1]]$ATT,
+      'ci95' = ci95,
+      'ci90' = ci90
+    )
+    attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
+    attr(result[[tt]], 'boot') <- TRUE
+    attr(result[[tt]], 'method') <- 'parametric'
+
+
   }
 
 
-
-
-
-
-
-
+  class(result) <- "diddesign"
+  return(result)
 }
 
 
-# betaHat   <- Variable(ncol(XX) + ncol(Xcov))
-# objective <- Minimize(sum((Y - Xuse %*% betaHat)^2))
-# const1    <- sum(betaHat[2:4]) == 0
-# const2    <- sum(betaHat[5:6]) == 0
-# const3    <- sum(betaHat[7:12]) == 0
-# problem <- Problem(objective, constraints = list(const1, const2))
-# result <- solve(problem)
-#
-#
-# m <- matrix(result$getValue(betaHat), ncol = 1)
-# rownames(m) <- paste0("$\\beta_{", 1:ncol(Xuse), "}$")
-
-
-#' Generate dummy variables
-#' @param data An element of \code{diddesign_data} object.
-#' @return A data matrix. The first column is ones' if \code{add_intercept = TRUE}.
+#' get design matrix and outcome vector
+#' @param lm_fit Fitted output from \code{\link{lm}}.
 #' @keywords internal
-gen_dummies <- function(data, add_intercept = TRUE) {
-  pdata <- data$pdata
+getX_rcs <- function(lm_fit, response_orginal) {
+  is_na <- is.na(response_orginal)
+  x_tmp <- model.matrix(lm_fit)
+  covariates <- x_tmp[, !(colnames(x_tmp) %in% c("treatment:post"))]
+  treatment  <- x_tmp[, "treatment:post"]
+  outcome    <- as.vector(model.frame(lm_fit)[,1])
 
-  ## generate group dummies
-  ## we can use id_subject but make sure it is at the treatment group levels
-  group_dummy <- model.matrix(~ factor(treatment) - 1, data = pdata)
-  ## generate time dummies
-  time_dummy  <- model.matrix(~ factor(id_time) - 1, data = pdata)
-  ## generate interaction dummies
-  interact_dummy <- model.matrix(~ factor(treatment):factor(id_time) - 1, data = pdata)
+  return(list("X" = covariates, 'y' = outcome, 'D' = treatment, 'is_na' = is_na))
+}
 
-  if(isTRUE(add_intercept)) {
-    ones <- matrix(1, nrow = nrow(pdata), ncol = 1)
-    Xmat <- list('ones' = ones, 'group' = data.matrix(group_dummy),
-    'time'  = data.matrix(time_dummy), 'interaction' = data.matrix(interact_dummy))
-  } else {
-    Xmat <- cbind(group_dummy, time_dummy, interact_dummy)
+#' CU-GMM function for RCS data
+#' @param A list of dataset. Output of \code{link{getX_rcs}}.
+#' @param Xdesign a list of design matrix. The variable of interest is named 'treatment:post'
+#' @keywords internal
+didgmmT_parametric_rcs <- function(dat, par_init = NULL) {
+
+
+  ## 1. residualize outcome and treatment
+  ##   - Regress Y on X
+  ##   - Regress D on X
+  for (d in 1:length(dat)) {
+    outcome    <- dat[[d]]$y
+    treatment  <- dat[[d]]$D
+    covariates <- dat[[d]]$X ## this includes intercept term
+
+    dat[[d]]$y_resid <- lm(outcome ~ covariates - 1)$residuals
+    dat[[d]]$d_resid <- lm(treatment ~ covariates - 1)$residuals
   }
 
-  return(Xmat)
+
+  ## 2. use resideualized outcome to estimate AT
+  ## initialize parameter (ATT) if not given
+  if(is.null(par_init)) par_init <- runif(1)
+  ##   - moment conditions: E[D(Y- Db)] = 0
+  est <- optim(par = par_init, fn = cugmm_loss_rcs, method = "BFGS", dat = dat)
+
+  return(list('est' = est, 'ATT' = est$par, 'data' = dat))
 }
 
 
+#' CU-GMM loss function for RCS data
+#' @param par parameter.
+#' @param dat a list of data consists of y_resid and d_reisd.
+#' @keywords internal
+cugmm_loss_rcs <- function(par, dat) {
+  n_moment_condition <- length(dat)
 
-get_diffmat <- function(time_pre) {
-  time_total <- time_pre + 1
-  diff_mat <- matrix(0, nrow = time_pre, ncol = 2 * time_total)
-  counter <- 0
-  for (tt in 1:time_pre) {
-    diff_mat[tt,1+counter] <--1
-    diff_mat[tt,time_total+1+counter] <- 1
-    counter <- counter + 1
+  XXe <- matrix(NA, nrow = length(dat[[1]]$is_na), ncol = n_moment_condition)
+  for (j in 1:n_moment_condition) {
+    is_na <- dat[[j]]$is_na
+    loss  <- dat[[j]]$d_resid * (dat[[j]]$y_resid - dat[[j]]$d_resid* par)
+    XXe[!is_na, j] <- as.vector(loss)
   }
-  return(diff_mat)
+
+  gbar  <- colMeans(XXe, na.rm = TRUE)
+  XXe   <- na.omit(XXe)
+  Omega <- (t(XXe) %*% XXe)
+  loss  <- as.vector(t(gbar) %*% solve(Omega / nrow(XXe), gbar))
+  # cat("loss = ", loss, '\n')
+  return(loss)
 }
+
+
+#' CU-GMM variance function for RCS data
+#' @param par parameter.
+#' @param dat a list of data consists of y_resid and d_reisd.
+#' @keywords internal
+cugmm_var_rcs <- function(par, dat) {
+  n_moment_condition <- length(dat)
+
+  G <- matrix(NA, nrow = n_moment_condition, ncol = 1)
+  XXe <- matrix(NA, nrow = length(dat[[1]]$is_na), ncol = n_moment_condition)
+  for (j in 1:n_moment_condition) {
+    is_na <- dat[[j]]$is_na
+    loss  <- dat[[j]]$d_resid * (dat[[j]]$y_resid - dat[[j]]$d_resid * par)
+    XXe[!is_na, j] <- as.vector(loss)
+
+    G[j,1]   <- mean(dat[[j]]$d_resid^2)
+  }
+
+  XXe   <- na.omit(XXe)
+  Omega <- (t(XXe) %*% XXe) / nrow(XXe)
+
+  gmm_var <- as.vector(solve(t(G) %*%  solve(Omega, G)))
+  att_var <- gmm_var / length(dat[[1]]$is_na)
+
+  return(att_var)
+}
+
+#
+# #' Generate dummy variables
+# #' @param data An element of \code{diddesign_data} object.
+# #' @return A data matrix. The first column is ones' if \code{add_intercept = TRUE}.
+# #' @keywords internal
+# gen_dummies <- function(data, add_intercept = TRUE) {
+#   pdata <- data$pdata
+#
+#   ## generate group dummies
+#   ## we can use id_subject but make sure it is at the treatment group levels
+#   group_dummy <- model.matrix(~ factor(treatment) - 1, data = pdata)
+#   ## generate time dummies
+#   time_dummy  <- model.matrix(~ factor(id_time) - 1, data = pdata)
+#   ## generate interaction dummies
+#   interact_dummy <- model.matrix(~ factor(treatment):factor(id_time) - 1, data = pdata)
+#
+#   if(isTRUE(add_intercept)) {
+#     ones <- matrix(1, nrow = nrow(pdata), ncol = 1)
+#     Xmat <- list('ones' = ones, 'group' = data.matrix(group_dummy),
+#     'time'  = data.matrix(time_dummy), 'interaction' = data.matrix(interact_dummy))
+#   } else {
+#     Xmat <- cbind(group_dummy, time_dummy, interact_dummy)
+#   }
+#
+#   return(Xmat)
+# }
+#
+#
+#
+# get_diffmat <- function(time_pre) {
+#   time_total <- time_pre + 1
+#   diff_mat <- matrix(0, nrow = time_pre, ncol = 2 * time_total)
+#   counter <- 0
+#   for (tt in 1:time_pre) {
+#     diff_mat[tt,1+counter] <--1
+#     diff_mat[tt,time_total+1+counter] <- 1
+#     counter <- counter + 1
+#   }
+#   return(diff_mat)
+# }

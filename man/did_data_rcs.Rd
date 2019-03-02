@@ -6,6 +6,9 @@
 \usage{
 did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov)
 }
+\arguments{
+\item{outcome}{a vector of outcome observations.}
+}
 \description{
 data processing function for repeated cross-section data
 }

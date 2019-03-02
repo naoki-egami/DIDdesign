@@ -2,7 +2,7 @@
 
 
 
-#' Parametric Version of Double DiD
+#' Parametric Version of Double DiD for panel data
 #' @param data data
 #' @param se_boot A boolean argument.
 #'  If set to \code{TRUE}, standard errors are computed by the block bootstrap.
@@ -94,13 +94,13 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
 
       ## estimate
       if (isTRUE(is_covariates)) {
-        est <- didgmmT_parametric_resid(dat_trans[use_moments], dat_use$id_subject, par_init)        
+        est <- didgmmT_parametric_resid(dat_trans[use_moments], dat_use$id_subject, par_init)
       } else {
         est <- didgmmT_parametric(dat_trans[use_moments], dat_use$id_subject, par_init)
       }
-      
+
       tmp[[m]] <- est
-      
+
       ## compute variance
       if (isTRUE(se_boot)) {
         boot_out <- list()
@@ -110,7 +110,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
         ## compute asymptotic variance
         if (isTRUE(is_covariates)) {
           att_var <- cugmm_var_parametric_resid(par = est$ATT, dat = est$data,
-                                          id_subject = dat_use$id_subject)          
+                                          id_subject = dat_use$id_subject)
         } else {
         att_var <- cugmm_var_parametric(par = est$ATT, dat = dat_trans[use_moments],
                                         id_subject = dat_use$id_subject)
@@ -151,17 +151,17 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       ## save obj
       did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
     } else {
-      # RETURN TWO-WAY FIXED EFFECT ESTIMATE 
+      # RETURN TWO-WAY FIXED EFFECT ESTIMATE
       did_est <- fit[[1]]$coef[1]
       if (isTRUE(is_covariates)) {
         did_var <- vcovHC(fit[[1]], cluster = 'group', type = 'HC2')[1,1]
       } else {
         did_var <- vcovHC(fit[[1]], cluster = 'group', type = 'HC2')
       }
-      
+
       tmp_se95 <- c(did_est + qnorm(0.025) * sqrt(did_var), did_est + qnorm(1 - 0.025) * sqrt(did_var))
       tmp_se90 <- c(did_est + qnorm(0.050) * sqrt(did_var), did_est + qnorm(1 - 0.050) * sqrt(did_var))
-      
+
       did_boot_list <- list('boot_est' = NULL, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
       did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
 
@@ -217,7 +217,7 @@ getX <- function(fm, fit, dat) {
   is_na  <- is.na(dat[,outvar])
   # y_bar[!is_na] <- pmodel.response(fit)
 
-  ## this returns only non-na entries 
+  ## this returns only non-na entries
   y_bar         <- pmodel.response(fit)
   names(y_bar)  <- outvar
 
@@ -302,7 +302,7 @@ cugmm_var_parametric <- function(par, dat, id_subject) {
   nobs <- length(uid)
 
   XXe <- list()
-  G   <- matrix(0, nrow = k, ncol = 1)  
+  G   <- matrix(0, nrow = k, ncol = 1)
   for (j in 1:k) {
     is_na <- dat[[j]]$is_na
     XXe[[j]] <- loss_loop(X = dat[[j]]$X, y = dat[[j]]$y, par = par_mat[j,],
@@ -310,7 +310,7 @@ cugmm_var_parametric <- function(par, dat, id_subject) {
                           is_na = as.numeric(is_na), nobs = nobs, p = p )
     G[j,1]   <- sum(as.vector(dat[[j]]$X[,1])^2) / nobs
     # cat("G[j,i] = ", G[j,1], "\n")
-                      
+
   }
 
   MXe   <- do.call("cbind", XXe)
@@ -346,7 +346,7 @@ didgmmT_parametric_resid <- function(dat, id_subject, par_init = NULL) {
     covariates <- dat[[d]]$X[, -1]
 
     dat[[d]]$y_resid <- lm(outcome ~ covariates - 1)$residuals
-    dat[[d]]$d_resid <- matrix(lm(treatment ~ covariates - 1)$residuals, 
+    dat[[d]]$d_resid <- matrix(lm(treatment ~ covariates - 1)$residuals,
                               nrow = length(outcome), ncol = 1)
   }
 

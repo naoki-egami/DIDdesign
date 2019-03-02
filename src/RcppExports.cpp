@@ -24,9 +24,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcs_mean_fill
+Rcpp::List rcs_mean_fill(const arma::vec& outcome, const arma::ivec& treatment, const arma::uvec& time_index, const arma::uvec& time_unique, const arma::rowvec& y1mean, const arma::rowvec& y0mean);
+RcppExport SEXP _DIDdesign_rcs_mean_fill(SEXP outcomeSEXP, SEXP treatmentSEXP, SEXP time_indexSEXP, SEXP time_uniqueSEXP, SEXP y1meanSEXP, SEXP y0meanSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type outcome(outcomeSEXP);
+    Rcpp::traits::input_parameter< const arma::ivec& >::type treatment(treatmentSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type time_index(time_indexSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type time_unique(time_uniqueSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type y1mean(y1meanSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type y0mean(y0meanSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcs_mean_fill(outcome, treatment, time_index, time_unique, y1mean, y0mean));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_DIDdesign_loss_loop", (DL_FUNC) &_DIDdesign_loss_loop, 8},
+    {"_DIDdesign_rcs_mean_fill", (DL_FUNC) &_DIDdesign_rcs_mean_fill, 6},
     {NULL, NULL, 0}
 };
 

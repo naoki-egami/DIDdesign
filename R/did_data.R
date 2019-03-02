@@ -44,12 +44,12 @@ did_data <- function(
 ) {
 
   if (is.null(id_subject)) {
-    is_tcs <- TRUE
-    warning("treat data as Repeated Cross-Section.")
+    is_rcs <- TRUE
+    cat("treat data as repeated cross-section.\n")
   }
 
   ## data transformation
-  if (isTRUE(is_tcs)) {
+  if (isTRUE(is_rcs)) {
 
     out <- did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov)
 
@@ -255,8 +255,8 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
     fm <- list()
 
     ## k = 1
-    dat2 <- dat2 %>% mutate(yd0 = outcome, post = ifelse(id_time == post_treatment[tt], 1, 0))
-    id_time_unique <- unique(dat2$id_time)
+    dat2 <- dat2 %>% mutate(yd0 = outcome, post = ifelse(id_time == post_treatment[1], 1, 0))
+    id_time_unique <- sort(unique(dat2$id_time))
 
     if (is.null(Xcov)) {
       fm[[1]] <- as.formula(paste("yd",0, " ~ treatment + post + treatment * post", sep = ''))
@@ -271,16 +271,28 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
     ## k = 2 ~ T
     for (k in 2:pre_time) {
       ydiff <- rep(NA, nrow(dat2))
-      for (i in 1:nrow(dat2)) {
-        di <- dat2$treatment[i]
-        ji <- which(id_time_unique == dat2$id_time[i])
-        ytmp <- di * y1mean + (1 - di) * y0mean
-        ytmp[ji] <- dat2$outcome[i]
-        ydiff[i] <- as.vector(diff.zoo(zoo(ytmp), differences = k-1, na.pad=TRUE))[ji]
-      }
+
+      tmp <- rcs_mean_fill(
+        outcome = dat2$outcome, treatment = dat2$treatment,
+        time_index = dat2$id_time, time_unique = id_time_unique,
+        y1mean = y1mean, y0mean = y0mean
+      )
+
+      ytmp <- tmp[[1]]
+      ji    <- tmp[[2]][,1] + 1
+      # for (i in 1:nrow(dat2)) {
+      #   di <- dat2$treatment[i]
+      #   ji <- which(id_time_unique == dat2$id_time[i])
+      #   ytmp <- di * y1mean + (1 - di) * y0mean
+      #   ytmp[ji] <- dat2$outcome[i]
+      #   ydiff[i] <- as.vector(diff.zoo(zoo(ytmp), differences = k-1, na.pad=TRUE))[ji]
+      # }
 
 
-      # ydiff <- t(diff.zoo(zoo(t(ytmp)), differences = k-1, na.pad = TRUE))
+      ydiff_mat <- t(diff.zoo(zoo(t(ytmp)), differences = k-1, na.pad = TRUE))
+      ydiff <- sapply(1:nrow(ydiff_mat), function(i) ydiff_mat[i,ji[i]])
+      ## need to subset ydif based on ji
+
       dat2[paste("yd", k-1, sep='')] <- ydiff
 
       if (is.null(Xcov)) {
