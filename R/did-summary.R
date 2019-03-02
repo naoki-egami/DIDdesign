@@ -48,8 +48,6 @@ summary.diddesign <- function(obj) {
     # rownames(res_tab) <- c("Status", "Y:Treated", "Y:Control")
   } else if ('diddesign' %in% class(obj)){
     ATT <- sapply(obj, function(x) round(x$ATT, 3))
-    BIC <- sapply(obj, function(x) round(x$BIC_min, 3))
-    HQIC <- sapply(obj, function(x) round(x$HQIC_min, 3))
     selected <- paste("M", sapply(obj, function(x) as.character(x$min_model)), sep = '')
 
     if (isTRUE(attr(obj[[1]], 'boot'))) {
@@ -60,6 +58,9 @@ summary.diddesign <- function(obj) {
 
       # did estimates
       if (!is.null(obj[[1]]$results_standardDiD) & attr(obj[[1]], 'method') == 'nonparametric') {
+        BIC <- sapply(obj, function(x) round(x$BIC_min, 3))
+        HQIC <- sapply(obj, function(x) round(x$HQIC_min, 3))
+
         DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
         DiD_se_save <- rep(NA, length(DiD))
         for (i in 1:length(ATT)) {
@@ -79,11 +80,14 @@ summary.diddesign <- function(obj) {
         colnames(res_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
         rownames(res_tab) <- NULL
       } else if(attr(obj[[1]], 'method') == 'nonparametric') {
+        BIC <- sapply(obj, function(x) round(x$BIC_min, 3))
+        HQIC <- sapply(obj, function(x) round(x$HQIC_min, 3))
+
         res_tab <- data.frame(rbind(
           ATT, se_save, BIC, HQIC, selected
         ), row.names = c("ATT", "95% CI", "BIC", "HQIC", "Selected Model"))
         colnames(res_tab) <- sapply(obj, function(x) attr(x, 'post_treat'))
-        
+
       } else if (!is.null(obj[[1]]$results_standardDiD) & attr(obj[[1]], 'method') == 'parametric') {
         DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
         DiD_se_save <- rep(NA, length(DiD))
@@ -102,13 +106,13 @@ summary.diddesign <- function(obj) {
 
         # col labels
         colnames(res_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
-        rownames(res_tab) <- NULL        
+        rownames(res_tab) <- NULL
       } else {
         res_tab <- data.frame(rbind(
           ATT, se_save, selected
         ), row.names = c("ATT", "95% CI", "Selected Model"))
         colnames(res_tab) <- sapply(obj, function(x) attr(x, 'post_treat'))
-        
+
       }
 
     } else {

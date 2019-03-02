@@ -210,6 +210,7 @@ did_data <- function(
 #' data processing function for repeated cross-section data
 #' @param outcome a vector of outcome observations.
 #' @importFrom zoo zoo
+#' @importFrom dplyr %>% filter summarise group_by pull tbl_df
 #' @importFrom utils getFromNamespace
 #' @keywords internal
 did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {

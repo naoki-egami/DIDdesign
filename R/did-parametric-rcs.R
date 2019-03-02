@@ -114,8 +114,6 @@ did_parametric_rcs <- function(data) {
     attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
     attr(result[[tt]], 'boot') <- TRUE
     attr(result[[tt]], 'method') <- 'parametric'
-
-
   }
 
 
