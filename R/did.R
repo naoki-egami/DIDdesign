@@ -74,9 +74,6 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   if (!("tbl_df" %in% class(data))) {
     data <- data %>% tbl_df()
   }
-  if (!exists(id_subject, data)) {
-    stop("variable specified for id_subject does not exsit in data")
-  }
   if (!exists(id_time, data)) {
     stop("variable specified for id_time does not exsit in data")
   }
@@ -90,7 +87,7 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     stop('variable(s) in formula does not match variables in data')
   }
   if(is.null(id_subject)) {
-    cat("id_subject is left unspecified. treating data as repeated cross-section.\n")
+    message("id_subject is left unspecified. treating data as repeated cross-section.\n")
     is_rcs <- TRUE
   } else {
     is_rcs <- FALSE
@@ -178,6 +175,10 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     # TO USE NONPARAMETRIC METHOD, BOTH CONDITIONS SHOULD BE MET:
     # 1. method should be 'nonparametric', AND
     # 2. is_covariates should be FALSE (NO COVARIATES ALLOWED)
+    if (isTRUE(is_rcs)) {
+      stop("only panel data is currently supported for nonparametric method.")
+    }
+
     fit <- did_nonparametric( data = dat_use,
       se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
       select  = select, est_did = TRUE
@@ -192,17 +193,26 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
       se_boot <- FALSE
     }
 
-    fit <- did_parametric( data = dat_use,
-      se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
-      select  = select, est_did = FALSE, is_covariates = is_covariates)
+    if (isTRUE(is_rcs)) {
+      fit <- did_parametric_rcs(data = dat_use)
+    } else {
+      fit <- did_parametric(data = dat_use,
+        se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
+        select  = select, est_did = FALSE, is_covariates = is_covariates)
+    }
   } else {
     if (isTRUE(se_boot)) {
       warning("Currently, we do not support bootstrap for parametric model.\n")
       se_boot <- FALSE
     }
-    fit <- did_parametric( data = dat_use,
-      se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
-      select  = select, est_did = FALSE, is_covariates = is_covariates)
+
+    if (isTRUE(is_rcs)) {
+      fit <- did_parametric_rcs(data = dat_use)
+    } else {
+      fit <- did_parametric( data = dat_use,
+        se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
+        select  = select, est_did = FALSE, is_covariates = is_covariates)
+    }
   }
 
   return(fit)

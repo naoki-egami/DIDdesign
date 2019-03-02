@@ -16,14 +16,14 @@ knitr::opts_chunk$set(
 ```
 
 
-## Load Sample Data 
+## Load Sample Data
 
 
 ```{r}
-# load package 
+# load package
 require(DIDdesign)
 
-# load sample data 
+# load sample data
 data("anzia2012")
 
 ```
@@ -32,11 +32,11 @@ data("anzia2012")
 ## Visualizing Data
 
 
-## Nonparametric Estimator 
+## Nonparametric Estimator
 
 
 ```{r}
-# estimate ATT 
+# estimate ATT
 fit_np <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 	id_subject = "district", id_time = "year",
 	post_treatment = c(2007, 2008, 2009),
@@ -44,11 +44,11 @@ fit_np <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 	se_boot = TRUE, n_boot  = 100, boot_min = FALSE,
 	select = "HQIC")
 
-# summary function 
+# summary function
 summary(fit_np)
 
 
-# plot results 
+# plot results
 plot(fit_np, full = TRUE)
 ```
 
@@ -56,23 +56,23 @@ plot(fit_np, full = TRUE)
 ## Parametric Estimator (with Covariates)
 
 ```{r}
-fit_p1 <- did(lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper + 
+fit_p1 <- did(lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
 						ami_pc + asian_pc + black_pc + hisp_pc,
-  data = anzia2012, id_subject = 'district', id_time = 'year', 
-  post_treatment = c(2007, 2008, 2009), 
+  data = anzia2012, id_subject = 'district', id_time = 'year',
+  post_treatment = c(2007, 2008, 2009),
 	method = 'parametric')
 ```
 ```{r}
-# summary function 
+# summary function
 summary(fit_p1)
 
-# plot function 
+# plot function
 plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5))
 abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
 ```
 
 
-We can compare estimates from a model without covariates. 
+We can compare estimates from a model without covariates.
 
 ```{r}
 fit_p2 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
@@ -84,10 +84,10 @@ fit_p2 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 
 
 ```{r}
-# summary function 
+# summary function
 summary(fit_p2)
 
-# plot function 
+# plot function
 par(mfrow = c(1,2), mar = c(4, 2.5, 3.5, 1))
 plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5), main = "With Covariates")
 abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
