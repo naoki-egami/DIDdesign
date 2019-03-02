@@ -15,7 +15,7 @@ loss_loop <- function(X, y, par, id_subject, uid, is_na, nobs, p) {
 #' @param time_unique a vector of unique time index (should be increasing order)
 #' @param y1mean a vector of mean outcome for the treated
 #' @param y0mean a vector of mean outcome for the control
-#' @value a matrix of outcome filled with mean outcome for each group
+#' @return a matrix of outcome filled with mean outcome for each group
 #' @keywords internal
 rcs_mean_fill <- function(outcome, treatment, time_index, time_unique, y1mean, y0mean) {
     .Call('_DIDdesign_rcs_mean_fill', PACKAGE = 'DIDdesign', outcome, treatment, time_index, time_unique, y1mean, y0mean)

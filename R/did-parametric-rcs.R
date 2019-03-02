@@ -4,9 +4,6 @@
 #' @param data A \code{diddesign_data} object.
 #' @export
 did_parametric_rcs <- function(data) {
-
-
-
   ## input checks
   if (!('diddesign_data' %in% class(data))) {
     stop("diddesign_data class object should be provided as data.")

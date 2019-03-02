@@ -8,7 +8,7 @@
 #' Covariates can be added by \code{y ~ d | x1 + x2} where \code{x1} and \code{x2} are covariates.
 #' @param data Data matrix. Either a \code{data.frame} object or  \code{tbl_df} object.
 #' @param method Either \code{"parametric"} or \code{"nonparametric"}.
-#' @param id_subject subject id.
+#' @param id_subject subject id. This argument should be left as \code{NULL} when repeated cross-section data are used.
 #' @param id_time time id.
 #' @param post_treatment time index for post treatment periods.
 #' @param se_boot If \code{TRUE} blockbootstrap is used for computing standard errors.

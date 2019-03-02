@@ -14,7 +14,7 @@ Covariates can be added by \code{y ~ d | x1 + x2} where \code{x1} and \code{x2} 
 
 \item{data}{Data matrix. Either a \code{data.frame} object or  \code{tbl_df} object.}
 
-\item{id_subject}{subject id.}
+\item{id_subject}{subject id. This argument should be left as \code{NULL} when repeated cross-section data are used.}
 
 \item{id_time}{time id.}
 

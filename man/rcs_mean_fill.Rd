@@ -19,6 +19,9 @@ rcs_mean_fill(outcome, treatment, time_index, time_unique, y1mean, y0mean)
 
 \item{y0mean}{a vector of mean outcome for the control}
 }
+\value{
+a matrix of outcome filled with mean outcome for each group
+}
 \description{
 helper function for repeated cross-section data
 }

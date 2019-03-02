@@ -44,7 +44,7 @@ arma::mat loss_loop(
 //' @param time_unique a vector of unique time index (should be increasing order)
 //' @param y1mean a vector of mean outcome for the treated
 //' @param y0mean a vector of mean outcome for the control
-//' @value a matrix of outcome filled with mean outcome for each group
+//' @return a matrix of outcome filled with mean outcome for each group
 //' @keywords internal
 // [[Rcpp::export]]
 Rcpp::List rcs_mean_fill(
