@@ -134,7 +134,7 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
     </tr>
     <tr>
       <th>id_subject</th>
-      <td><p>subject id.</p></td>
+      <td><p>subject id. This argument should be left as <code>NULL</code> when repeated cross-section data are used.</p></td>
     </tr>
     <tr>
       <th>id_time</th>
@@ -202,7 +202,7 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
   <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nonparametric"</span>,
   <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)</div><div class='output co'>#&gt; <span class='error'>Error in isTRUE(is_rcs): object 'is_rcs' not found</span></div><div class='input'>
+)</div><div class='output co'>#&gt; <span class='error'>Error in isTRUE(is_tcs): object 'is_tcs' not found</span></div><div class='input'>
 <span class='co'># view summary</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in summary(fit1): object 'fit1' not found</span></div><div class='input'>
 <span class='co'># view effect plot</span>

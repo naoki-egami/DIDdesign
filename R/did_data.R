@@ -55,7 +55,7 @@ did_data <- function(
 
     out <- did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov)
 
-  } else if (!isTRUE(is_tcs) & isTRUE(long)) {
+  } else if (!isTRUE(is_rcs) & isTRUE(long)) {
     ## if the input is in the long format,
     ## we transform it to the wide format
 
