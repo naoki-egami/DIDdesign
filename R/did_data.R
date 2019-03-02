@@ -46,6 +46,8 @@ did_data <- function(
   if (is.null(id_subject)) {
     is_rcs <- TRUE
     # message("treat data as repeated cross-section.\n")
+  } else {
+    is_rcs <- FALSE
   }
 
   ## data transformation
