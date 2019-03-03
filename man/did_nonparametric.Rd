@@ -27,3 +27,30 @@ Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni corr
 \description{
 Double Difference-in-Differences Estimator
 }
+\examples{
+\donttest{
+ # load package
+ require(DIDdesign)
+ # load data
+ data(anzia2012)
+
+ # convert data into did double format
+ out <- did_data(
+   outcome = anzia2012$lnavgsalary_cpi,
+   treatment = anzia2012$oncycle,
+   post_treatment = c(2007, 2008, 2009),
+   id_subject = anzia2012$district,
+   id_time = anzia2012$year,
+   long = TRUE, Xcov = NULL
+ )
+
+ # fit nonparametric double-did method
+ fit <- did_nonparametric(out, se_boot = TRUE, n_boot = 500, boot_min = FALSE)
+
+ # plot results
+ plot(fit, full = TRUE)
+
+ # show result summary
+ summary(fit)
+}
+}
