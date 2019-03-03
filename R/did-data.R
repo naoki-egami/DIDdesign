@@ -12,11 +12,15 @@
 #' @param id_time A vector of time index. Required if \code{long = TRUE}.
 #' @param long A boolean input indicating whether the input is in the long format or not.
 #' Default is \code{long = TRUE}.
-#' @return A \code{diddesign} class object.
-#' @importFrom dplyr %>% tbl_df select filter mutate
-#' @importFrom tidyr spread
-#' @importFrom plm pdata.frame
-#' @importFrom utils getFromNamespace
+#' @return A \code{diddesign} class object which is a list.
+#'  Each element corresponds to each post-treatment period.
+#'  Each element of the returned \code{diddesign} object is also a list consists of the following:
+#' \itemize{
+#'  \item \code{Y}: outcome vector.
+#'  \item \code{D}: treatment vector.
+#'  \item \code{formula}: A list of formula for \code{\link{lm}}.
+#'  \item \code{pdata}: A data frame appended transformed outcomes (e.g., yd0, yd1, etc).
+#'}
 #' @examples
 #'  # load data from didrobust package
 #'  data(anzia2012)

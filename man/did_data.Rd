@@ -23,7 +23,15 @@ If left as \code{NULL}, the last period in a variable given as \code{id_time} is
 Default is \code{long = TRUE}.}
 }
 \value{
-A \code{diddesign} class object.
+A \code{diddesign} class object which is a list.
+ Each element corresponds to each post-treatment period.
+ Each element of the returned \code{diddesign} object is also a list consists of the following:
+\itemize{
+ \item \code{Y}: outcome vector.
+ \item \code{D}: treatment vector.
+ \item \code{formula}: A list of formula for \code{\link{lm}}.
+ \item \code{pdata}: A data frame appended transformed outcomes (e.g., yd0, yd1, etc).
+}
 }
 \description{
 A function to transform panel data into did double format.
