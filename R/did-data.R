@@ -50,40 +50,20 @@ did_data <- function(
   ## data transformation
   ##
   if (isTRUE(is_rcs)) {
+
+    ## repeated cross-section + long
     out <- did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov)
   } else if (!isTRUE(is_rcs) & isTRUE(long)) {
+
+    ## panel + long
     out <- did_data_panelL(outcome, treatment, post_treatment, id_subject, id_time, Xcov)
   } else {
-    ## if the data is already in the wide format,
-    ## we will use the input as is
 
-    ## ==== input checks ==== ##
-    t_time <- ncol(Y); n_obs  <- nrow(Y)
-    if ((length(D) - n_obs) != 0) {
-      stop('Length of the treatment vector and the number of rows in Y do not match.')
+    ## panel + wide
+    if (!is.null(Xcov)) {
+      warning("To use covariates, please transform data into the long format.")
     }
-
-    ### ==== make data into did_double obj ==== ###
-    if (!is.null(post_treatment)) {
-      matched_var <- as.character(post_treatment) %in% colnames(outcome)
-      outcome <- outcome %>% tbl_df()
-      Ypre <- outcome %>% select(-post_treatment) %>% data.matrix()
-
-      if(any(matched_var)) {
-        out <- list()
-        Ypost <- outcome %>% select(post_treatment[matched_var]) %>% data.matrix()
-        for (i in 1:sum(matched_var)) {
-          out[[i]] <- list(
-            "Y" = cbind(Ypre, Ypost[,i]),
-            "D" = treatment
-          )
-        }
-      } else {
-        stop("colnames of outcome and variables in post_treatment do not match.")
-      }
-    } else {
-      stop("Please specify post_treatment by providing variable names.")
-    }
+    out <- did_data_panelW(outcome, treatment, post_treatment)
   }
 
   class(out) <- c("diddesign", "diddesign_data")
@@ -336,6 +316,61 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
 
     attr(out[[tt]], 'post_treat') <- post_treatment[tt]
     attr(out[[tt]], 'id_time') <- sort(unique(id_time))
+  }
+
+  return(out)
+}
+
+
+
+
+
+#' Data processing function for panel data (wide format)
+#' @param outcome A vector of outcome variable.
+#' @param treatment A vector of treatment indicator variable.
+#' @param post_treatment A vector of numeric time index for post treatment periods.
+#' @return A list. Each element corresponds to each post-treatment period.
+#'  Each element of the returned list is also a list consists of the following:
+#' \itemize{
+#'  \item \code{Y}: outcome vector.
+#'  \item \code{D}: treatment vector.
+#'}
+#' @importFrom dplyr %>% select tbl_df
+#' @keywords internal
+did_data_panelW <- function(outcome, treatment, post_treat) {
+
+  ## if the data is already in the wide format,
+  ## we will use the input as is
+
+  ## ==== input checks ==== ##
+  t_time <- ncol(outcome); n_obs  <- nrow(outcome)
+  if ((length(treatment) - n_obs) != 0) {
+    stop('Length of the treatment vector and the number of rows in Y do not match.')
+  }
+
+  ### ==== make data into did_double obj ==== ###
+  if (!is.null(post_treatment)) {
+    matched_var <- as.character(post_treatment) %in% colnames(outcome)
+    outcome     <- outcome %>% tbl_df()
+    Ypre        <- outcome %>% select(-post_treatment) %>% data.matrix()
+
+    if(any(matched_var)) {
+      out   <- list()
+      Ypost <- outcome %>% select(post_treatment[matched_var]) %>% data.matrix()
+      for (i in 1:sum(matched_var)) {
+        out[[i]] <- list(
+          "Y" = cbind(Ypre, Ypost[,i]),
+          "D" = treatment
+        )
+
+        attr(out[[i]], 'post_treat') <- post_treatment[i]
+        attr(out[[i]], 'id_time') <- NULL
+      }
+    } else {
+      stop("colnames of outcome and variables in post_treatment do not match.")
+    }
+  } else {
+    stop("Please specify post_treatment by providing variable names.")
   }
 
   return(out)
