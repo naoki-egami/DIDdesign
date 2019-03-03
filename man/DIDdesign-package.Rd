@@ -6,14 +6,14 @@
 \alias{DIDdesign-package}
 \title{Difference-in-Differences Design}
 \description{
-This packages provides tools for estimating treatment effects 
+This packages provides tools for estimating treatment effects
  and diagnosing difference-in-differences designs.
 }
 \details{
 The package has two main functions:
 \itemize{
-  \item \code{\link{did_data}}: format data for analysis
-  \item \code{\link{did}}: estimate treatment effects 
+  \item \code{\link{did_plot}}: create DiD plot
+  \item \code{\link{did}}: estimate treatment effects
 }
 }
 \seealso{
@@ -29,7 +29,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Naoki Egami \email{email@gmail.com}
+  \item Naoki Egami \email{email@gmail.com} (0000-0002-5491-2174)
 }
 
 }

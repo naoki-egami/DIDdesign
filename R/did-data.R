@@ -43,132 +43,16 @@ did_data <- function(
   Xcov = NULL
 ) {
 
-  if (is.null(id_subject)) {
-    is_rcs <- TRUE
-    # message("treat data as repeated cross-section.\n")
-  } else {
-    is_rcs <- FALSE
-  }
+  is_rcs <- FALSE
+  if (is.null(id_subject)) { is_rcs <- TRUE }
 
+  ##
   ## data transformation
+  ##
   if (isTRUE(is_rcs)) {
-
     out <- did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov)
-
   } else if (!isTRUE(is_rcs) & isTRUE(long)) {
-    ## if the input is in the long format,
-    ## we transform it to the wide format
-
-    ## na omit
-    outcome <- na.omit(outcome); treatment <- na.omit(treatment)
-
-    ## export function
-    diff.pseries <- getFromNamespace("diff.pseries", "plm")
-
-    ### ==== intput check ==== ###
-    if (length(outcome) != length(treatment)) {
-      stop("Length of outcome and length of treatment do not match.")
-    }
-    if (any(c(min(treatment) != 0, max(treatment) != 1))) {
-      stop("We currently support the binary treatment. treatment vector should take either 0 or 1.")
-    }
-    if (is.null(id_time)) {
-      stop("`id_time` should be provided when long = TRUE.")
-    } else {
-      id_subject <- na.omit(id_subject)
-      id_time <- na.omit(id_time)
-    }
-    if (!is.numeric(id_time)) {
-      ## this is a little sketchy conversion
-      ## maybe better to ask users to make the input numeric beforehand
-      id_time <- as.numeric(as.character(id_time))
-    }
-    if (is.null(post_treatment)) {
-      post_treatment <- max(id_time)
-      cat('We treat', post_treatment, 'as the post treatment period\n')
-    } else {
-      post_treatment <- sort(post_treatment)
-    }
-    if (min(length(outcome), length(treatment), length(id_subject), length(id_time))  !=
-        max(length(outcome), length(treatment), length(id_subject), length(id_time))) {
-      stop("outcome, treatment, id_subject and id_time should have the same length.")
-    }
-
-    if (!is.null(Xcov)) {  ## use this when Xcov is supplied
-      if (is.null(colnames(Xcov))) {
-        colnames(Xcov) <- paste("XR", 1:ncol(Xcov), sep = '')
-      }
-      if (any(colnames(Xcov) %in% c('', "", " ", ' '))) {
-        ## rename colnames if they contain empty name
-        rename_idx <- which(colnames(Xcov) %in% c('', "", " ", ' '))
-        colnames(Xcov)[rename_idx] <- paste('XR', length(rename_idx), sep = '')
-      }
-      x_colname <- colnames(Xcov)
-    }
-
-    ### ==== transform data ==== ###
-    dat <- data.frame(outcome, treatment, id_subject, id_time) %>% tbl_df()
-    out <- list()
-    for (tt in 1:length(post_treatment)) {
-      ## prep for nonparametric version
-      dat_tmp <- dat %>%
-        dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
-        na.omit()
-      y_tmp <- dat_tmp %>% dplyr::select(-treatment) %>% tidyr::spread(id_time, outcome) %>%
-        dplyr::select(-id_subject) %>% data.matrix()
-      d_tmp <- dat_tmp %>% select(-outcome) %>% tidyr::spread(id_time, treatment) %>%
-        dplyr::select(-id_subject) %>% data.matrix()
-
-      ## prep for parametric model
-
-      # create dynamic treatment variable
-      ## overwrite time index so that there's no time gap
-      ## this is necesary to take diff in plm
-      if (is.null(Xcov)) {
-        dat2 <- dat %>%
-          dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
-          mutate(id_time = ifelse(id_time == post_treatment[tt], post_treatment[1], id_time)) %>%
-          na.omit()
-      } else {
-        dat2 <- data.frame(outcome, treatment, id_subject, id_time, Xcov) %>%
-          tbl_df() %>%
-          dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
-          mutate(id_time = ifelse(id_time == post_treatment[tt], post_treatment[1], id_time)) %>%
-          na.omit()
-      }
-      dat_plm <- pdata.frame(dat2, index = c("id_subject", "id_time"))
-
-      # make formula
-      pre_time <- ncol(y_tmp) - 1;
-      max_diff <- pre_time - 1 ## make sure this is positive
-      fm <- list()
-
-      for (i in 0:max_diff) {
-        if (is.null(Xcov)) {
-          fm[[i+1]] <- as.formula(paste("yd",i, "~ treatment", sep = ''))
-        } else {
-          fm[[i+1]] <- as.formula(paste("yd",i, " ~ treatment + ", paste(x_colname, collapse = "+"), sep = ""))
-        }
-        if (i > 0) {
-          dat_plm[paste("yd", i, sep = '')] <- diff.pseries(dat_plm$outcome, lag = i)
-        } else {
-          dat_plm[paste("yd", i, sep = '')] <- dat_plm$outcome
-        }
-
-      }
-
-      ## output
-      out[[tt]] <- list(
-        "Y" = y_tmp,
-        "D" = apply(d_tmp, 1, max),
-        'formula' = fm,
-        'pdata' = dat_plm
-      )
-
-      attr(out[[tt]], 'post_treat') <- post_treatment[tt]
-      attr(out[[tt]], 'id_time') <- sort(unique(id_time))
-    }
-
+    out <- did_data_panelL(outcome, treatment, post_treatment, id_subject, id_time, Xcov)
   } else {
     ## if the data is already in the wide format,
     ## we will use the input as is
@@ -207,10 +91,20 @@ did_data <- function(
 }
 
 
-
-
-#' data processing function for repeated cross-section data
-#' @param outcome a vector of outcome observations.
+#' Data processing function for repeated cross-section data
+#' @param outcome A vector of outcome variable.
+#' @param treatment A vector of treatment indicator variable.
+#' @param post_treatment A vector of numeric time index for post treatment periods.
+#' @param id_time A vector of time index variable.
+#' @param Xcov A matrix of covariates.
+#' @return A list. Each element corresponds to each post-treatment period.
+#'  Each element of the returned list is also a list consists of the following:
+#' \itemize{
+#'  \item \code{Y}: outcome vector.
+#'  \item \code{D}: treatment vector.
+#'  \item \code{formula}: A list of formula for \code{\link{lm}}.
+#'  \item \code{pdata}: A data frame appended transformed outcomes (e.g., yd0, yd1, etc).
+#'}
 #' @importFrom zoo zoo
 #' @importFrom dplyr %>% filter summarise group_by pull tbl_df
 #' @importFrom utils getFromNamespace
@@ -282,16 +176,7 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
       )
 
       ytmp <- tmp[[1]]
-      ji    <- tmp[[2]][,1] + 1
-      # for (i in 1:nrow(dat2)) {
-      #   di <- dat2$treatment[i]
-      #   ji <- which(id_time_unique == dat2$id_time[i])
-      #   ytmp <- di * y1mean + (1 - di) * y0mean
-      #   ytmp[ji] <- dat2$outcome[i]
-      #   ydiff[i] <- as.vector(diff.zoo(zoo(ytmp), differences = k-1, na.pad=TRUE))[ji]
-      # }
-
-
+      ji   <- tmp[[2]][,1] + 1
       ydiff_mat <- t(diff.zoo(zoo(t(ytmp)), differences = k-1, na.pad = TRUE))
       ydiff <- sapply(1:nrow(ydiff_mat), function(i) ydiff_mat[i,ji[i]])
       ## need to subset ydif based on ji
@@ -322,4 +207,136 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
 }
 
 
-make_basis <- function(k, total_time) replace(numeric(total_time), k, 1)
+#' Data processing function for panel data (long format)
+#' @param outcome A vector of outcome variable.
+#' @param treatment A vector of treatment indicator variable.
+#' @param post_treatment A vector of numeric time index for post treatment periods.
+#' @param id_subject A vector of subject index variable.
+#' @param id_time A vector of time index variable.
+#' @param Xcov A matrix of covariates.
+#' @return A list. Each element corresponds to each post-treatment period.
+#'  Each element of the returned list is also a list consists of the following:
+#' \itemize{
+#'  \item \code{Y}: outcome vector.
+#'  \item \code{D}: treatment vector.
+#'  \item \code{formula}: A list of formula for \code{\link{lm}}.
+#'  \item \code{pdata}: A data frame appended transformed outcomes (e.g., yd0, yd1, etc).
+#'}
+#' @importFrom plm pdata.frame
+#' @importFrom utils getFromNamespace
+#' @importFrom dplyr %>% select filter tbl_df
+#' @keywords internal
+did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_time, Xcov) {
+
+  ## na omit
+  outcome <- na.omit(outcome); treatment <- na.omit(treatment)
+
+  ## export function
+  diff.pseries <- getFromNamespace("diff.pseries", "plm")
+
+  ### ==== intput check ==== ###
+  if (length(outcome) != length(treatment)) {
+    stop("Length of outcome and length of treatment do not match.")
+  }
+  if (any(c(min(treatment) != 0, max(treatment) != 1))) {
+    stop("We currently support the binary treatment. treatment vector should take either 0 or 1.")
+  }
+  if (is.null(id_time)) {
+    stop("`id_time` should be provided when long = TRUE.")
+  } else {
+    id_subject <- na.omit(id_subject)
+    id_time <- na.omit(id_time)
+  }
+  if (!is.numeric(id_time)) {
+    ## this is a little sketchy conversion
+    ## maybe better to ask users to make the input numeric beforehand
+    id_time <- as.numeric(as.character(id_time))
+  }
+  if (is.null(post_treatment)) {
+    post_treatment <- max(id_time)
+    cat('We treat', post_treatment, 'as the post treatment period\n')
+  } else {
+    post_treatment <- sort(post_treatment)
+  }
+  if (min(length(outcome), length(treatment), length(id_subject), length(id_time))  !=
+      max(length(outcome), length(treatment), length(id_subject), length(id_time))) {
+    stop("outcome, treatment, id_subject and id_time should have the same length.")
+  }
+
+  if (!is.null(Xcov)) {  ## use this when Xcov is supplied
+    if (is.null(colnames(Xcov))) {
+      colnames(Xcov) <- paste("XR", 1:ncol(Xcov), sep = '')
+    }
+    if (any(colnames(Xcov) %in% c('', "", " ", ' '))) {
+      ## rename colnames if they contain empty name
+      rename_idx <- which(colnames(Xcov) %in% c('', "", " ", ' '))
+      colnames(Xcov)[rename_idx] <- paste('XR', length(rename_idx), sep = '')
+    }
+    x_colname <- colnames(Xcov)
+  }
+
+  ### ==== transform data ==== ###
+  dat <- data.frame(outcome, treatment, id_subject, id_time) %>% tbl_df()
+  out <- list()
+  for (tt in 1:length(post_treatment)) {
+    ## prep for nonparametric version
+    dat_tmp <- dat %>%
+      dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
+      na.omit()
+    y_tmp <- dat_tmp %>% dplyr::select(-treatment) %>% tidyr::spread(id_time, outcome) %>%
+      dplyr::select(-id_subject) %>% data.matrix()
+    d_tmp <- dat_tmp %>% select(-outcome) %>% tidyr::spread(id_time, treatment) %>%
+      dplyr::select(-id_subject) %>% data.matrix()
+
+    ## prep for parametric model
+
+    # create dynamic treatment variable
+    ## overwrite time index so that there's no time gap
+    ## this is necesary to take diff in plm
+    if (is.null(Xcov)) {
+      dat2 <- dat %>%
+        dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
+        mutate(id_time = ifelse(id_time == post_treatment[tt], post_treatment[1], id_time)) %>%
+        na.omit()
+    } else {
+      dat2 <- data.frame(outcome, treatment, id_subject, id_time, Xcov) %>%
+        tbl_df() %>%
+        dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
+        mutate(id_time = ifelse(id_time == post_treatment[tt], post_treatment[1], id_time)) %>%
+        na.omit()
+    }
+    dat_plm <- pdata.frame(dat2, index = c("id_subject", "id_time"))
+
+    # make formula
+    pre_time <- ncol(y_tmp) - 1;
+    max_diff <- pre_time - 1 ## make sure this is positive
+    fm <- list()
+
+    for (i in 0:max_diff) {
+      if (is.null(Xcov)) {
+        fm[[i+1]] <- as.formula(paste("yd",i, "~ treatment", sep = ''))
+      } else {
+        fm[[i+1]] <- as.formula(paste("yd",i, " ~ treatment + ", paste(x_colname, collapse = "+"), sep = ""))
+      }
+      if (i > 0) {
+        dat_plm[paste("yd", i, sep = '')] <- diff.pseries(dat_plm$outcome, lag = i)
+      } else {
+        dat_plm[paste("yd", i, sep = '')] <- dat_plm$outcome
+      }
+
+    }
+
+    ## output
+    out[[tt]] <- list(
+      "Y" = y_tmp,
+      "D" = apply(d_tmp, 1, max),
+      'formula' = fm,
+      'pdata' = dat_plm
+    )
+
+    attr(out[[tt]], 'post_treat') <- post_treatment[tt]
+    attr(out[[tt]], 'id_time') <- sort(unique(id_time))
+  }
+
+  return(out)
+}

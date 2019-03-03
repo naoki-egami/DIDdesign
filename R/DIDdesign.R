@@ -1,12 +1,12 @@
-#' Difference-in-Differences Design 
+#' Difference-in-Differences Design
 #'
-#' This packages provides tools for estimating treatment effects 
+#' This packages provides tools for estimating treatment effects
 #'  and diagnosing difference-in-differences designs.
 #'
 #' The package has two main functions:
 #' \itemize{
-#'   \item \code{\link{did_data}}: format data for analysis
-#'   \item \code{\link{did}}: estimate treatment effects 
+#'   \item \code{\link{did_plot}}: create DiD plot
+#'   \item \code{\link{did}}: estimate treatment effects
 #' }
 "_PACKAGE"
 

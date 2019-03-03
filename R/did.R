@@ -67,7 +67,12 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   ## import function
   getFormula <- getFromNamespace("formula.Formula", "Formula")
 
-  ## input checks
+  # ********************************************************* #
+  #                                                           #
+  #                        input checks                       #
+  #                                                           #
+  # ********************************************************* #
+
   if (!(any(class(data) %in% c("tbl_df", "data.frame")))) {
     stop("input data should be data.frame or tbl_df class object")
   }
