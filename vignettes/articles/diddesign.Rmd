@@ -1,5 +1,5 @@
 ---
-title: "Example Usage"
+title: "Example Usage (Panel Data)"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

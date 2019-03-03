@@ -2,6 +2,7 @@ Package: DIDdesign
 Type: Package
 Title: R package for analyzing and diagnosing difference-in-differences design.
 Version: 0.1.3
+Date: 2019-03-02
 Authors@R: c(
   person("Naoki", "Egami", email = "email@gmail.com", role = c("aut")
   ),

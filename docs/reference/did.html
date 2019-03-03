@@ -202,11 +202,19 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
   <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nonparametric"</span>,
   <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)</div><div class='output co'>#&gt; <span class='error'>Error in isTRUE(is_tcs): object 'is_tcs' not found</span></div><div class='input'>
+)</div><div class='output co'>#&gt; 
+#&gt; ... estimating treatment effect for  2007  ...
+#&gt; ... computing the standard DiD estimate ...
+#&gt; 
+#&gt; ... estimating treatment effect for  2008  ...
+#&gt; ... computing the standard DiD estimate ...
+#&gt; 
+#&gt; ... estimating treatment effect for  2009  ...
+#&gt; ... computing the standard DiD estimate ...</div><div class='input'>
 <span class='co'># view summary</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in summary(fit1): object 'fit1' not found</span></div><div class='input'>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in rbind(ATT, BIC, HQIC, selected): object 'HQIC' not found</span></div><div class='input'>
 <span class='co'># view effect plot</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(fit1): object 'fit1' not found</span></div><div class='input'>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot.diddesign(fit1): Plot function is not suppored for estimates without bootstrap se's</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
