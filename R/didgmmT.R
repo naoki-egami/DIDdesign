@@ -4,6 +4,8 @@
 
 #' DID-GMM with m-th order parallel treand assumption
 #'
+#' A function for DID-GMM with panel data.
+#'
 #' @param Y Outcome matrix.
 #' @param D Treatment vector.
 #' @param M Order specification.
@@ -11,7 +13,17 @@
 #' @param only_beta A boolean argument.
 #'  If \code{TRUE} ATT is estimated only using moment conditions related to the last time-period.
 #'  Default is \code{FALSE}.
-#' @export
+#' @param only_oneM A boolean argument.
+#' if \code{TRUE}, ATT is estimated only using one moment condition.
+#' @return A list consisting of the following elements:
+#'  \itemize{
+#'    \item \code{ATT}: Estimates of the average treatment effect on the treated.
+#'    \item \cdoe{zeta}: a value of zeta.
+#'    \item \code{J}: J-statistics
+#'    \item \code{BIC}: BIC 
+#'    \item \code{HQIC}: HQIC
+#'  }
+#' @keywords internal
 didgmmT <- function(Y, D, M, ep = 0.01, max_trial = 100, only_beta = FALSE, only_oneM = FALSE) {
 
   ## quantities
@@ -41,6 +53,7 @@ didgmmT <- function(Y, D, M, ep = 0.01, max_trial = 100, only_beta = FALSE, only
     ## use zeta
     method_use <- 2
   } else if (isTRUE(only_beta) & !isTRUE(only_oneM)) {
+    ## use only moments related to T+1 and one moment
     method_use <- 3
   } else {
     method_use <- 4
@@ -324,8 +337,6 @@ hansenT_over_init <- function(par, Y, D, M, ep) {
   loss <- crossprod(x, x)
   return(loss)
 }
-
-
 
 
 

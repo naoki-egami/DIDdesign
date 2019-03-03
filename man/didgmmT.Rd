@@ -19,7 +19,21 @@ didgmmT(Y, D, M, ep = 0.01, max_trial = 100, only_beta = FALSE,
 \item{only_beta}{A boolean argument.
 If \code{TRUE} ATT is estimated only using moment conditions related to the last time-period.
 Default is \code{FALSE}.}
+
+\item{only_oneM}{A boolean argument.
+if \code{TRUE}, ATT is estimated only using one moment condition.}
+}
+\value{
+A list consisting of the following elements:
+ \itemize{
+   \item \code{ATT}: Estimates of the average treatment effect on the treated.
+   \item \cdoe{zeta}: a value of zeta.
+   \item \code{J}: J-statistics
+   \item \code{BIC}: BIC 
+   \item \code{HQIC}: HQIC
+ }
 }
 \description{
-DID-GMM with m-th order parallel treand assumption
+A function for DID-GMM with panel data.
 }
+\keyword{internal}

@@ -28,12 +28,12 @@ did_nonparametric <- function(
   #                                                           #
   #       estimate effect for each post-treatment period      #
   #                                                           #
-  # ********************************************************* #    
+  # ********************************************************* #
   result <- list()
   for (j in 1:length(data)) {
     cat("\n... estimating treatment effect for ", attr(data[[j]], 'post_treat'), " ...\n")
 
-  
+
     ## ==== point estimate ==== ##
     ## set m_vec
     m_vec <- 1:t_pre
@@ -47,7 +47,7 @@ did_nonparametric <- function(
       Y = data[[j]]$Y, D = data[[j]]$D,
       mvec = m_vec, t_pre = t_pre, select = select, n_boot = n_boot
     )
-    
+
     HQIC       <- select_tmp$HQIC
     BIC        <- select_tmp$BIC
     min_model  <- select_tmp$min_model
