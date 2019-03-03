@@ -2,7 +2,7 @@
 % Please edit documentation in R/did-nonparametric.R
 \name{did_nonparametric}
 \alias{did_nonparametric}
-\title{Double Difference-in-Differences Estimator}
+\title{Nonparametric Double Difference-in-Differences Estimator}
 \usage{
 did_nonparametric(data, se_boot = FALSE, n_boot = 1000,
   boot_min = TRUE, select = "HQIC", est_did = TRUE)
@@ -25,7 +25,7 @@ Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni corr
 \item{est_did}{If \code{TRUE}, standard difference-in-differences estimates are computed. Default is \code{TRUE}.}
 }
 \description{
-Double Difference-in-Differences Estimator
+Nonparametric Double Difference-in-Differences Estimator
 }
 \examples{
 \donttest{

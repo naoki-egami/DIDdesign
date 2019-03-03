@@ -1,12 +1,12 @@
 
-#' DiD plot 
+#' DiD plot
 #' @examples
-#' # load package 
+#' # load package
 #' require(DIDdesign)
-#' 
-#' # load data 
+#'
+#' # load data
 #' data(anzia2012)
-#' 
+#'
 #' # plot
 #' did_plot(
 #'   outcome = anzia2012$lnavgsalary_cpi,
@@ -16,24 +16,54 @@
 #'   id_time = anzia2012$year,
 #'   ylim = c(10.5, 10.8)
 #' )
+#' @importFrom dplyr %>% pull tbl_df
+#' @importFrom Formula as.Formula
+#' @importFrom utils getFromNamespace
 #' @export
-did_plot <- function(outcome, treatment, post_treatment, id_subject, id_time,
+did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
   xlim = NULL, ylim = NULL, col = NULL, ...
 ) {
-  
-  ## FORMAT DATA 
-  dat <- did_data(
-    outcome = outcome,
-    treatment = treatment,
-    post_treatment = post_treatment,
-    id_subject = id_subject,
-    id_time = id_time,
-    long = TRUE
-  )
-  
-  ## CALL plot.diddesign
-  # par(mfrow = c(1, 3))
-  plot(dat, xlim = xlim, ylim = ylim, col = col, ...)
+
+  ## import function
+  getFormula <- getFromNamespace("formula.Formula", "Formula")
+
+  ## extract variable infor
+
+  ## convert formula
+  formula <- as.Formula(formula)
+  f1 <- getFormula(formula, rhs = 1)
+
+  ## extract variable names
+  outcome    <- all.vars(f1)[1]
+  treatment  <- all.vars(f1)[2]
+
+  ## gether data
+  if (is.null(id_subject)) {
+    warning("treat data as repeated cross-section data")
+    data %>% group_by(treatment, id_time) %>%
+      summarise(ymean = mean(outcome, na.rm = TRUE)) -> y_summary
+    y1mean <- y_summary %>% filter(treatment == 1) %>% pul(ymean)
+    y0mean <- y_summary %>% filter(treatment == 0) %>% pul(ymean)
+    # if (is.null(xlim))
+    # if (is.null(xlim))
+    # plot(1, 1, type = 'n', xlim = xlim, ylim = ylim, col = col, ...)
+
+  } else {
+    dat_use <- did_data(
+      outcome        = data %>% pull(outcome),
+      treatment      = data %>% pull(treatment),
+      id_subject     = data %>% pull(id_subject),
+      id_time        = data %>% pull(id_time),
+      post_treatment = post_treatment,
+      long           = TRUE,
+      Xcov           = NULL
+    )
+
+    ## CALL plot.diddesign
+    # par(mfrow = c(1, 3))
+    plot(dat_use, xlim = xlim, ylim = ylim, col = col, ...)
+
+  }
 
 }
 
@@ -53,7 +83,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
     ##
     ## plot for raw data
     ##
-    
+
     summary_dat <- summarize.diddesign(data)
     ymean <- summary_dat$ymean
     id_time <- summary_dat$id_time
@@ -63,10 +93,10 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
     if (is.null(ylim)) ylim <- c(min(ymean), max(ymean))
     if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray60')
     if (is.null(lwd)) lwd <- 1.5
-    
+
     time_use <- which(attr(data[[1]], 'post_treat') == id_time)
-    
-    ## plot 
+
+    ## plot
     plot(1, 1, type = 'n', ylim = ylim, xlim = xlim, xlab = "", ylab = "Mean Outcome", ...)
     abline(v = mean(id_time[(time_use-1):time_use]), col = 'red', lty = 3, lwd = 1.3)
     lines(id_time, ymean[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
@@ -101,7 +131,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
         }
         se_list[[i]] <- se_mat
         ATT_list[[i]] <- att_vec
-        
+
 
       }
 
@@ -119,7 +149,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
           # point
           points(i+locs[j], ATT_list[[i]][j], pch = points[j], col = colors[[i]][j])
           # 90%
-          lines(c(i+locs[j],i+locs[j]), c(se_list[[i]][j,1], se_list[[i]][j,2]), col = colors[[i]][j], 
+          lines(c(i+locs[j],i+locs[j]), c(se_list[[i]][j,1], se_list[[i]][j,2]), col = colors[[i]][j],
                 lwd = 2.2)
           # 95%
           arrows(i+locs[j], se_list[[i]][j,3], i+locs[j], se_list[[i]][j,4], col = colors[[i]][j],

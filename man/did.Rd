@@ -2,7 +2,7 @@
 % Please edit documentation in R/did.R
 \name{did}
 \alias{did}
-\title{DiD}
+\title{Double Difference-in-Differences}
 \usage{
 did(formula, data, id_subject = NULL, id_time, post_treatment,
   method = "parametric", se_boot = FALSE, n_boot = 1000,
@@ -50,29 +50,30 @@ A \code{diddesign} class object, which is a list of results for each post treatm
  }
 }
 \description{
-Estimate average treatment effect on the treated .
+Estimate average treatment effect on the treated using double difference-in-difference estimator.
 }
 \examples{
-# load package
-require(DIDdesign)
+\donttest{
+  # load package
+  require(DIDdesign)
 
-# load  data
-data(anzia2012)
+  # load  data
+  data(anzia2012)
 
-# nonparametric estimator without covariates
-fit1 <- did(
-  formula = lnavgsalary_cpi ~ oncycle,
-  data = anzia2012,
-  id_subject = "district", id_time = "year",
-  post_treatment = c(2007, 2008, 2009),
-  method = "nonparametric",
-  se_boot = FALSE
-)
+  # nonparametric estimator without covariates
+  fit1 <- did(
+    formula = lnavgsalary_cpi ~ oncycle,
+    data = anzia2012,
+    id_subject = "district", id_time = "year",
+    post_treatment = c(2007, 2008, 2009),
+    method = "nonparametric",
+    se_boot = TRUE, n_boot = 100, boot_min = FALSE
+  )
 
-# view summary
-summary(fit1)
+  # view summary
+  summary(fit1)
 
-# view effect plot
-plot(fit1)
-
+  # view effect plot
+  plot(fit1, full = TRUE)
+}
 }

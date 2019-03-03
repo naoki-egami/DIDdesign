@@ -1,6 +1,6 @@
 
 
-#' Double DiD with Repeated Cross-Section
+#' Parametric Double Difference-in-Differences Estimator with Repeated Cross-Section Data
 #' @param data A \code{diddesign_data} object.
 #' @export
 did_parametric_rcs <- function(data) {

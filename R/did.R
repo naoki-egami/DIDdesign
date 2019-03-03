@@ -1,8 +1,8 @@
 
 
-#' DiD
+#' Double Difference-in-Differences
 #'
-#' Estimate average treatment effect on the treated .
+#' Estimate average treatment effect on the treated using double difference-in-difference estimator.
 #'
 #' @param formula A formula. \code{y ~ d} where \code{y} is the outcome and \code{d} is the (time-varying) treatment indicator.
 #' Covariates can be added by \code{y ~ d | x1 + x2} where \code{x1} and \code{x2} are covariates.
@@ -36,28 +36,29 @@
 #' @importFrom Formula as.Formula
 #' @importFrom utils getFromNamespace
 #' @examples
-#' # load package
-#' require(DIDdesign)
+#' \donttest{
+#'   # load package
+#'   require(DIDdesign)
 #'
-#' # load  data
-#' data(anzia2012)
+#'   # load  data
+#'   data(anzia2012)
 #'
-#' # nonparametric estimator without covariates
-#' fit1 <- did(
-#'   formula = lnavgsalary_cpi ~ oncycle,
-#'   data = anzia2012,
-#'   id_subject = "district", id_time = "year",
-#'   post_treatment = c(2007, 2008, 2009),
-#'   method = "nonparametric",
-#'   se_boot = FALSE
-#' )
+#'   # nonparametric estimator without covariates
+#'   fit1 <- did(
+#'     formula = lnavgsalary_cpi ~ oncycle,
+#'     data = anzia2012,
+#'     id_subject = "district", id_time = "year",
+#'     post_treatment = c(2007, 2008, 2009),
+#'     method = "nonparametric",
+#'     se_boot = TRUE, n_boot = 100, boot_min = FALSE
+#'   )
 #'
-#' # view summary
-#' summary(fit1)
+#'   # view summary
+#'   summary(fit1)
 #'
-#' # view effect plot
-#' plot(fit1)
-#'
+#'   # view effect plot
+#'   plot(fit1, full = TRUE)
+#' }
 #' @export
 did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE,

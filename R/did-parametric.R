@@ -2,7 +2,7 @@
 
 
 
-#' Parametric Version of Double DiD for panel data
+#' Parametric Double Difference-in-Differences Estimator
 #' @param data data
 #' @param se_boot A boolean argument.
 #'  If set to \code{TRUE}, standard errors are computed by the block bootstrap.

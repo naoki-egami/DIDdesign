@@ -90,7 +90,7 @@ did_data <- function(
 #'  \item \code{pdata}: A data frame appended transformed outcomes (e.g., yd0, yd1, etc).
 #'}
 #' @importFrom zoo zoo
-#' @importFrom dplyr %>% filter summarise group_by pull tbl_df
+#' @importFrom dplyr %>% filter summarise group_by pull mutate tbl_df
 #' @importFrom utils getFromNamespace
 #' @keywords internal
 did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {

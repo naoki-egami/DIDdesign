@@ -32,7 +32,7 @@
 
 <meta property="og:title" content="DID-GMM with m-th order parallel treand assumption — didgmmT" />
 
-<meta property="og:description" content="DID-GMM with m-th order parallel treand assumption" />
+<meta property="og:description" content="A function for DID-GMM with panel data." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DIDdesign</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
 
     <div class="ref-description">
     
-    <p>DID-GMM with m-th order parallel treand assumption</p>
+    <p>A function for DID-GMM with panel data.</p>
     
     </div>
 
@@ -144,7 +144,23 @@
 If <code>TRUE</code> ATT is estimated only using moment conditions related to the last time-period.
 Default is <code>FALSE</code>.</p></td>
     </tr>
+    <tr>
+      <th>only_oneM</th>
+      <td><p>A boolean argument.
+if <code>TRUE</code>, ATT is estimated only using one moment condition.</p></td>
+    </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A list consisting of the following elements:</p><ul>
+<li><p><code>ATT</code>: Estimates of the average treatment effect on the treated.</p></li>
+<li><p><code>zeta</code>: a value of zeta.</p></li>
+<li><p><code>J</code>: J-statistics</p></li>
+<li><p><code>BIC</code>: BIC</p></li>
+<li><p><code>HQIC</code>: HQIC</p></li>
+</ul>
+
     
 
   </div>
@@ -152,7 +168,9 @@ Default is <code>FALSE</code>.</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+          </ul>
 
   </div>
 </div>

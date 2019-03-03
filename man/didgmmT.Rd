@@ -27,9 +27,9 @@ if \code{TRUE}, ATT is estimated only using one moment condition.}
 A list consisting of the following elements:
  \itemize{
    \item \code{ATT}: Estimates of the average treatment effect on the treated.
-   \item \cdoe{zeta}: a value of zeta.
+   \item \code{zeta}: a value of zeta.
    \item \code{J}: J-statistics
-   \item \code{BIC}: BIC 
+   \item \code{BIC}: BIC
    \item \code{HQIC}: HQIC
  }
 }

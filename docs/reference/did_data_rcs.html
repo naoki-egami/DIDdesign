@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>data processing function for repeated cross-section data — did_data_rcs • DIDdesign</title>
+<title>Data processing function for repeated cross-section data — did_data_rcs • DIDdesign</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="data processing function for repeated cross-section data — did_data_rcs" />
+<meta property="og:title" content="Data processing function for repeated cross-section data — did_data_rcs" />
 
-<meta property="og:description" content="data processing function for repeated cross-section data" />
+<meta property="og:description" content="Data processing function for repeated cross-section data" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DIDdesign</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
       </span>
     </div>
 
@@ -105,14 +105,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>data processing function for repeated cross-section data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/naoki-egami/DIDdesign/blob/master/R/did_data.R'><code>R/did_data.R</code></a></small>
+    <h1>Data processing function for repeated cross-section data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/naoki-egami/DIDdesign/blob/master/R/did-data.R'><code>R/did-data.R</code></a></small>
     <div class="hidden name"><code>did_data_rcs.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>data processing function for repeated cross-section data</p>
+    <p>Data processing function for repeated cross-section data</p>
     
     </div>
 
@@ -123,9 +123,36 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>outcome</th>
-      <td><p>a vector of outcome observations.</p></td>
+      <td><p>A vector of outcome variable.</p></td>
+    </tr>
+    <tr>
+      <th>treatment</th>
+      <td><p>A vector of treatment indicator variable.</p></td>
+    </tr>
+    <tr>
+      <th>post_treatment</th>
+      <td><p>A vector of numeric time index for post treatment periods.</p></td>
+    </tr>
+    <tr>
+      <th>id_time</th>
+      <td><p>A vector of time index variable.</p></td>
+    </tr>
+    <tr>
+      <th>Xcov</th>
+      <td><p>A matrix of covariates.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A list. Each element corresponds to each post-treatment period.
+ Each element of the returned list is also a list consists of the following:</p><ul>
+<li><p><code>Y</code>: outcome vector.</p></li>
+<li><p><code>D</code>: treatment vector.</p></li>
+<li><p><code>formula</code>: A list of formula for <code><a href='https://www.rdocumentation.org/packages/stats/topics/lm'>lm</a></code>.</p></li>
+<li><p><code>pdata</code>: A data frame appended transformed outcomes (e.g., yd0, yd1, etc).</p></li>
+</ul>
+
     
 
   </div>
@@ -133,7 +160,9 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+          </ul>
 
   </div>
 </div>

@@ -8,6 +8,7 @@
 #'   \item \code{\link{did_plot}}: create DiD plot
 #'   \item \code{\link{did}}: estimate treatment effects
 #' }
+#' @keywords internal
 "_PACKAGE"
 
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/did-parametric-rcs.R
 \name{did_parametric_rcs}
 \alias{did_parametric_rcs}
-\title{Double DiD with Repeated Cross-Section}
+\title{Parametric Double Difference-in-Differences Estimator with Repeated Cross-Section Data}
 \usage{
 did_parametric_rcs(data)
 }
@@ -10,5 +10,5 @@ did_parametric_rcs(data)
 \item{data}{A \code{diddesign_data} object.}
 }
 \description{
-Double DiD with Repeated Cross-Section
+Parametric Double Difference-in-Differences Estimator with Repeated Cross-Section Data
 }

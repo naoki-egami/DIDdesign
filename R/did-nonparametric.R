@@ -1,4 +1,4 @@
-#' Double Difference-in-Differences Estimator
+#' Nonparametric Double Difference-in-Differences Estimator
 #'
 #' @param data did_double.data object. See \code{\link{did_double_data}}.
 #' @param se_boot A boolean argument.
@@ -28,10 +28,10 @@
 #'  )
 #'
 #'  # fit nonparametric double-did method
-#'  fit <- did_nonparametric(out, se_boot = TRUE, n_boot = 500, boot_min = FALSE)
+#'  fit <- did_nonparametric(out, se_boot = TRUE, n_boot = 100, boot_min = TRUE)
 #'
 #'  # plot results
-#'  plot(fit, full = TRUE)
+#'  plot(fit)
 #'
 #'  # show result summary
 #'  summary(fit)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/did-parametric.R
 \name{did_parametric}
 \alias{did_parametric}
-\title{Parametric Version of Double DiD for panel data}
+\title{Parametric Double Difference-in-Differences Estimator}
 \usage{
 did_parametric(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
   select = "HQIC", est_did = FALSE, is_covariates)
@@ -24,5 +24,5 @@ one of "HQIC", "BIC", "tt1" (T-test), "tt2" (T-test with Bonferroni correction).
 The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.}
 }
 \description{
-Parametric Version of Double DiD for panel data
+Parametric Double Difference-in-Differences Estimator
 }
