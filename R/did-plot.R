@@ -8,12 +8,10 @@
 #' data(anzia2012)
 #'
 #' # plot
-#' did_plot(
-#'   outcome = anzia2012$lnavgsalary_cpi,
-#'   treatment = anzia2012$oncycle,
+#' did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 #'   post_treatment = c(2007, 2008, 2009),
-#'   id_subject = anzia2012$district,
-#'   id_time = anzia2012$year,
+#'   id_subject = "district",
+#'   id_time = "year",
 #'   ylim = c(10.5, 10.8)
 #' )
 #' @importFrom dplyr %>% pull tbl_df
@@ -21,7 +19,7 @@
 #' @importFrom utils getFromNamespace
 #' @export
 did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
-  xlim = NULL, ylim = NULL, col = NULL, ...
+  diff_order = 1, xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...
 ) {
 
   ## import function
@@ -44,9 +42,12 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
       summarise(ymean = mean(outcome, na.rm = TRUE)) -> y_summary
     y1mean <- y_summary %>% filter(treatment == 1) %>% pul(ymean)
     y0mean <- y_summary %>% filter(treatment == 0) %>% pul(ymean)
+    dat_use <- list("y1mean" = y1mean, 'y0mean' = y0mean,
+                    'id_time' = sort(unique(y_summary$id_time)))
     # if (is.null(xlim))
     # if (is.null(xlim))
     # plot(1, 1, type = 'n', xlim = xlim, ylim = ylim, col = col, ...)
+    plot_diddesign_data(dat_use, panel = FALSE, xlim = xlim, ylim = ylim, col = col, loc = loc, lwd = lwd, ...)
 
   } else {
     dat_use <- did_data(
@@ -61,12 +62,49 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
 
     ## CALL plot.diddesign
     # par(mfrow = c(1, 3))
-    plot(dat_use, xlim = xlim, ylim = ylim, col = col, ...)
+    plot_diddesign_data(dat_use, panel = TRUE, xlim = xlim, ylim = ylim, col = col, loc = loc, lwd = lwd, ...)
 
   }
 
 }
 
+#' Baseline plot function for did_plot
+#' @param data Two possible inputs. If \code{panel = TRUE}, input should be a \code{diddesign_data} class object.
+#'    If \code{panel = FALSE}, it should be a list consists of \code{"y1mean"}, \code{"y0mean"} and \code{"id_time"}.
+#' @keywords internal
+plot_diddesign_data <- function(data, panel = TRUE, xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...) {
+  if(isTRUE(panel)) {
+    summary_dat <- summarize.diddesign(data)
+    ymean <- summary_dat$ymean
+    id_time <- summary_dat$id_time
+  } else {
+    ## data
+    ymean <- rbind(data$y1mean, data$y0mean)
+    id_time <- data$id_time
+  }
+
+  ## plot
+  if (is.null(xlim)) xlim <- c(min(id_time), max(id_time))
+  if (is.null(ylim)) ylim <- c(min(ymean), max(ymean))
+  if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray40')
+  if (is.null(lwd)) lwd <- 1.5
+  if (is.null(loc)) loc <- 'topleft'
+
+  time_use <- which(attr(data[[1]], 'post_treat') == id_time)
+  ## background color setup
+  bg_col <- rgb(215, 196, 187, maxColorValue = 255, alpha = 80)
+
+  ## plot
+  plot(1, 1, type = 'n', ylim = ylim, xlim = xlim, xlab = "", ylab = "Mean Outcome", ...)
+  rect(mean(id_time[(time_use-1):time_use]), min(ylim) / 1.04,
+      max(xlim) * 1.04, max(ylim) * 1.04, border = NA, col = bg_col)
+  abline(v = mean(id_time[(time_use-1):time_use]), col = '#B9887D', lty = 3, lwd = 1.3)
+  lines(id_time, ymean[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
+  lines(id_time, ymean[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
+  legend(loc, legend = c("treated", 'control'), col = col[1:2],
+    lty = 1, pch = c(16, 17), bty = 'n')
+  box(lwd = 1.2)
+}
 
 #' Plot function
 #' @param data Input object. This should be either diddesign object or diddesign_data object.
@@ -79,32 +117,34 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
 #' @param ... additional arguments supplied to the plot function.
 #' @export
 plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NULL, full = FALSE, ...) {
-  if('diddesign_data' %in% class(data)) {
-    ##
-    ## plot for raw data
-    ##
+  # if('diddesign_data' %in% class(data)) {
+  #   ##
+  #   ## plot for raw data
+  #   ##
+  #
+  #   summary_dat <- summarize.diddesign(data)
+  #   ymean <- summary_dat$ymean
+  #   id_time <- summary_dat$id_time
+  #
+  #   ## plot
+  #   if (is.null(xlim)) xlim <- c(min(id_time), max(id_time))
+  #   if (is.null(ylim)) ylim <- c(min(ymean), max(ymean))
+  #   if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray60')
+  #   if (is.null(lwd)) lwd <- 1.5
+  #
+  #   time_use <- which(attr(data[[1]], 'post_treat') == id_time)
+  #
+  #   ## plot
+  #   plot(1, 1, type = 'n', ylim = ylim, xlim = xlim, xlab = "", ylab = "Mean Outcome", ...)
+  #   abline(v = mean(id_time[(time_use-1):time_use]), col = 'red', lty = 3, lwd = 1.3)
+  #   lines(id_time, ymean[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
+  #   lines(id_time, ymean[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
+  #   legend('topleft', legend = c("treated", 'control'), col = col[1:2],
+  #     lty = 1, pch = c(16, 17), bty = 'n')
+  #
+  # } else
 
-    summary_dat <- summarize.diddesign(data)
-    ymean <- summary_dat$ymean
-    id_time <- summary_dat$id_time
-
-    ## plot
-    if (is.null(xlim)) xlim <- c(min(id_time), max(id_time))
-    if (is.null(ylim)) ylim <- c(min(ymean), max(ymean))
-    if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray60')
-    if (is.null(lwd)) lwd <- 1.5
-
-    time_use <- which(attr(data[[1]], 'post_treat') == id_time)
-
-    ## plot
-    plot(1, 1, type = 'n', ylim = ylim, xlim = xlim, xlab = "", ylab = "Mean Outcome", ...)
-    abline(v = mean(id_time[(time_use-1):time_use]), col = 'red', lty = 3, lwd = 1.3)
-    lines(id_time, ymean[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
-    lines(id_time, ymean[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
-    legend('topleft', legend = c("treated", 'control'), col = col[1:2],
-      lty = 1, pch = c(16, 17), bty = 'n')
-
-  } else if ('diddesign' %in% class(data)) {
+  if ('diddesign' %in% class(data)) {
     ##
     ## plot for estimation result
     ##

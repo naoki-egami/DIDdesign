@@ -4,26 +4,25 @@
 \alias{did_plot}
 \title{DiD plot}
 \usage{
-did_plot(outcome, treatment, post_treatment, id_subject, id_time,
-  xlim = NULL, ylim = NULL, col = NULL, ...)
+did_plot(formula, data, post_treatment, id_subject = NULL, id_time,
+  diff_order = 1, xlim = NULL, ylim = NULL, col = NULL,
+  loc = NULL, lwd = NULL, ...)
 }
 \description{
 DiD plot
 }
 \examples{
-# load package 
+# load package
 require(DIDdesign)
 
-# load data 
+# load data
 data(anzia2012)
 
 # plot
-did_plot(
-  outcome = anzia2012$lnavgsalary_cpi,
-  treatment = anzia2012$oncycle,
+did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
   post_treatment = c(2007, 2008, 2009),
-  id_subject = anzia2012$district,
-  id_time = anzia2012$year,
+  id_subject = "district",
+  id_time = "year",
   ylim = c(10.5, 10.8)
 )
 }
