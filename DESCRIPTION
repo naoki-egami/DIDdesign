@@ -1,6 +1,6 @@
 Package: DIDdesign
 Type: Package
-Title: R package for analyzing difference-in-differences design.
+Title: R package for analyzing and diagnosing difference-in-differences design.
 Version: 0.1.3
 Date: 2019-03-02
 Authors@R: c(
@@ -10,7 +10,7 @@ Authors@R: c(
   person("Soichiro", "Yamauchi", email = "email@gmail.com", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0003-0554-2717")
   ))
-Description: A package for analyzing difference-in-differences design.
+Description: A package for analyzing and diagnosing difference-in-differences design.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
