@@ -33,7 +33,7 @@ gmm_selection <- function(Y, D, mvec, t_pre, select, n_boot) {
     }
 
     if (count > 0) min_model <- m_vec[count]
-    
+
   } else {
     stop("invalid input for select")
   }
@@ -44,10 +44,16 @@ gmm_selection <- function(Y, D, mvec, t_pre, select, n_boot) {
 
 
 #' Model selectin based on linear FE model
+#' @param data panel data from \code{diddesign_data} object.
+#' @param fm_list A list of formulae from \code{diddesign_data} object.
+#' @param post_time Time index for the post Treatment period.
+#' @param alpha Level of rejection. Default is at the 5\% level
 #' @importFrom plm plm vcovHC
+#' @importFrom utils getFromNamespace
 #' @keywords internal
 fe_selection <- function(data, fm_list, post_time, alpha = 0.05) {
 
+  # load function
   diff.pseries <- getFromNamespace("diff.pseries", "plm")
 
   # exclude post-treatment periods
@@ -58,19 +64,20 @@ fe_selection <- function(data, fm_list, post_time, alpha = 0.05) {
   # run fe
   min_model  <- length(fm_list)
   test_theta <- test_se <- rep(NA, (length(fm_list)-1))
+
+  # upward model selection (from highest order to lowest order)
   for (ff in (length(fm_list)-1):1) {
+    ## estimate "placebo" model
     tmp <- plm(fm_list[[ff]], data = data_use, method = 'within', effect = 'twoways')
     test_theta[ff] <- tmp$coef[1]
     test_se[ff]    <- sqrt(vcovHC(tmp, cluster = 'group', type = 'HC2')[1,1])
-
-    if ((test_theta[ff] + qnorm(alpha/2) * test_se[ff]) <= 0 &
-        (test_theta[ff] + qnorm(1 - alpha/2) * test_se[ff]) >= 0) {
-      min_model <- ff
-    }
+    cover_zero     <- ((test_theta[ff] + qnorm(alpha/2) * test_se[ff]) <= 0) &
+                      ((test_theta[ff] + qnorm(1 - alpha/2) * test_se[ff]) >= 0)
+    if (cover_zero) { min_model <- ff }
   }
 
-  return(list("min_model" = min_model, 'BIC' = NULL, "HQIC" = NULL, 'test_theta' = test_theta,
-              'test_se' = test_se))
+  return(list("min_model" = min_model, 'BIC' = NULL, "HQIC" = NULL,
+              'test_theta' = test_theta, 'test_se' = test_se))
 }
 
 
@@ -97,7 +104,7 @@ rcs_selection <- function(data, fm_list, post_time, alpha = 0.05) {
     }
   }
 
-  return(list("min_model" = min_model, 'BIC' = NULL, "HQIC" = NULL, 'test_theta' = test_theta,
-              'test_se' = test_se))
+  return(list("min_model" = min_model, 'BIC' = NULL, "HQIC" = NULL, '
+              test_theta' = test_theta, 'test_se' = test_se))
 
 }

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DiD plot — did_plot • DIDdesign</title>
+<title>Plot function for selection — did_plot_selection • DIDdesign</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="DiD plot — did_plot" />
+<meta property="og:title" content="Plot function for selection — did_plot_selection" />
 
-<meta property="og:description" content="Generate a plot for difference-in-differences design." />
+<meta property="og:description" content="Plot function for selection" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,69 +105,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>DiD plot</h1>
+    <h1>Plot function for selection</h1>
     <small class="dont-index">Source: <a href='https://github.com/naoki-egami/DIDdesign/blob/master/R/did-plot.R'><code>R/did-plot.R</code></a></small>
-    <div class="hidden name"><code>did_plot.Rd</code></div>
+    <div class="hidden name"><code>did_plot_selection.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Generate a plot for difference-in-differences design.</p>
+    <p>Plot function for selection</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>did_plot</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='no'>post_treatment</span>, <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>id_time</span>,
-  <span class='kw'>diff_order</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>loc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>did_plot_selection</span>(<span class='no'>data</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>equivalence</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>eL</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>eU</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>loc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>formula</th>
-      <td><p><code>outcome ~ treatment</code>.</p></td>
-    </tr>
-    <tr>
       <th>data</th>
-      <td><p>data set</p></td>
+      <td><p><code>diddesign</code> object.
+Typically, it is an output from <code><a href='did.html'>did</a></code> function.</p></td>
     </tr>
     <tr>
-      <th>post_treatment</th>
-      <td><p>a vector of time index indicating post treatment periods.</p></td>
-    </tr>
-    <tr>
-      <th>id_subject</th>
-      <td><p>a variable name of unit index.
-This should be left as <code>NULL</code> when repeated cross-section data is used.</p></td>
-    </tr>
-    <tr>
-      <th>id_time</th>
-      <td><p>a variable name of time index.</p></td>
-    </tr>
-    <tr>
-      <th>diff_order</th>
-      <td><p>Order of differences. <code>diff_order = 0</code> generates a plot based on the original outcome.
-<code>diff_order = 1</code> generates a plot based on differenced outcomes.</p></td>
-    </tr>
-    <tr>
-      <th>xlim</th>
-      <td><p>xlim</p></td>
-    </tr>
-    <tr>
-      <th>ylim</th>
-      <td><p>ylim</p></td>
-    </tr>
-    <tr>
-      <th>col</th>
-      <td><p>col</p></td>
-    </tr>
-    <tr>
-      <th>loc</th>
-      <td><p>Location of legend. See <code><a href='https://www.rdocumentation.org/packages/graphics/topics/legend'>legend</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>lwd</th>
-      <td><p>Line width.</p></td>
+      <th>alpha</th>
+      <td><p>Level of rejection.
+Confidence intervals are constructed with the 1-alpha and 1 - alpha/2 levels.</p></td>
     </tr>
     </table>
     
@@ -179,24 +143,18 @@ This should be left as <code>NULL</code> when repeated cross-section data is use
 <span class='co'># load data</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>anzia2012</span>)
 
-<span class='co'># original series</span>
-<span class='fu'>did_plot</span>(<span class='no'>lnavgsalary_cpi</span> ~ <span class='no'>oncycle</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>anzia2012</span>,
-  <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
-  <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>,
-  <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
-  <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>10.55</span>, <span class='fl'>10.8</span>),
-  <span class='kw'>diff_order</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Original Series'</span>
-)</div><div class='img'><img src='did_plot-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'># differenced series</span>
-<span class='fu'>did_plot</span>(<span class='no'>lnavgsalary_cpi</span> ~ <span class='no'>oncycle</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>anzia2012</span>,
-  <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
-  <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>,
-  <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
-  <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>0.05</span>, <span class='fl'>0.05</span>),
-  <span class='kw'>diff_order</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Differenced Series'</span>
-)</div><div class='img'><img src='did_plot-2.png' alt='' width='700' height='433' /></div></pre>
+<span class='co'># fit the model</span>
+<span class='no'>fit1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='did.html'>did</a></span>(<span class='no'>lnavgsalary_cpi</span> ~ <span class='no'>oncycle</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>anzia2012</span>,
+            <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>, <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
+            <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
+            <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"parametric"</span>)</div><div class='output co'>#&gt; 
+#&gt; ... estimating treatment effect for  2007  ...
+#&gt; 
+#&gt; ... estimating treatment effect for  2008  ...
+#&gt; 
+#&gt; ... estimating treatment effect for  2009  ...</div><div class='input'>
+<span class='co'># plot</span>
+<span class='fu'>did_plot_selection</span>(<span class='no'>fit1</span>, <span class='kw'>equivalence</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>eL</span> <span class='kw'>=</span> -<span class='fl'>0.005</span>, <span class='kw'>eU</span> <span class='kw'>=</span> <span class='fl'>0.005</span>)</div><div class='output co'>#&gt; <span class='error'>Error in did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005): could not find function "did_plot_selection"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

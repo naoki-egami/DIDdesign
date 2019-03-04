@@ -53,7 +53,6 @@ A \code{diddesign} class object, which is a list of results for each post treatm
 Estimate average treatment effect on the treated using double difference-in-difference estimator.
 }
 \examples{
-\donttest{
   # load package
   require(DIDdesign)
 
@@ -75,5 +74,4 @@ Estimate average treatment effect on the treated using double difference-in-diff
 
   # view effect plot
   plot(fit1, full = TRUE)
-}
 }

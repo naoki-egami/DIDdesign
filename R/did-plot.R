@@ -335,3 +335,91 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
     }
   }
 }
+
+
+
+
+#' Plot function for selection
+#' @param data \code{diddesign} object.
+#'    Typically, it is an output from \code{\link{did}} function.
+#' @param alpha Level of rejection.
+#'    Confidence intervals are constructed with the 1-alpha and 1 - alpha/2 levels.
+#' @examples
+#' # load package
+#' require(DIDdesign)
+#'
+#' # load data
+#' data(anzia2012)
+#'
+#' # fit the model
+#' fit1 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
+#'             id_subject = "district", id_time = "year",
+#'             post_treatment = c(2007, 2008, 2009),
+#'             method = "parametric")
+#'
+#' # plot
+#' did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005)
+#' @keywords internal
+did_plot_selection <- function(
+  data, alpha = 0.05, equivalence = TRUE, eL = NULL, eU = NULL,
+  xlim = NULL, ylim = NULL, col = NULL, loc = NULL,...) {
+
+  if (!(class(data) %in% c("diddesign"))) {
+    stop("Input data should be a 'diddesign' object")
+  }
+
+  if(exists("selection", attributes(data[[1]]))) {
+    ## extract info
+    selection <- attr(data[[1]], "selection")
+    theta  <- selection$test_theta
+    stderr <- selection$test_se
+    model  <- selection$min_model
+
+    ## construct confidence intervals
+    CIa <- cbind(theta + qnorm(alpha/2) * stderr,
+                 theta + qnorm(1 - alpha/2) * stderr)
+    CI2a <- cbind(theta + qnorm(alpha) * stderr,
+                  theta + qnorm(1 - alpha) * stderr)
+
+    ## prepare plot parameters
+    if (is.null(ylim)) ylim <- c(min(CIa), max(CIa))
+    if (is.null(xlim)) xlim <- c(0.7, length(theta) + 0.3)
+    if (is.null(col) | length(col) < length(theta)) {
+      col <- rep('gray30', length(theta))
+      col[model] <- "#006284"
+      col <- rev(col)
+    }
+    if (is.null(loc)) loc <- 'topleft'
+
+    if (isTRUE(equivalence)) {
+      if(is.null(eL)) eL <- min(CI2a)
+      if(is.null(eU)) eU <- max(CI2a)
+      message("Equivalence region: [", eL, ",", eU, "] at the alpha = ", alpha, " level.")
+      eq_color <- rgb(123, 162, 63, maxColorValue = 255, alpha = 60)
+    }
+
+    ## make plot
+    plot(theta, type = 'n', pch = 16, cex = 1.2, ylim = ylim, xlim = xlim,
+        xaxt = 'n', xlab  = "", ylab = "Theta", col = col, ...)
+    if (isTRUE(equivalence)) {
+      rect(min(xlim) / 1.3, eL, max(xlim) * 1.3, eU, border = NA, col = eq_color)
+    }
+    abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)
+    for (i in 1:nrow(CIa)) {
+      lines(c(i,i), CI2a[i,], lwd = 2.2, col = col[i])
+      arrows(i, CIa[i,1], i, CIa[i,2], col = col[i], length = 0.05, angle = 90, code = 3)
+    }
+    points(theta, pch = 16, cex = 1.2, col = col)
+    axis(1, at = 1:length(theta), labels = paste("M", rev(1:length(theta)), sep = ''))
+    box(lwd = 1.25)
+    if (isTRUE(equivalence)) {
+    legend(loc, legend = c('selected model', 'equivalence region'),
+      lty = c(1, NA), pch = c(16, NA), col = c("#006284", NA),
+      fill = c(NA, eq_color), border = c(NA, 'black'), bty = 'n')
+    } else {
+      legend(loc, legend = c('selected model'), lty = 1, pch = 16, col = c("#006284"), bty = 'n')
+    }
+  } else {
+    stop("selection does not exsit.")
+  }
+}

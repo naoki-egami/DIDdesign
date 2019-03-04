@@ -6,6 +6,15 @@
 \usage{
 fe_selection(data, fm_list, post_time, alpha = 0.05)
 }
+\arguments{
+\item{data}{panel data from \code{diddesign_data} object.}
+
+\item{fm_list}{A list of formulae from \code{diddesign_data} object.}
+
+\item{post_time}{Time index for the post Treatment period.}
+
+\item{alpha}{Level of rejection. Default is at the 5\% level}
+}
 \description{
 Model selectin based on linear FE model
 }
