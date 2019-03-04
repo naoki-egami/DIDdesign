@@ -1,5 +1,21 @@
 
 #' DiD plot
+#'
+#' Generate a plot for difference-in-differences design.
+#' @param formula \code{outcome ~ treatment}.
+#' @param data data set
+#' @param post_treatment a vector of time index indicating post treatment periods.
+#' @param id_subject a variable name of unit index.
+#'  This should be left as \code{NULL} when repeated cross-section data is used.
+#' @param id_time a variable name of time index.
+#' @param diff_order Order of differences. \code{diff_order = 0} generates a plot based on the original outcome.
+#'  \code{diff_order = 1} generates a plot based on differenced outcomes.
+#' @param xlim xlim
+#' @param ylim ylim
+#' @param col col
+#' @param loc Location of legend. See \code{\link{legend}}.
+#' @param lwd Line width.
+#'
 #' @examples
 #' # load package
 #' require(DIDdesign)
@@ -7,19 +23,31 @@
 #' # load data
 #' data(anzia2012)
 #'
-#' # plot
+#' # two plots
+#' par(mfrow = c(2, 1), mar = c(4, 4, 2.5, 2))
 #' did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 #'   post_treatment = c(2007, 2008, 2009),
 #'   id_subject = "district",
 #'   id_time = "year",
-#'   ylim = c(10.5, 10.8)
+#'   ylim = c(10.55, 10.8),
+#'   diff_order = 0,
+#'   main = 'Original Series'
+#' )
+#'
+#' did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
+#'   post_treatment = c(2007, 2008, 2009),
+#'   id_subject = "district",
+#'   id_time = "year",
+#'   ylim = c(-0.05, 0.05),
+#'   diff_order = 1,
+#'   main = 'Differenced Series'
 #' )
 #' @importFrom dplyr %>% pull tbl_df
 #' @importFrom Formula as.Formula
 #' @importFrom utils getFromNamespace
 #' @export
 did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
-  diff_order = 1, xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...
+  diff_order = 0, xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...
 ) {
 
   ## import function
@@ -47,7 +75,8 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
     # if (is.null(xlim))
     # if (is.null(xlim))
     # plot(1, 1, type = 'n', xlim = xlim, ylim = ylim, col = col, ...)
-    plot_diddesign_data(dat_use, panel = FALSE, xlim = xlim, ylim = ylim, col = col, loc = loc, lwd = lwd, ...)
+    plot_diddesign_data(dat_use, panel = FALSE, diff_order = diff_order,
+      xlim = xlim, ylim = ylim, col = col, loc = loc, lwd = lwd, ...)
 
   } else {
     dat_use <- did_data(
@@ -62,7 +91,8 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
 
     ## CALL plot.diddesign
     # par(mfrow = c(1, 3))
-    plot_diddesign_data(dat_use, panel = TRUE, xlim = xlim, ylim = ylim, col = col, loc = loc, lwd = lwd, ...)
+    plot_diddesign_data(dat_use, panel = TRUE, diff_order = diff_order,
+      xlim = xlim, ylim = ylim, col = col, loc = loc, lwd = lwd, ...)
 
   }
 
@@ -71,8 +101,12 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
 #' Baseline plot function for did_plot
 #' @param data Two possible inputs. If \code{panel = TRUE}, input should be a \code{diddesign_data} class object.
 #'    If \code{panel = FALSE}, it should be a list consists of \code{"y1mean"}, \code{"y0mean"} and \code{"id_time"}.
+#' @param panel A boolean argument. \code{TRUE} if data are in the panel format and \code{FALSE} if repeated cross-section.
+#' @param diff_order Either \code{0} (original series) or \code{1} (differenced series). 
 #' @keywords internal
-plot_diddesign_data <- function(data, panel = TRUE, xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...) {
+plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
+  xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...) {
+
   if(isTRUE(panel)) {
     summary_dat <- summarize.diddesign(data)
     ymean <- summary_dat$ymean
@@ -84,26 +118,65 @@ plot_diddesign_data <- function(data, panel = TRUE, xlim = NULL, ylim = NULL, co
   }
 
   ## plot
-  if (is.null(xlim)) xlim <- c(min(id_time), max(id_time))
-  if (is.null(ylim)) ylim <- c(min(ymean), max(ymean))
-  if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray40')
-  if (is.null(lwd)) lwd <- 1.5
-  if (is.null(loc)) loc <- 'topleft'
+  if (diff_order == 0) {
+    if (is.null(xlim)) xlim <- c(min(id_time), max(id_time))
+    if (is.null(ylim)) ylim <- c(min(ymean), max(ymean))
+    if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray40')
+    if (is.null(lwd)) lwd <- 1.5
+    if (is.null(loc)) loc <- 'topleft'
 
-  time_use <- which(attr(data[[1]], 'post_treat') == id_time)
-  ## background color setup
-  bg_col <- rgb(215, 196, 187, maxColorValue = 255, alpha = 80)
+    time_use <- which(attr(data[[1]], 'post_treat') == id_time)
+    ## background color setup
+    bg_col <- rgb(215, 196, 187, maxColorValue = 255, alpha = 80)
 
-  ## plot
-  plot(1, 1, type = 'n', ylim = ylim, xlim = xlim, xlab = "", ylab = "Mean Outcome", ...)
-  rect(mean(id_time[(time_use-1):time_use]), min(ylim) / 1.04,
-      max(xlim) * 1.04, max(ylim) * 1.04, border = NA, col = bg_col)
-  abline(v = mean(id_time[(time_use-1):time_use]), col = '#B9887D', lty = 3, lwd = 1.3)
-  lines(id_time, ymean[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
-  lines(id_time, ymean[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
-  legend(loc, legend = c("treated", 'control'), col = col[1:2],
-    lty = 1, pch = c(16, 17), bty = 'n')
-  box(lwd = 1.2)
+    ub_inc <- ifelse(max(ylim) > 0, 1.10, 1/1.10)
+    lb_inc <- ifelse(min(ylim) > 0, 1/1.10, 1.10)
+    ## plot
+    plot(1, 1, type = 'n', ylim = ylim, xlim = xlim, xlab = "", ylab = "Mean Outcome", ...)
+    rect(mean(id_time[(time_use-1):time_use]), min(ylim) * lb_inc,
+          max(xlim) * 1.04, max(ylim) * ub_inc, border = NA, col = bg_col)
+    abline(v = mean(id_time[(time_use-1):time_use]), col = '#B9887D', lty = 3, lwd = 1.3)
+    lines(id_time, ymean[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
+    lines(id_time, ymean[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
+    legend(loc, legend = c("treated", 'control'), col = col[1:2],
+      lty = 1, pch = c(16, 17), bty = 'n')
+    box(lwd = 1.2)
+  } else {
+    ## diff_order = 2
+
+    ## prepare data
+    ymean_diff <- t(apply(ymean, 1, diff))
+
+    if (is.null(xlim)) xlim <- c(1, length(id_time)-1) # min(id_time), max(id_time))
+    if (is.null(ylim)) ylim <- c(min(ymean_diff), max(ymean_diff))
+    if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray40')
+    if (is.null(lwd)) lwd <- 1.5
+    if (is.null(loc)) loc <- 'topleft'
+
+    time_use <- which(attr(data[[1]], 'post_treat') == id_time)
+    time_lab <- sapply(1:(length(id_time)-1), function(i) {
+      paste(id_time[i+1], "-", id_time[i], sep = '')
+    })
+    ## background color setup
+    bg_col <- rgb(215, 196, 187, maxColorValue = 255, alpha = 80)
+
+    ub_inc <- ifelse(max(ylim) > 0, 1.10, 1/1.10)
+    lb_inc <- ifelse(min(ylim) > 0, 1/1.10, 1.10)
+
+    ## plot
+    plot(1, 1, type = 'n', ylim = ylim, xlim = xlim, xlab = "",
+      ylab = "Differenced Mean Outcome", xaxt = "n", ...)
+    axis(1, at = 1:max(xlim), labels = time_lab, cex.axis = 0.8)
+    rect(time_use - 1.5, min(ylim) * lb_inc, max(xlim) * 1.04, max(ylim) * ub_inc,
+        border = NA, col = bg_col)
+    abline(v = time_use - 1.5, col = '#B9887D', lty = 3, lwd = 1.3)
+    lines(ymean_diff[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
+    lines(ymean_diff[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
+    legend(loc, legend = c("treated", 'control'), col = col[1:2],
+      lty = 1, pch = c(16, 17), bty = 'n')
+    box(lwd = 1.2)
+
+  }
 }
 
 #' Plot function

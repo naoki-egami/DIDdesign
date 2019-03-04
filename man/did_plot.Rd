@@ -5,11 +5,36 @@
 \title{DiD plot}
 \usage{
 did_plot(formula, data, post_treatment, id_subject = NULL, id_time,
-  diff_order = 1, xlim = NULL, ylim = NULL, col = NULL,
+  diff_order = 0, xlim = NULL, ylim = NULL, col = NULL,
   loc = NULL, lwd = NULL, ...)
 }
+\arguments{
+\item{formula}{\code{outcome ~ treatment}.}
+
+\item{data}{data set}
+
+\item{post_treatment}{a vector of time index indicating post treatment periods.}
+
+\item{id_subject}{a variable name of unit index.
+This should be left as \code{NULL} when repeated cross-section data is used.}
+
+\item{id_time}{a variable name of time index.}
+
+\item{diff_order}{Order of differences. \code{diff_order = 0} generates a plot based on the original outcome.
+\code{diff_order = 1} generates a plot based on differenced outcomes.}
+
+\item{xlim}{xlim}
+
+\item{ylim}{ylim}
+
+\item{col}{col}
+
+\item{loc}{Location of legend. See \code{\link{legend}}.}
+
+\item{lwd}{Line width.}
+}
 \description{
-DiD plot
+Generate a plot for difference-in-differences design.
 }
 \examples{
 # load package
@@ -18,11 +43,23 @@ require(DIDdesign)
 # load data
 data(anzia2012)
 
-# plot
+# two plots
+par(mfrow = c(2, 1), mar = c(4, 4, 2.5, 2))
 did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
   post_treatment = c(2007, 2008, 2009),
   id_subject = "district",
   id_time = "year",
-  ylim = c(10.5, 10.8)
+  ylim = c(10.55, 10.8),
+  diff_order = 0,
+  main = 'Original Series'
+)
+
+did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
+  post_treatment = c(2007, 2008, 2009),
+  id_subject = "district",
+  id_time = "year",
+  ylim = c(-0.05, 0.05),
+  diff_order = 1,
+  main = 'Differenced Series'
 )
 }

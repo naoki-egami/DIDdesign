@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DIDdesign</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -170,7 +170,7 @@ Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni corr
  )
 
  <span class='co'># fit nonparametric double-did method</span>
- <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>did_nonparametric</span>(<span class='no'>out</span>, <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>n_boot</span> <span class='kw'>=</span> <span class='fl'>500</span>, <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; 
+ <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>did_nonparametric</span>(<span class='no'>out</span>, <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>n_boot</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; 
 #&gt; ... estimating treatment effect for  2007  ...
 #&gt; ... bootstraping to compute standard errors ...
 #&gt; ... computing the standard DiD estimate ...
@@ -183,16 +183,16 @@ Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni corr
 #&gt; ... bootstraping to compute standard errors ...
 #&gt; ... computing the standard DiD estimate ...</div><div class='input'>
  <span class='co'># plot results</span>
- <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit</span>, <span class='kw'>full</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='did_nonparametric-1.png' alt='' width='700' height='433' /></div><div class='input'>
+ <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit</span>)</div><div class='img'><img src='did_nonparametric-1.png' alt='' width='700' height='433' /></div><div class='input'>
  <span class='co'># show result summary</span>
  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt;                                2007             2008             2009
 #&gt; 1   D-DiD      ATT           -0.007           -0.012           -0.012
-#&gt; 2           95% CI [-0.013, -0.001]  [-0.02, -0.004]      [-0.023, 0]
+#&gt; 2           95% CI [-0.013, -0.001] [-0.022, -0.004] [-0.022, -0.001]
 #&gt; 3              BIC          -18.018          -18.018          -18.018
 #&gt; 4             HQIC           -9.147           -9.147           -9.147
 #&gt; 5         Selected               M1               M1               M1
 #&gt; 6 Std-DiD      ATT           -0.007           -0.011           -0.011
-#&gt; 7           95% CI [-0.012, -0.001] [-0.018, -0.003] [-0.022, -0.001]</div></pre>
+#&gt; 7           95% CI [-0.012, -0.001]  [-0.02, -0.004]  [-0.02, -0.001]</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
