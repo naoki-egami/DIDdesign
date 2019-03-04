@@ -50,9 +50,6 @@ A function to transform panel data into did double format.
    long = TRUE
  )
 
- # make a plot
- plot(out)
-
  # view a summary
  summary(out)
 }

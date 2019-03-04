@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DIDdesign</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -117,8 +117,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>did_plot_selection</span>(<span class='no'>data</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>equivalence</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>eL</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>eU</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>loc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>)</pre>
+  <span class='kw'>eU</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>loc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -133,6 +132,31 @@ Typically, it is an output from <code><a href='did.html'>did</a></code> function
       <td><p>Level of rejection.
 Confidence intervals are constructed with the 1-alpha and 1 - alpha/2 levels.</p></td>
     </tr>
+    <tr>
+      <th>equivalence</th>
+      <td><p>boolean; if <code>TRUE</code>, equivalence region is superimposed on a plot.
+See also <code>eL</code> and <code>eU</code> arguments to set the upper and the lower bound of a region.</p></td>
+    </tr>
+    <tr>
+      <th>eL</th>
+      <td><p>lower bound of equivalence region. If unspecified, the smallest value of 1 - alpha level sets is used.</p></td>
+    </tr>
+    <tr>
+      <th>eU</th>
+      <td><p>upper bound of equivalence region. If unspecified, the largest value of 1 - alpha level sets is used.</p></td>
+    </tr>
+    <tr>
+      <th>xlim</th>
+      <td><p>xlim. See <code><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></code> function.</p></td>
+    </tr>
+    <tr>
+      <th>ylim</th>
+      <td><p>ylim. See <code><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></code> function.</p></td>
+    </tr>
+    <tr>
+      <th>loc</th>
+      <td><p>location of legend. See <code>link{legend}</code> function.</p></td>
+    </tr>
     </table>
     
 
@@ -143,7 +167,7 @@ Confidence intervals are constructed with the 1-alpha and 1 - alpha/2 levels.</p
 <span class='co'># load data</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>anzia2012</span>)
 
-<span class='co'># fit the model</span>
+<span class='co'># fit models</span>
 <span class='no'>fit1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='did.html'>did</a></span>(<span class='no'>lnavgsalary_cpi</span> ~ <span class='no'>oncycle</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>anzia2012</span>,
             <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>, <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
             <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
@@ -152,9 +176,26 @@ Confidence intervals are constructed with the 1-alpha and 1 - alpha/2 levels.</p
 #&gt; 
 #&gt; ... estimating treatment effect for  2008  ...
 #&gt; 
-#&gt; ... estimating treatment effect for  2009  ...</div><div class='input'>
-<span class='co'># plot</span>
-<span class='fu'>did_plot_selection</span>(<span class='no'>fit1</span>, <span class='kw'>equivalence</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>eL</span> <span class='kw'>=</span> -<span class='fl'>0.005</span>, <span class='kw'>eU</span> <span class='kw'>=</span> <span class='fl'>0.005</span>)</div><div class='output co'>#&gt; <span class='error'>Error in did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005): could not find function "did_plot_selection"</span></div></pre>
+#&gt; ... estimating treatment effect for  2009  ...</div><div class='input'><span class='no'>fit2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='did.html'>did</a></span>(<span class='no'>lnavgsalary_cpi</span> ~ <span class='no'>oncycle</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>anzia2012</span>,
+            <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>, <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
+            <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
+            <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nonparametric"</span>, <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; 
+#&gt; ... estimating treatment effect for  2007  ...
+#&gt; ... computing asymptotic variance ...
+#&gt; ... computing the standard DiD estimate ...
+#&gt; 
+#&gt; ... estimating treatment effect for  2008  ...
+#&gt; ... computing asymptotic variance ...
+#&gt; ... computing the standard DiD estimate ...
+#&gt; 
+#&gt; ... estimating treatment effect for  2009  ...
+#&gt; ... computing asymptotic variance ...
+#&gt; ... computing the standard DiD estimate ...</div><div class='input'>
+<span class='co'># make a plot with equivalence region</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/par'>par</a></span>(<span class='kw'>mfrow</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>), <span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>4</span>, <span class='fl'>2.5</span>, <span class='fl'>3.5</span>, <span class='fl'>1</span>))
+<span class='fu'>did_plot_selection</span>(<span class='no'>fit1</span>, <span class='kw'>equivalence</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>eL</span> <span class='kw'>=</span> -<span class='fl'>0.005</span>, <span class='kw'>eU</span> <span class='kw'>=</span> <span class='fl'>0.005</span>,
+ <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>0.015</span>, <span class='fl'>0.015</span>), <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>"Parametric"</span>)</div><div class='output co'>#&gt; <span class='message'>Equivalence region: [-0.005,0.005] at the alpha = 0.05 level.</span></div><div class='input'><span class='fu'>did_plot_selection</span>(<span class='no'>fit2</span>, <span class='kw'>equivalence</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>eL</span> <span class='kw'>=</span> -<span class='fl'>0.005</span>, <span class='kw'>eU</span> <span class='kw'>=</span> <span class='fl'>0.005</span>,
+ <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>0.015</span>, <span class='fl'>0.015</span>), <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>"Nonparametric"</span>)</div><div class='output co'>#&gt; <span class='message'>Equivalence region: [-0.005,0.005] at the alpha = 0.05 level.</span></div><div class='img'><img src='did_plot_selection-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

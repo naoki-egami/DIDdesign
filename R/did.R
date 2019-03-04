@@ -49,7 +49,7 @@
 #'     id_subject = "district", id_time = "year",
 #'     post_treatment = c(2007, 2008, 2009),
 #'     method = "nonparametric",
-#'     se_boot = TRUE, n_boot = 100, boot_min = FALSE
+#'     se_boot = FALSE
 #'   )
 #'
 #'   # view summary
@@ -57,6 +57,9 @@
 #'
 #'   # view effect plot
 #'   plot(fit1, full = TRUE)
+#'
+#'   # view selection plot
+#'  did_plot_selection(fit1)
 #' @export
 did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE,

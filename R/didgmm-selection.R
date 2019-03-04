@@ -117,7 +117,7 @@ fe_selection <- function(data, fm_list, post_time, alpha = 0.05) {
     if (cover_zero) { min_model <- ff }
   }
 
-  out_list <- list("min_model" = min_model, 'test_theta' = test_theta, 'test_se' = test_se)
+  out_list <- list("min_model" = min_model, 'test_theta' = rev(test_theta), 'test_se' = rev(test_se))
   attr(out_list, 'method') <- 'fe_selection'
   return(out_list)
 }
@@ -146,6 +146,6 @@ rcs_selection <- function(data, fm_list, post_time, alpha = 0.05) {
     }
   }
 
-  return(list("min_model" = min_model, 'test_theta' = test_theta, 'test_se' = test_se))
+  return(list("min_model" = min_model, 'test_theta' = rev(test_theta), 'test_se' = rev(test_se)))
 
 }

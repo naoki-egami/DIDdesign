@@ -35,9 +35,6 @@
 #'    long = TRUE
 #'  )
 #'
-#'  # make a plot
-#'  plot(out)
-#'
 #'  # view a summary
 #'  summary(out)
 #' @export

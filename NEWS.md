@@ -2,6 +2,7 @@
 # DIDdesign 0.2.1
 
 + Added a new feature `did_plot_selection()`. It generates a plot for model selection statistics.
++ Supports asymptotic variances in nonparametric method in `did()`
 
 # DIDdesign 0.2.0
 

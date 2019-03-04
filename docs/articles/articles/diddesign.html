@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">DIDdesign</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -125,31 +125,29 @@ fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/d
     <span class="dt">id_subject =</span> <span class="st">"district"</span>, <span class="dt">id_time =</span> <span class="st">"year"</span>,
     <span class="dt">post_treatment =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2007</span>, <span class="dv">2008</span>, <span class="dv">2009</span>),
     <span class="dt">method =</span> <span class="st">"nonparametric"</span>,
-    <span class="dt">se_boot =</span> <span class="ot">TRUE</span>, <span class="dt">n_boot  =</span> <span class="dv">100</span>, <span class="dt">boot_min =</span> <span class="ot">FALSE</span>,
-    <span class="dt">select =</span> <span class="st">"HQIC"</span>)
+    <span class="dt">se_boot =</span> <span class="ot">FALSE</span>
+)
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ... estimating treatment effect for  2007  ...</span>
-<span class="co">#&gt; ... bootstraping to compute standard errors ...</span>
+<span class="co">#&gt; ... computing asymptotic variance ...</span>
 <span class="co">#&gt; ... computing the standard DiD estimate ...</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ... estimating treatment effect for  2008  ...</span>
-<span class="co">#&gt; ... bootstraping to compute standard errors ...</span>
+<span class="co">#&gt; ... computing asymptotic variance ...</span>
 <span class="co">#&gt; ... computing the standard DiD estimate ...</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ... estimating treatment effect for  2009  ...</span>
-<span class="co">#&gt; ... bootstraping to compute standard errors ...</span>
+<span class="co">#&gt; ... computing asymptotic variance ...</span>
 <span class="co">#&gt; ... computing the standard DiD estimate ...</span>
 
 <span class="co"># summary function</span>
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(fit_np)
 <span class="co">#&gt;                                2007             2008             2009</span>
 <span class="co">#&gt; 1   D-DiD      ATT           -0.007           -0.012           -0.012</span>
-<span class="co">#&gt; 2           95% CI [-0.014, -0.001] [-0.022, -0.004] [-0.022, -0.001]</span>
-<span class="co">#&gt; 3              BIC          -18.018          -18.018          -18.018</span>
-<span class="co">#&gt; 4             HQIC           -9.147           -9.147           -9.147</span>
-<span class="co">#&gt; 5         Selected               M1               M1               M1</span>
-<span class="co">#&gt; 6 Std-DiD      ATT           -0.007           -0.011           -0.011</span>
-<span class="co">#&gt; 7           95% CI  [-0.014, 0.001] [-0.019, -0.002] [-0.022, -0.001]</span>
+<span class="co">#&gt; 2           95% CI [-0.013, -0.001] [-0.021, -0.004] [-0.022, -0.001]</span>
+<span class="co">#&gt; 3         Selected               M1               M1               M1</span>
+<span class="co">#&gt; 4 Std-DiD      ATT           -0.007           -0.011           -0.011</span>
+<span class="co">#&gt; 5           95% CI [-0.012, -0.001]  [-0.02, -0.003]      [-0.021, 0]</span>
 
 
 <span class="co"># plot results</span>

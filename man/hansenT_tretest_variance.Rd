@@ -9,3 +9,4 @@ hansenT_tretest_variance(par, Y, D, M)
 \description{
 GMM variance for the testing moment model
 }
+\keyword{internal}

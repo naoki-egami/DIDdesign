@@ -48,7 +48,9 @@ fit2 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
             method = "nonparametric", se_boot = FALSE)
 
 # make a plot with equivalence region
-did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005)
-did_plot_selection(fit2, equivalence = TRUE, eL = -0.005, eU = 0.005)
+par(mfrow = c(1,2), mar = c(4, 2.5, 3.5, 1))
+did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005,
+ ylim = c(-0.015, 0.015), main = "Parametric")
+did_plot_selection(fit2, equivalence = TRUE, eL = -0.005, eU = 0.005,
+ ylim = c(-0.015, 0.015), main = "Nonparametric")
 }
-\keyword{internal}

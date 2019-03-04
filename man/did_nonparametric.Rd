@@ -45,10 +45,11 @@ Nonparametric Double Difference-in-Differences Estimator
  )
 
  # fit nonparametric double-did method
- fit <- did_nonparametric(out, se_boot = TRUE, n_boot = 100, boot_min = TRUE)
+ fit <- did_nonparametric(out)
 
  # plot results
- plot(fit)
+ par(mar = c(4, 2.5, 3.5, 1))
+ plot(fit, full = TRUE, ylim = c(-0.05, 0.05))
 
  # show result summary
  summary(fit)

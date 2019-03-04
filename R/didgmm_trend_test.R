@@ -343,7 +343,7 @@ hansenT_tretest_over_init <- function(par, Y, D, M, ep) {
 }
 
 #' GMM variance for the testing moment model
-#' @keywords
+#' @keywords internal
 hansenT_tretest_variance <- function(par, Y, D, M) {
   ## params
   zeta <- par

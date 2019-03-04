@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DIDdesign</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -116,7 +116,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>gmm_selection</span>(<span class='no'>Y</span>, <span class='no'>D</span>, <span class='no'>mvec</span>, <span class='no'>t_pre</span>, <span class='no'>select</span>, <span class='no'>n_boot</span>)</pre>
+    <pre class="usage"><span class='fu'>gmm_selection</span>(<span class='no'>Y</span>, <span class='no'>D</span>, <span class='no'>mvec</span>, <span class='no'>t_pre</span>, <span class='no'>select</span>, <span class='no'>alpha</span>, <span class='no'>n_boot</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,13 +139,25 @@
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a list that consists of</p><ul>
+<li><p>min_modela index of selected moment.</p></li>
+<li><p>HQICHQIC values of all models considered.</p></li>
+<li><p>BICBIC values of all models considered.</p></li>
+<li><p>test_thetatest statistics of all models. What value is returned depends on selectin criteria.</p></li>
+</ul>
+
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+          </ul>
 
   </div>
 </div>

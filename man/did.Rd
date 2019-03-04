@@ -66,7 +66,7 @@ Estimate average treatment effect on the treated using double difference-in-diff
     id_subject = "district", id_time = "year",
     post_treatment = c(2007, 2008, 2009),
     method = "nonparametric",
-    se_boot = TRUE, n_boot = 100, boot_min = FALSE
+    se_boot = FALSE
   )
 
   # view summary
@@ -74,4 +74,7 @@ Estimate average treatment effect on the treated using double difference-in-diff
 
   # view effect plot
   plot(fit1, full = TRUE)
+
+  # view selection plot
+ did_plot_selection(fit1)
 }
