@@ -33,6 +33,7 @@ gmm_selection <- function(Y, D, mvec, t_pre, select, alpha, n_boot) {
     min_model  <- check_cover(test_theta, test_se, alpha, mvec)
 
     names(test_theta) <- names(test_se) <- paste("M", mvec[-length(mvec)], sep = '')
+    test_se <- rev(test_se); test_theta <- rev(test_theta)
   } else if (select %in% c('tt1', 'tt2')) {
     ## model selection by t-test
     m_vec <- rev(1:(t_pre - 1))
@@ -60,6 +61,7 @@ gmm_selection <- function(Y, D, mvec, t_pre, select, alpha, n_boot) {
   out_list <- list('min_model' = min_model, 'HQIC' = HQIC, 'BIC' = BIC,
                    'test_theta' = test_theta, 'test_se' = test_se)
   attr(out_list, 'method') <- 'gmm_selection'
+  attr(out_list, 'level')  <- alpha
   return(out_list)
 }
 

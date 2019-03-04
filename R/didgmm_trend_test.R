@@ -18,9 +18,8 @@ didgmm_test2 <- function(Y0, D0, M, max_trial = 100) {
     fit <- list("par" = diff(YD1, difference = M) - diff(YD0, difference = M), "value" = 0)
 
     ## variance (simply adding variances )
-    varn1 <- apply(Y0[D0 == 1,], 2, function(x) var(x));
-    varn0 <- apply(Y0[D0 == 0,], 2, function(x) var(x));
-    se_est <- sqrt(sum(varn1) + sum(varn0))
+    se_est <- sqrt(hansenT_tretest_over2(fit$par, Y = Y0, D = D0, M = M, return_var = TRUE))
+
   } else {
     ## pick initial value with Identify W GMM
     init <- optim(par = rnorm(1), fn = hansenT_tretest_over2, method = 'BFGS',
@@ -60,7 +59,7 @@ hansenT_tretest_over2 <- function(par, Y0, D0, M, init = FALSE, return_var = FAL
   zeta <- par
 
   ## common quantities
-  T0 <- ncol(Y0) - 1; N <- nrow(Y0); N1 <- sum(D0)
+  T0 <- ncol(Y0); N <- nrow(Y0); N1 <- sum(D0)
   pi_i <- N1 / N
   pi_weight <- 1 / pi_i * (D0 - pi_i) / (1 - pi_i)
 
@@ -96,7 +95,43 @@ hansenT_tretest_over2 <- function(par, Y0, D0, M, init = FALSE, return_var = FAL
 
   return(loss)
 }
-
+#
+#
+# #' compute loss based on moment condition
+# #' @keywords internal
+# hansenT_tretest_just_var <- function(par, Y0, D0, M) {
+#   ## params
+#   zeta <- par
+#
+#   ## common quantities
+#   T0 <- ncol(Y0); N <- nrow(Y0); N1 <- sum(D0)
+#   pi_i <- N1 / N
+#   pi_weight <- 1 / pi_i * (D0 - pi_i) / (1 - pi_i)
+#
+#   ## compute moments for zeta
+#   t_use <- (M+1):T0
+#   yT0diff <- matrix(NA, nrow = length(t_use), ncol = N)
+#   for (z in 1:length(t_use)) {
+#     ## take (k-1)-th order diff
+#     tmp <- diff(t(Y0[,1:t_use[z]]), differences = M)
+#     ## take 'last' time period among subseted
+#     yT0diff[z,] <- tmp
+#   }
+#
+#   ## combine moments
+#   psi_out <- t(yT0diff) * pi_weight - zeta
+#
+#   ## compute the loss
+#   W <- as.vector(crossprod(psi_out, psi_out) / N)
+#
+#
+#   ## return gWg
+#   gmm_var <- W
+#   loss    <- gmm_var / N
+#
+#   return(loss)
+# }
+#
 
 
 #' Trend test with mean

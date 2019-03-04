@@ -406,7 +406,8 @@ did_plot_selection <- function(
     if (isTRUE(equivalence)) {
       if(is.null(eL)) eL <- min(CI2a)
       if(is.null(eU)) eU <- max(CI2a)
-      message("Equivalence region: [", eL, ",", eU, "] at the alpha = ", alpha, " level.")
+      message("Equivalence region: [", round(eL, 3), ",", round(eU, 3),
+              "] at the alpha = ", alpha, " level.")
       eq_color <- rgb(123, 162, 63, maxColorValue = 255, alpha = 60)
     }
 
