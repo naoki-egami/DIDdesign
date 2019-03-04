@@ -83,10 +83,10 @@ did_nonparametric <- function(
     ## set m_vec
     tmp <- list()
     for (m in m_vec) {
-      tmp[[m]] <- didgmmT(Y = data[[j]]$Y, D = data[[j]]$D, M = m)
+      tmp[[m]] <- didgmmT(Y = data[[j]]$Y, D = data[[j]]$D, M = m, only_beta = TRUE, ep = 0)
     }
 
-    ## ==== bootstrap ==== ##
+    ## ==== variance calulations ==== ##
     if (isTRUE(se_boot) & isTRUE(boot_min)) {
       ## do bootstrap if necessary for the selected model
       cat("... bootstraping to compute standard errors ...\n")
@@ -110,7 +110,20 @@ did_nonparametric <- function(
       se90 <- tmp_min[[min_model]]$ci90
 
     } else {
-      tmp_min <- se95 <- se90  <- NULL
+      cat("... computing asymptotic variance ...\n")
+      tmp_min <- list()
+      for (m in m_vec) {
+        var_est <- didgmmT.variance(tmp[[m]], Y = data[[j]]$Y, D = data[[j]]$D, M = m)
+        tmp_se95 <- c(tmp[[m]]$ATT + qnorm(0.05/2) * sqrt(var_est),
+                      tmp[[m]]$ATT + qnorm(1 - 0.05/2) * sqrt(var_est))
+        tmp_se90 <- c(tmp[[m]]$ATT + qnorm(0.05) * sqrt(var_est),
+                      tmp[[m]]$ATT + qnorm(1 - 0.05) * sqrt(var_est))
+        tmp_min[[m]] <- list('boot_est' = var_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+      }
+
+      se95 <- tmp_min[[min_model]]$ci95
+      se90 <- tmp_min[[min_model]]$ci90
+
     }
 
     ## ==== standard DiD estimate ==== ##
@@ -121,14 +134,14 @@ did_nonparametric <- function(
       did_est <- std_did(Y = data[[j]]$Y, D = data[[j]]$D)
 
       ## bootstrap
-      if (isTRUE(se_boot)) {
+      # if (isTRUE(se_boot)) {
         tmp_est <- std_did_boot(Y = data[[j]]$Y, D = data[[j]]$D, n_boot = n_boot)
         tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
         tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
         did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
-      } else {
-        did_boot_list <- NULL
-      }
+      # } else {
+      #   did_boot_list <- NULL
+      # }
 
       ## save obj
       did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
@@ -149,7 +162,7 @@ did_nonparametric <- function(
     )
 
     attr(result[[j]], 'post_treat') <- attr(data[[j]], 'post_treat')
-    attr(result[[j]], 'boot') <- se_boot
+    attr(result[[j]], 'boot') <- TRUE
     attr(result[[j]], 'method') <- 'nonparametric'
   }
 
