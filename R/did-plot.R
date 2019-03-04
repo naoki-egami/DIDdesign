@@ -358,14 +358,19 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 #' # load data
 #' data(anzia2012)
 #'
-#' # fit the model
+#' # fit models
 #' fit1 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 #'             id_subject = "district", id_time = "year",
 #'             post_treatment = c(2007, 2008, 2009),
 #'             method = "parametric")
+#' fit2 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
+#'             id_subject = "district", id_time = "year",
+#'             post_treatment = c(2007, 2008, 2009),
+#'             method = "nonparametric", se_boot = FALSE)
 #'
 #' # make a plot with equivalence region
 #' did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005)
+#' did_plot_selection(fit2, equivalence = TRUE, eL = -0.005, eU = 0.005)
 #' @keywords internal
 did_plot_selection <- function(
   data, alpha = 0.05, equivalence = TRUE, eL = NULL, eU = NULL,
@@ -375,9 +380,9 @@ did_plot_selection <- function(
     stop("Input data should be a 'diddesign' object")
   }
 
-  if(exists("selection", attributes(data[[1]]))) {
+  if(exists("selection", attributes(data))) {
     ## extract info
-    selection <- attr(data[[1]], "selection")
+    selection <- attr(data, "selection")
     theta  <- selection$test_theta
     stderr <- selection$test_se
     model  <- selection$min_model
@@ -392,9 +397,9 @@ did_plot_selection <- function(
     if (is.null(ylim)) ylim <- c(min(CIa), max(CIa))
     if (is.null(xlim)) xlim <- c(0.7, length(theta) + 0.3)
     # if (is.null(col) | length(col) < length(theta)) {
-    #   col <- rep('gray30', length(theta))
-    #   col[model] <- "#006284"
-    #   col <- rev(col)
+      col <- rep('gray30', length(theta))
+      col[model] <- "#006284"
+      col <- rev(col)
     # }
     if (is.null(loc)) loc <- 'topleft'
 

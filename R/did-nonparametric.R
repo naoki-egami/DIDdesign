@@ -8,7 +8,7 @@
 #' @param boot_min If \code{TRUE}, bootstrap is used only for the selected model.
 #'  This option helps reduce computational burdens.
 #' @param select The criteria used to select the best model. The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
-#'  Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).
+#'  Options are "GMM", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).
 #' @param est_did If \code{TRUE}, standard difference-in-differences estimates are computed. Default is \code{TRUE}.
 #' @examples
 #'\donttest{
@@ -38,7 +38,8 @@
 #' }
 #' @export
 did_nonparametric <- function(
-  data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE, select = "HQIC",
+  data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
+  alpha = 0.05, select = "GMM",
   est_did = TRUE
 ) {
   ## input checks
@@ -51,33 +52,41 @@ did_nonparametric <- function(
     stop("We reuqire more than two pre-treatment periods.\n")
   }
 
+
+
+  # ********************************************************* #
+  #                                                           #
+  #    model selection based on pre-treatment observations    #
+  #                                                           #
+  # ********************************************************* #
+  result <- list()
+
+  m_vec <- 1:t_pre
+  select_tmp <- gmm_selection(Y = data[[1]]$Y, D = data[[1]]$D,
+                              mvec = m_vec, t_pre = t_pre, select = select, alpha = alpha,
+                              n_boot = n_boot)
+
+  HQIC       <- select_tmp$HQIC
+  BIC        <- select_tmp$BIC
+  min_model  <- select_tmp$min_model
+
+  attr(result, 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
+
   # ********************************************************* #
   #                                                           #
   #       estimate effect for each post-treatment period      #
   #                                                           #
   # ********************************************************* #
-  result <- list()
   for (j in 1:length(data)) {
     cat("\n... estimating treatment effect for ", attr(data[[j]], 'post_treat'), " ...\n")
 
 
     ## ==== point estimate ==== ##
     ## set m_vec
-    m_vec <- 1:t_pre
     tmp <- list()
     for (m in m_vec) {
       tmp[[m]] <- didgmmT(Y = data[[j]]$Y, D = data[[j]]$D, M = m)
     }
-
-    ## ==== model selection ==== ##
-    select_tmp <- gmm_selection(
-      Y = data[[j]]$Y, D = data[[j]]$D,
-      mvec = m_vec, t_pre = t_pre, select = select, n_boot = n_boot
-    )
-
-    HQIC       <- select_tmp$HQIC
-    BIC        <- select_tmp$BIC
-    min_model  <- select_tmp$min_model
 
     ## ==== bootstrap ==== ##
     if (isTRUE(se_boot) & isTRUE(boot_min)) {

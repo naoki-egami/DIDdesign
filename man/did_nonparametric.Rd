@@ -5,7 +5,7 @@
 \title{Nonparametric Double Difference-in-Differences Estimator}
 \usage{
 did_nonparametric(data, se_boot = FALSE, n_boot = 1000,
-  boot_min = TRUE, select = "HQIC", est_did = TRUE)
+  boot_min = TRUE, alpha = 0.05, select = "GMM", est_did = TRUE)
 }
 \arguments{
 \item{data}{did_double.data object. See \code{\link{did_double_data}}.}
@@ -20,7 +20,7 @@ Bootstrap iterations are set by \code{n_boot} argument.}
 This option helps reduce computational burdens.}
 
 \item{select}{The criteria used to select the best model. The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
-Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).}
+Options are "GMM", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).}
 
 \item{est_did}{If \code{TRUE}, standard difference-in-differences estimates are computed. Default is \code{TRUE}.}
 }

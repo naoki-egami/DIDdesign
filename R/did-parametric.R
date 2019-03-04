@@ -41,6 +41,9 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
   BIC        <- 0 #select_tmp$BIC
   min_model  <- select_tmp$min_model
 
+  ## save 
+  attr(result, 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
+
   for (tt in 1:n_post) {
 
     m_vec <- 1:t_pre
@@ -187,7 +190,6 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
     attr(result[[tt]], 'boot')       <- TRUE
     attr(result[[tt]], 'method')     <- 'parametric'
-    attr(result[[tt]], 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
   }
 
   class(result) <- "diddesign"

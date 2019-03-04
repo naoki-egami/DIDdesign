@@ -4,7 +4,7 @@
 \alias{gmm_selection}
 \title{Model selection by GMM}
 \usage{
-gmm_selection(Y, D, mvec, t_pre, select, n_boot)
+gmm_selection(Y, D, mvec, t_pre, select, alpha, n_boot)
 }
 \arguments{
 \item{Y}{outcome}

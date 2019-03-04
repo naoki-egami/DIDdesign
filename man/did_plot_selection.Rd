@@ -37,13 +37,18 @@ require(DIDdesign)
 # load data
 data(anzia2012)
 
-# fit the model
+# fit models
 fit1 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
             id_subject = "district", id_time = "year",
             post_treatment = c(2007, 2008, 2009),
             method = "parametric")
+fit2 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
+            id_subject = "district", id_time = "year",
+            post_treatment = c(2007, 2008, 2009),
+            method = "nonparametric", se_boot = FALSE)
 
 # make a plot with equivalence region
 did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005)
+did_plot_selection(fit2, equivalence = TRUE, eL = -0.005, eU = 0.005)
 }
 \keyword{internal}

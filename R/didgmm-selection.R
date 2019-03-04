@@ -11,30 +11,39 @@
 #'   \item{test_theta}{test statistics of all models. What value is returned depends on selectin criteria.}
 #' }
 #' @keywords internal
-gmm_selection <- function(Y, D, mvec, t_pre, select, n_boot) {
+gmm_selection <- function(Y, D, mvec, t_pre, select, alpha, n_boot) {
   select_list <- list()
-  for (m in mvec) {
-    select_list[[m]] <- didgmm_test(Y = Y, D = D, M = m)
+  T0 <- ncol(Y) - 1
+  Y0 <- Y[, 1:T0];
+
+  ## GMM based selection
+  for (m in 1:(length(mvec)-1)) {
+    select_list[[m]] <- didgmm_test2(Y = Y0, D0 = D, M = mvec[m])
   }
 
-  HQIC <- sapply(select_list, function(x) x$HQIC)
-  BIC  <- sapply(select_list, function(x) x$BIC)
+  HQIC <- rep(0, length(mvec)) # sapply(select_list, function(x) x$HQIC)
+  BIC  <- rep(0, length(mvec)) # sapply(select_list, function(x) x$BIC)
   zeta <- sapply(select_list, function(x) x$zeta)
 
-  if (select %in% c("BIC", "HQIC")) {
+  if (select %in% c("GMM")) {
     ## model selection by BIC and HQIC
-    min_model  <- ifelse(select == "HQIC", which.min(HQIC), which.min(BIC))
+    # min_model  <- ifelse(select == "HQIC", which.min(HQIC), which.min(BIC))
     test_theta <- zeta
+    test_se    <- sapply(select_list, function(x) x$se)
+    min_model  <- check_cover(test_theta, test_se, alpha, mvec)
+
+    names(test_theta) <- names(test_se) <- paste("M", mvec[-length(mvec)], sep = '')
   } else if (select %in% c('tt1', 'tt2')) {
     ## model selection by t-test
     m_vec <- rev(1:(t_pre - 1))
     min_model <- t_pre
     count <- 0
-    for (m in m_vec) {
-      select_list[[m]] <- trendT_test(Y = Y, D = D, M = m, boot = TRUE, n_boot = n_boot)
+    for (m in 1:(length(m_vec)-1)) {
+      m_use <- mvec[m]
+      select_list[[m]] <- trendT_test(Y = Y, D = D, M = m_use, boot = TRUE, n_boot = n_boot)
       use_reject <- ifelse(select == "tt1", select_list[[m]]$boot$reject, select_list[[m]]$boot$reject_correction)
       if (use_reject) {
-        min_model <- m+1
+        min_model <- mvec[m+1]
         break;
       } else {
         count <- count + 1
@@ -48,12 +57,31 @@ gmm_selection <- function(Y, D, mvec, t_pre, select, n_boot) {
     stop("invalid input for select")
   }
 
-  out_list <- list('min_model' = min_model, 'HQIC' = HQIC, 'BIC' = BIC, 'test_theta' = test_theta)
+  out_list <- list('min_model' = min_model, 'HQIC' = HQIC, 'BIC' = BIC,
+                   'test_theta' = test_theta, 'test_se' = test_se)
   attr(out_list, 'method') <- 'gmm_selection'
-  return(out_listw)
+  return(out_list)
 }
 
+#' sequentially check coverage of zero
+#' @keywords internal
+check_cover <- function(theta, se, alpha, mvec) {
+  min_model <- max(mvec)
+  mvec_rev  <- rev(mvec)[-1]
+  theta_rev <- rev(theta)
+  se_rev    <- rev(se)
+  for (i in 1:length(mvec_rev)) {
+    is_cover <- (theta_rev[i] + qnorm(alpha/2) * se_rev[i] <= 0) &
+                (theta_rev[i] + qnorm(1 - alpha/2) * se_rev[i] >= 0)
+    if (is_cover) {
+      min_model <- mvec_rev[i]
+    } else {
+      break;
+    }
+  }
 
+  return(min_model)
+}
 
 #' Model selectin based on linear FE model
 #' @param data panel data from \code{diddesign_data} object.
