@@ -32,30 +32,21 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
 
   # ********************************************************* #
   #                                                           #
-  #         model selection by GMM J-stats or t-test          #
-  #         - use only pre-treatment data                     #
+  #           model selection by GMM  or t-test               #
+  #           - use only pre-treatment data                   #
   #                                                           #
   # ********************************************************* #
   select_tmp <- fe_selection(data[[1]]$pdata, data[[1]]$formula, attr(data[[1]], 'post_treat'))
-  HQIC       <- 0 #select_tmp$HQIC
-  BIC        <- 0 #select_tmp$BIC
   min_model  <- select_tmp$min_model
 
-  ## save 
+  ## save
   attr(result, 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
 
   for (tt in 1:n_post) {
 
     m_vec <- 1:t_pre
-    # select_tmp <- gmm_selection(Y = data[[tt]]$Y, D = data[[tt]]$D,
-    #                             mvec = m_vec, t_pre = t_pre, select = select, n_boot = n_boot)
-    # HQIC       <- select_tmp$HQIC
-    # BIC        <- select_tmp$BIC
-    # min_model  <- select_tmp$min_model
-
     dat_use    <- data[[tt]]$pdata
     fm_list    <- data[[tt]]$formula
-
 
     # ********************************************************* #
     #                                                           #
@@ -178,8 +169,6 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       'results_estimates' = tmp,
       'results_bootstraps' = tmp_min,
       'results_standardDiD' = did_save,
-      'BIC' = BIC, "HQIC" = HQIC,
-      'BIC_min' = min(BIC), 'HQIC_min' = min(HQIC),
       'min_model' = min_model,
       'select' = select,
       'ATT' = tmp[[min_model]]$ATT,

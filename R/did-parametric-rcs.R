@@ -30,8 +30,6 @@ did_parametric_rcs <- function(data) {
     dat_use    <- data[[tt]]$pdata
     fm_list    <- data[[tt]]$formula
     select_tmp <- rcs_selection(dat_use, fm_list, attr(data[[1]], 'post_treat'))
-    HQIC       <- 0 #select_tmp$HQIC
-    BIC        <- 0 #select_tmp$BIC
     min_model  <- select_tmp$min_model
 
     # ********************************************************* #

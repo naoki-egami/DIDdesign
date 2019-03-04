@@ -66,8 +66,6 @@ did_nonparametric <- function(
                               mvec = m_vec, t_pre = t_pre, select = select, alpha = alpha,
                               n_boot = n_boot)
 
-  HQIC       <- select_tmp$HQIC
-  BIC        <- select_tmp$BIC
   min_model  <- select_tmp$min_model
 
   attr(result, 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
@@ -143,8 +141,6 @@ did_nonparametric <- function(
       'results_estimates' = tmp,
       'results_bootstraps' = tmp_min,
       'results_standardDiD' = did_save,
-      'BIC' = BIC, "HQIC" = HQIC,
-      'BIC_min' = min(BIC), 'HQIC_min' = min(HQIC),
       'min_model' = min_model,
       'select' = select,
       'ATT' = tmp[[min_model]]$ATT,

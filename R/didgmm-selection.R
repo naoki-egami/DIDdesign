@@ -58,8 +58,7 @@ gmm_selection <- function(Y, D, mvec, t_pre, select, alpha, n_boot) {
     stop("invalid input for select")
   }
 
-  out_list <- list('min_model' = min_model, 'HQIC' = HQIC, 'BIC' = BIC,
-                   'test_theta' = test_theta, 'test_se' = test_se)
+  out_list <- list('min_model' = min_model, 'test_theta' = test_theta, 'test_se' = test_se)
   attr(out_list, 'method') <- 'gmm_selection'
   attr(out_list, 'level')  <- alpha
   return(out_list)
@@ -118,8 +117,7 @@ fe_selection <- function(data, fm_list, post_time, alpha = 0.05) {
     if (cover_zero) { min_model <- ff }
   }
 
-  out_list <- list("min_model" = min_model, 'BIC' = NULL, "HQIC" = NULL,
-              'test_theta' = test_theta, 'test_se' = test_se)
+  out_list <- list("min_model" = min_model, 'test_theta' = test_theta, 'test_se' = test_se)
   attr(out_list, 'method') <- 'fe_selection'
   return(out_list)
 }
@@ -148,7 +146,6 @@ rcs_selection <- function(data, fm_list, post_time, alpha = 0.05) {
     }
   }
 
-  return(list("min_model" = min_model, 'BIC' = NULL, "HQIC" = NULL, '
-              test_theta' = test_theta, 'test_se' = test_se))
+  return(list("min_model" = min_model, 'test_theta' = test_theta, 'test_se' = test_se))
 
 }
