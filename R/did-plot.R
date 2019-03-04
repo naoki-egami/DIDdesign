@@ -23,8 +23,7 @@
 #' # load data
 #' data(anzia2012)
 #'
-#' # two plots
-#' par(mfrow = c(2, 1), mar = c(4, 4, 2.5, 2))
+#' # original series
 #' did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 #'   post_treatment = c(2007, 2008, 2009),
 #'   id_subject = "district",
@@ -34,6 +33,7 @@
 #'   main = 'Original Series'
 #' )
 #'
+#' # differenced series
 #' did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 #'   post_treatment = c(2007, 2008, 2009),
 #'   id_subject = "district",
@@ -102,7 +102,7 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
 #' @param data Two possible inputs. If \code{panel = TRUE}, input should be a \code{diddesign_data} class object.
 #'    If \code{panel = FALSE}, it should be a list consists of \code{"y1mean"}, \code{"y0mean"} and \code{"id_time"}.
 #' @param panel A boolean argument. \code{TRUE} if data are in the panel format and \code{FALSE} if repeated cross-section.
-#' @param diff_order Either \code{0} (original series) or \code{1} (differenced series). 
+#' @param diff_order Either \code{0} (original series) or \code{1} (differenced series).
 #' @keywords internal
 plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
   xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...) {

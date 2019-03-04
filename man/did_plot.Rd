@@ -43,8 +43,7 @@ require(DIDdesign)
 # load data
 data(anzia2012)
 
-# two plots
-par(mfrow = c(2, 1), mar = c(4, 4, 2.5, 2))
+# original series
 did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
   post_treatment = c(2007, 2008, 2009),
   id_subject = "district",
@@ -54,6 +53,7 @@ did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
   main = 'Original Series'
 )
 
+# differenced series
 did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
   post_treatment = c(2007, 2008, 2009),
   id_subject = "district",
