@@ -19,10 +19,12 @@ didgmm_test <- function(Y, D, M, ep = 0.01, max_trial = 100) {
   ## estimate param
   converge <- 1; iter <- 1
   if (n_over == 0) {
-    ## this is simple
+    ## this is simple  "T0-1"-th order difference-in-differences
     YD1 <- apply(Y[D == 1, 1:T0], 2, mean, na.rm = TRUE);
     YD0 <- apply(Y[D == 0, 1:T0], 2, mean, na.rm = TRUE);
     fit <- list("par" = diff(YD1, difference = (T0-1)) - diff(YD0, difference = (T0-1)), "value" = 0)
+
+    ## variance
   } else {
     ## pick initial value with Identify W GMM
     init <- optim(
@@ -52,7 +54,8 @@ didgmm_test <- function(Y, D, M, ep = 0.01, max_trial = 100) {
 }
 
 
-
+#' compute loss based on moment condition
+#' @keywords internal
 hansenT_tretest_over <- function(par, Y, D, M, ep) {
   ## params
   zeta <- par
@@ -92,9 +95,8 @@ hansenT_tretest_over <- function(par, Y, D, M, ep) {
 }
 
 
-##
-## choose initial value
-##
+#' function to select intial value
+#' @keywords internal
 hansenT_tretest_over_init <- function(par, Y, D, M, ep) {
   ## params
   zeta <- par
