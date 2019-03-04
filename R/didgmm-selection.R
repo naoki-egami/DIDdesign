@@ -3,6 +3,13 @@
 #' @param D treatment
 #' @param m_vec moment sets
 #' @param select selection methods
+#' @return a list that consists of
+#' \itemize{
+#'   \item{min_model}{a index of selected moment.}
+#'   \item{HQIC}{HQIC values of all models considered.}
+#'   \item{BIC}{BIC values of all models considered.}
+#'   \item{test_theta}{test statistics of all models. What value is returned depends on selectin criteria.}
+#' }
 #' @keywords internal
 gmm_selection <- function(Y, D, mvec, t_pre, select, n_boot) {
   select_list <- list()
@@ -12,18 +19,20 @@ gmm_selection <- function(Y, D, mvec, t_pre, select, n_boot) {
 
   HQIC <- sapply(select_list, function(x) x$HQIC)
   BIC  <- sapply(select_list, function(x) x$BIC)
+  zeta <- sapply(select_list, function(x) x$zeta)
 
   if (select %in% c("BIC", "HQIC")) {
     ## model selection by BIC and HQIC
-    min_model <- ifelse(select == "HQIC", which.min(HQIC), which.min(BIC))
+    min_model  <- ifelse(select == "HQIC", which.min(HQIC), which.min(BIC))
+    test_theta <- zeta
   } else if (select %in% c('tt1', 'tt2')) {
     ## model selection by t-test
     m_vec <- rev(1:(t_pre - 1))
     min_model <- t_pre
     count <- 0
     for (m in m_vec) {
-      select_list <- trendT_test(Y = Y, D = D, M = m, boot = TRUE, n_boot = n_boot)
-      use_reject <- ifelse(select == "tt1", select_list$boot$reject, select_list$boot$reject_correction)
+      select_list[[m]] <- trendT_test(Y = Y, D = D, M = m, boot = TRUE, n_boot = n_boot)
+      use_reject <- ifelse(select == "tt1", select_list[[m]]$boot$reject, select_list[[m]]$boot$reject_correction)
       if (use_reject) {
         min_model <- m+1
         break;
@@ -31,14 +40,17 @@ gmm_selection <- function(Y, D, mvec, t_pre, select, n_boot) {
         count <- count + 1
       }
     }
-
+    test_theta <- sapply(select_list, function(x) x$delta)
+    test_se    <- sapply(select_list, function(x) sd(x$boot))
     if (count > 0) min_model <- m_vec[count]
 
   } else {
     stop("invalid input for select")
   }
 
-  return(list('min_model' = min_model, 'HQIC' = HQIC, 'BIC' = BIC))
+  out_list <- list('min_model' = min_model, 'HQIC' = HQIC, 'BIC' = BIC, 'test_theta' = test_theta)
+  attr(out_list, 'method') <- 'gmm_selection'
+  return(out_listw)
 }
 
 
@@ -76,8 +88,10 @@ fe_selection <- function(data, fm_list, post_time, alpha = 0.05) {
     if (cover_zero) { min_model <- ff }
   }
 
-  return(list("min_model" = min_model, 'BIC' = NULL, "HQIC" = NULL,
-              'test_theta' = test_theta, 'test_se' = test_se))
+  out_list <- list("min_model" = min_model, 'BIC' = NULL, "HQIC" = NULL,
+              'test_theta' = test_theta, 'test_se' = test_se)
+  attr(out_list, 'method') <- 'fe_selection'
+  return(out_list)
 }
 
 

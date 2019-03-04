@@ -15,6 +15,15 @@ gmm_selection(Y, D, mvec, t_pre, select, n_boot)
 
 \item{m_vec}{moment sets}
 }
+\value{
+a list that consists of
+\itemize{
+  \item{min_model}{a index of selected moment.}
+  \item{HQIC}{HQIC values of all models considered.}
+  \item{BIC}{BIC values of all models considered.}
+  \item{test_theta}{test statistics of all models. What value is returned depends on selectin criteria.}
+}
+}
 \description{
 Model selection by GMM
 }

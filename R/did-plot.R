@@ -344,6 +344,13 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 #'    Typically, it is an output from \code{\link{did}} function.
 #' @param alpha Level of rejection.
 #'    Confidence intervals are constructed with the 1-alpha and 1 - alpha/2 levels.
+#' @param equivalence boolean; if \code{TRUE}, equivalence region is superimposed on a plot.
+#'    See also \code{eL} and \code{eU} arguments to set the upper and the lower bound of a region.
+#' @param eU upper bound of equivalence region. If unspecified, the largest value of 1 - alpha level sets is used.
+#' @param eL lower bound of equivalence region. If unspecified, the smallest value of 1 - alpha level sets is used.
+#' @param xlim xlim. See \code{\link{plot}} function.
+#' @param ylim ylim. See \code{\link{plot}} function.
+#' @param loc location of legend. See \code{link{legend}} function.
 #' @examples
 #' # load package
 #' require(DIDdesign)
@@ -357,12 +364,12 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 #'             post_treatment = c(2007, 2008, 2009),
 #'             method = "parametric")
 #'
-#' # plot
+#' # make a plot with equivalence region
 #' did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005)
 #' @keywords internal
 did_plot_selection <- function(
   data, alpha = 0.05, equivalence = TRUE, eL = NULL, eU = NULL,
-  xlim = NULL, ylim = NULL, col = NULL, loc = NULL,...) {
+  xlim = NULL, ylim = NULL, loc = NULL,...) {
 
   if (!(class(data) %in% c("diddesign"))) {
     stop("Input data should be a 'diddesign' object")
@@ -384,11 +391,11 @@ did_plot_selection <- function(
     ## prepare plot parameters
     if (is.null(ylim)) ylim <- c(min(CIa), max(CIa))
     if (is.null(xlim)) xlim <- c(0.7, length(theta) + 0.3)
-    if (is.null(col) | length(col) < length(theta)) {
-      col <- rep('gray30', length(theta))
-      col[model] <- "#006284"
-      col <- rev(col)
-    }
+    # if (is.null(col) | length(col) < length(theta)) {
+    #   col <- rep('gray30', length(theta))
+    #   col[model] <- "#006284"
+    #   col <- rev(col)
+    # }
     if (is.null(loc)) loc <- 'topleft'
 
     if (isTRUE(equivalence)) {

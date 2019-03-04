@@ -5,8 +5,7 @@
 \title{Plot function for selection}
 \usage{
 did_plot_selection(data, alpha = 0.05, equivalence = TRUE, eL = NULL,
-  eU = NULL, xlim = NULL, ylim = NULL, col = NULL, loc = NULL,
-  ...)
+  eU = NULL, xlim = NULL, ylim = NULL, loc = NULL, ...)
 }
 \arguments{
 \item{data}{\code{diddesign} object.
@@ -14,6 +13,19 @@ Typically, it is an output from \code{\link{did}} function.}
 
 \item{alpha}{Level of rejection.
 Confidence intervals are constructed with the 1-alpha and 1 - alpha/2 levels.}
+
+\item{equivalence}{boolean; if \code{TRUE}, equivalence region is superimposed on a plot.
+See also \code{eL} and \code{eU} arguments to set the upper and the lower bound of a region.}
+
+\item{eL}{lower bound of equivalence region. If unspecified, the smallest value of 1 - alpha level sets is used.}
+
+\item{eU}{upper bound of equivalence region. If unspecified, the largest value of 1 - alpha level sets is used.}
+
+\item{xlim}{xlim. See \code{\link{plot}} function.}
+
+\item{ylim}{ylim. See \code{\link{plot}} function.}
+
+\item{loc}{location of legend. See \code{link{legend}} function.}
 }
 \description{
 Plot function for selection
@@ -31,7 +43,7 @@ fit1 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
             post_treatment = c(2007, 2008, 2009),
             method = "parametric")
 
-# plot
+# make a plot with equivalence region
 did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005)
 }
 \keyword{internal}
