@@ -49,26 +49,16 @@ did_parametric_rcs <- function(data) {
       dat_trans[[ff]] <- getX_rcs(fit[[ff]], dat_use[,y_var_name])
     }
 
-    # att <- sapply(fit, function(x) x$coef['treatment:post'])
-    # result[[tt]] <- att
     tmp <- tmp_min <- list()
     for (m in m_vec) {
       use_moments <- m_vec[m:length(m_vec)]
-      # if (length(use_moments) == 1) {
-      #   ## point estimate
-      #   est <- list("ATT" = fit[[use_moments]]$coef['treatment:post'])
-      #   tmp[[m]] <- est
-      #
-      #   ## variance
-      #   att_var <- summary(fit[[use_moments]])$coef['treatment:post', 2]^2
-      # } else {
-        ## point estimate
-        est <- didgmmT_parametric_rcs(dat_trans[use_moments])
-        tmp[[m]] <- est
 
-        ## compute variance
-        att_var <- cugmm_var_rcs(par = est$ATT, dat = est$data)
-      # }
+      ## point estimate
+      est <- didgmmT_parametric_rcs(dat_trans[use_moments])
+      tmp[[m]] <- est
+
+      ## compute variance
+      att_var <- cugmm_var_rcs(par = est$ATT, dat = est$data)
 
       ## compute Ci
       tmp_ci95     <- c(est$ATT - 1.96 * sqrt(att_var), est$ATT + 1.96 * sqrt(att_var))
