@@ -442,7 +442,6 @@ did_plot_selection <- function(
       legend(loc, legend = c('selected model'), lty = 1, pch = 16, col = c("#006284"), bty = 'n')
     } else if (isTRUE(equivalence) & !(model <= length(theta))) {
       legend(loc, legend = c( 'equivalence region'),
-        lty = c(NA), pch = c(NA), col = c(NA),
         fill = c(eq_color), border = c('black'), bty = 'n')
     } else {
       legend(loc, legend = c('selection statistic'),
