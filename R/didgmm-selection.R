@@ -146,6 +146,8 @@ rcs_selection <- function(data, fm_list, post_time, alpha = 0.05) {
     }
   }
 
-  return(list("min_model" = min_model, 'test_theta' = rev(test_theta), 'test_se' = rev(test_se)))
+  out_list <- list("min_model" = min_model, 'test_theta' = rev(test_theta), 'test_se' = rev(test_se))
+  attr(out_list, 'method') <- 'rcs_selection'
+  return(out_list)
 
 }

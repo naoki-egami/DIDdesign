@@ -18,19 +18,21 @@ did_parametric_rcs <- function(data) {
 
   n_post <- length(data)
   result <- list()
-  for (tt in 1:n_post) {
 
-    # ********************************************************* #
-    #                                                           #
-    #         model selection by GMM J-stats or t-test          #
-    #         - use only pre-treatment data                     #
-    #                                                           #
-    # ********************************************************* #
+  # ********************************************************* #
+  #                                                           #
+  #         model selection by GMM J-stats or t-test          #
+  #         - use only pre-treatment data                     #
+  #                                                           #
+  # ********************************************************* #
+  select_tmp <- rcs_selection(data[[1]]$pdata, data[[1]]$formula, attr(data[[1]], 'post_treat'))
+  min_model  <- select_tmp$min_model
+  attr(result, 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
+
+  for (tt in 1:n_post) {
 
     dat_use    <- data[[tt]]$pdata
     fm_list    <- data[[tt]]$formula
-    select_tmp <- rcs_selection(dat_use, fm_list, attr(data[[1]], 'post_treat'))
-    min_model  <- select_tmp$min_model
 
     # ********************************************************* #
     #                                                           #
