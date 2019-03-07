@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DIDdesign</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
 
     <pre class="usage"><span class='fu'>did</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>id_time</span>, <span class='no'>post_treatment</span>,
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"parametric"</span>, <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>n_boot</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='st'>"HQIC"</span>)</pre>
+  <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='st'>"GMM"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,30 +201,30 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
     <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>, <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
     <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
     <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nonparametric"</span>,
-    <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>n_boot</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+    <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
   )</div><div class='output co'>#&gt; 
 #&gt; ... estimating treatment effect for  2007  ...
-#&gt; ... bootstraping to compute standard errors ...
+#&gt; ... computing asymptotic variance ...
 #&gt; ... computing the standard DiD estimate ...
 #&gt; 
 #&gt; ... estimating treatment effect for  2008  ...
-#&gt; ... bootstraping to compute standard errors ...
+#&gt; ... computing asymptotic variance ...
 #&gt; ... computing the standard DiD estimate ...
 #&gt; 
 #&gt; ... estimating treatment effect for  2009  ...
-#&gt; ... bootstraping to compute standard errors ...
+#&gt; ... computing asymptotic variance ...
 #&gt; ... computing the standard DiD estimate ...</div><div class='input'>
   <span class='co'># view summary</span>
   <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt;                                2007             2008             2009
 #&gt; 1   D-DiD      ATT           -0.007           -0.012           -0.012
-#&gt; 2           95% CI [-0.013, -0.002] [-0.021, -0.004] [-0.021, -0.002]
-#&gt; 3              BIC          -18.018          -18.018          -18.018
-#&gt; 4             HQIC           -9.147           -9.147           -9.147
-#&gt; 5         Selected               M1               M1               M1
-#&gt; 6 Std-DiD      ATT           -0.007           -0.011           -0.011
-#&gt; 7           95% CI [-0.012, -0.002] [-0.018, -0.002]  [-0.019, 0.001]</div><div class='input'>
+#&gt; 2           95% CI [-0.013, -0.001] [-0.021, -0.004] [-0.022, -0.001]
+#&gt; 3         Selected               M1               M1               M1
+#&gt; 4 Std-DiD      ATT           -0.007           -0.011           -0.011
+#&gt; 5           95% CI [-0.012, -0.001] [-0.019, -0.003]      [-0.022, 0]</div><div class='input'>
   <span class='co'># view effect plot</span>
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit1</span>, <span class='kw'>full</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='did-1.png' alt='' width='700' height='433' /></div></pre>
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit1</span>, <span class='kw'>full</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='did-1.png' alt='' width='700' height='433' /></div><div class='input'>
+  <span class='co'># view selection plot</span>
+ <span class='fu'><a href='did_plot_selection.html'>did_plot_selection</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='message'>Equivalence region: [-0.027,0.008] at the alpha = 0.05 level.</span></div><div class='img'><img src='did-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

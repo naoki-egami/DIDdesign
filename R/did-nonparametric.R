@@ -8,7 +8,7 @@
 #' @param boot_min If \code{TRUE}, bootstrap is used only for the selected model.
 #'  This option helps reduce computational burdens.
 #' @param select The criteria used to select the best model. The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
-#'  Options are "HQIC", "BIC", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).
+#'  Options are "GMM", "tt1" (T-test) and "tt2" (T-test with Bonferroni correction).
 #' @param est_did If \code{TRUE}, standard difference-in-differences estimates are computed. Default is \code{TRUE}.
 #' @examples
 #'\donttest{
@@ -28,17 +28,19 @@
 #'  )
 #'
 #'  # fit nonparametric double-did method
-#'  fit <- did_nonparametric(out, se_boot = TRUE, n_boot = 100, boot_min = TRUE)
+#'  fit <- did_nonparametric(out)
 #'
 #'  # plot results
-#'  plot(fit)
+#'  par(mar = c(4, 2.5, 3.5, 1))
+#'  plot(fit, full = TRUE, ylim = c(-0.05, 0.05))
 #'
 #'  # show result summary
 #'  summary(fit)
 #' }
 #' @export
 did_nonparametric <- function(
-  data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE, select = "HQIC",
+  data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
+  alpha = 0.05, select = "GMM",
   est_did = TRUE
 ) {
   ## input checks
@@ -51,35 +53,41 @@ did_nonparametric <- function(
     stop("We reuqire more than two pre-treatment periods.\n")
   }
 
+
+
+  # ********************************************************* #
+  #                                                           #
+  #    model selection based on pre-treatment observations    #
+  #                                                           #
+  # ********************************************************* #
+  result <- list()
+
+  m_vec <- 1:t_pre
+  select_tmp <- gmm_selection(Y = data[[1]]$Y, D = data[[1]]$D,
+                              mvec = m_vec, t_pre = t_pre, select = select, alpha = alpha,
+                              n_boot = n_boot)
+
+  min_model  <- select_tmp$min_model
+
+  attr(result, 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
+
   # ********************************************************* #
   #                                                           #
   #       estimate effect for each post-treatment period      #
   #                                                           #
   # ********************************************************* #
-  result <- list()
   for (j in 1:length(data)) {
     cat("\n... estimating treatment effect for ", attr(data[[j]], 'post_treat'), " ...\n")
 
 
     ## ==== point estimate ==== ##
     ## set m_vec
-    m_vec <- 1:t_pre
     tmp <- list()
     for (m in m_vec) {
-      tmp[[m]] <- didgmmT(Y = data[[j]]$Y, D = data[[j]]$D, M = m)
+      tmp[[m]] <- didgmmT(Y = data[[j]]$Y, D = data[[j]]$D, M = m, only_beta = TRUE, ep = 0)
     }
 
-    ## ==== model selection ==== ##
-    select_tmp <- gmm_selection(
-      Y = data[[j]]$Y, D = data[[j]]$D,
-      mvec = m_vec, t_pre = t_pre, select = select, n_boot = n_boot
-    )
-
-    HQIC       <- select_tmp$HQIC
-    BIC        <- select_tmp$BIC
-    min_model  <- select_tmp$min_model
-
-    ## ==== bootstrap ==== ##
+    ## ==== variance calulations ==== ##
     if (isTRUE(se_boot) & isTRUE(boot_min)) {
       ## do bootstrap if necessary for the selected model
       cat("... bootstraping to compute standard errors ...\n")
@@ -103,7 +111,20 @@ did_nonparametric <- function(
       se90 <- tmp_min[[min_model]]$ci90
 
     } else {
-      tmp_min <- se95 <- se90  <- NULL
+      cat("... computing asymptotic variance ...\n")
+      tmp_min <- list()
+      for (m in m_vec) {
+        var_est <- didgmmT.variance(tmp[[m]], Y = data[[j]]$Y, D = data[[j]]$D, M = m)
+        tmp_se95 <- c(tmp[[m]]$ATT + qnorm(0.05/2) * sqrt(var_est),
+                      tmp[[m]]$ATT + qnorm(1 - 0.05/2) * sqrt(var_est))
+        tmp_se90 <- c(tmp[[m]]$ATT + qnorm(0.05) * sqrt(var_est),
+                      tmp[[m]]$ATT + qnorm(1 - 0.05) * sqrt(var_est))
+        tmp_min[[m]] <- list('boot_est' = var_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+      }
+
+      se95 <- tmp_min[[min_model]]$ci95
+      se90 <- tmp_min[[min_model]]$ci90
+
     }
 
     ## ==== standard DiD estimate ==== ##
@@ -114,14 +135,14 @@ did_nonparametric <- function(
       did_est <- std_did(Y = data[[j]]$Y, D = data[[j]]$D)
 
       ## bootstrap
-      if (isTRUE(se_boot)) {
+      # if (isTRUE(se_boot)) {
         tmp_est <- std_did_boot(Y = data[[j]]$Y, D = data[[j]]$D, n_boot = n_boot)
         tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
         tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
         did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
-      } else {
-        did_boot_list <- NULL
-      }
+      # } else {
+      #   did_boot_list <- NULL
+      # }
 
       ## save obj
       did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
@@ -134,8 +155,6 @@ did_nonparametric <- function(
       'results_estimates' = tmp,
       'results_bootstraps' = tmp_min,
       'results_standardDiD' = did_save,
-      'BIC' = BIC, "HQIC" = HQIC,
-      'BIC_min' = min(BIC), 'HQIC_min' = min(HQIC),
       'min_model' = min_model,
       'select' = select,
       'ATT' = tmp[[min_model]]$ATT,
@@ -144,7 +163,7 @@ did_nonparametric <- function(
     )
 
     attr(result[[j]], 'post_treat') <- attr(data[[j]], 'post_treat')
-    attr(result[[j]], 'boot') <- se_boot
+    attr(result[[j]], 'boot') <- TRUE
     attr(result[[j]], 'method') <- 'nonparametric'
   }
 

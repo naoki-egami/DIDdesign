@@ -62,8 +62,8 @@ fit_np <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 	id_subject = "district", id_time = "year",
 	post_treatment = c(2007, 2008, 2009),
 	method = "nonparametric",
-	se_boot = TRUE, n_boot  = 100, boot_min = FALSE,
-	select = "HQIC")
+	se_boot = FALSE
+)
 
 # summary function
 summary(fit_np)

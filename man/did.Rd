@@ -6,7 +6,7 @@
 \usage{
 did(formula, data, id_subject = NULL, id_time, post_treatment,
   method = "parametric", se_boot = FALSE, n_boot = 1000,
-  boot_min = TRUE, select = "HQIC")
+  boot_min = TRUE, select = "GMM")
 }
 \arguments{
 \item{formula}{A formula. \code{y ~ d} where \code{y} is the outcome and \code{d} is the (time-varying) treatment indicator.
@@ -53,7 +53,6 @@ A \code{diddesign} class object, which is a list of results for each post treatm
 Estimate average treatment effect on the treated using double difference-in-difference estimator.
 }
 \examples{
-\donttest{
   # load package
   require(DIDdesign)
 
@@ -67,7 +66,7 @@ Estimate average treatment effect on the treated using double difference-in-diff
     id_subject = "district", id_time = "year",
     post_treatment = c(2007, 2008, 2009),
     method = "nonparametric",
-    se_boot = TRUE, n_boot = 100, boot_min = FALSE
+    se_boot = FALSE
   )
 
   # view summary
@@ -75,5 +74,7 @@ Estimate average treatment effect on the treated using double difference-in-diff
 
   # view effect plot
   plot(fit1, full = TRUE)
-}
+
+  # view selection plot
+ did_plot_selection(fit1)
 }

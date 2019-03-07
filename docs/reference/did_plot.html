@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DIDdesign</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -179,8 +179,7 @@ This should be left as <code>NULL</code> when repeated cross-section data is use
 <span class='co'># load data</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>anzia2012</span>)
 
-<span class='co'># two plots</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/par'>par</a></span>(<span class='kw'>mfrow</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>1</span>), <span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>2.5</span>, <span class='fl'>2</span>))
+<span class='co'># original series</span>
 <span class='fu'>did_plot</span>(<span class='no'>lnavgsalary_cpi</span> ~ <span class='no'>oncycle</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>anzia2012</span>,
   <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
   <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>,
@@ -188,8 +187,8 @@ This should be left as <code>NULL</code> when repeated cross-section data is use
   <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>10.55</span>, <span class='fl'>10.8</span>),
   <span class='kw'>diff_order</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Original Series'</span>
-)
-
+)</div><div class='img'><img src='did_plot-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># differenced series</span>
 <span class='fu'>did_plot</span>(<span class='no'>lnavgsalary_cpi</span> ~ <span class='no'>oncycle</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>anzia2012</span>,
   <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
   <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>,
@@ -197,7 +196,7 @@ This should be left as <code>NULL</code> when repeated cross-section data is use
   <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>0.05</span>, <span class='fl'>0.05</span>),
   <span class='kw'>diff_order</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Differenced Series'</span>
-)</div><div class='img'><img src='did_plot-1.png' alt='' width='700' height='433' /></div></pre>
+)</div><div class='img'><img src='did_plot-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
