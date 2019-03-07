@@ -405,12 +405,12 @@ did_plot_selection <- function(
     ## prepare plot parameters
     if (is.null(ylim)) ylim <- c(min(CIa), max(CIa))
     if (is.null(xlim)) xlim <- c(0.7, length(theta) + 0.3)
-    # if (is.null(col) | length(col) < length(theta)) {
-      col <- rep('gray30', length(theta))
-      col[model] <- "#006284"
-      col <- rev(col)
-    # }
-    if (is.null(loc)) loc <- 'topleft'
+    if (is.null(loc)) loc <- 'topleft'
+
+    col <- rep('gray30', length(theta))
+    if (model <= length(theta)) col[model] <- "#006284"
+    col <- rev(col)
+
 
     if (isTRUE(equivalence)) {
       if(is.null(eL)) eL <- min(CI2a)
@@ -434,12 +434,20 @@ did_plot_selection <- function(
     points(theta, pch = 16, cex = 1.2, col = col)
     axis(1, at = 1:length(theta), labels = paste("M", rev(1:length(theta)), sep = ''))
     box(lwd = 1.25)
-    if (isTRUE(equivalence)) {
+    if (isTRUE(equivalence) & (model <= length(theta))) {
     legend(loc, legend = c('selected model', 'equivalence region'),
       lty = c(1, NA), pch = c(16, NA), col = c("#006284", NA),
       fill = c(NA, eq_color), border = c(NA, 'black'), bty = 'n')
-    } else {
+    } else if (!isTRUE(equivalence) & (model <= length(theta))) {
       legend(loc, legend = c('selected model'), lty = 1, pch = 16, col = c("#006284"), bty = 'n')
+    } else if (isTRUE(equivalence) & !(model <= length(theta))) {
+      legend(loc, legend = c( 'equivalence region'),
+        lty = c(NA), pch = c(NA), col = c(NA),
+        fill = c(eq_color), border = c('black'), bty = 'n')
+    } else {
+      legend(loc, legend = c('selection statistic'),
+        lty = 1, pch = 16, col = c("gray30"), bty = 'n')
+
     }
   } else {
     stop("selection does not exsit.")
