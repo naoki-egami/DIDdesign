@@ -42,7 +42,7 @@
 #'   diff_order = 1,
 #'   main = 'Differenced Series'
 #' )
-#' @importFrom dplyr %>% pull tbl_df
+#' @importFrom dplyr %>% pull select tbl_df
 #' @importFrom Formula as.Formula
 #' @importFrom utils getFromNamespace
 #' @export
@@ -66,12 +66,15 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
   ## gether data
   if (is.null(id_subject)) {
     warning("treat data as repeated cross-section data")
-    data %>% group_by(treatment, id_time) %>%
+    dat_use <- data %>% select_(outcome, treatment, id_time) %>% tbl_df()
+    colnames(dat_use) <- c("outcome", "treatment", "id_time")
+    dat_use %>% group_by(treatment, id_time) %>%
       summarise(ymean = mean(outcome, na.rm = TRUE)) -> y_summary
-    y1mean <- y_summary %>% filter(treatment == 1) %>% pul(ymean)
-    y0mean <- y_summary %>% filter(treatment == 0) %>% pul(ymean)
+    y1mean <- y_summary %>% filter(treatment == 1) %>% pull(ymean)
+    y0mean <- y_summary %>% filter(treatment == 0) %>% pull(ymean)
     dat_use <- list("y1mean" = y1mean, 'y0mean' = y0mean,
                     'id_time' = sort(unique(y_summary$id_time)))
+    attr(dat_use, 'post_treat') <- min(post_treatment)
     # if (is.null(xlim))
     # if (is.null(xlim))
     # plot(1, 1, type = 'n', xlim = xlim, ylim = ylim, col = col, ...)
@@ -111,10 +114,14 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
     summary_dat <- summarize.diddesign(data)
     ymean <- summary_dat$ymean
     id_time <- summary_dat$id_time
+    time_use <- which(attr(data[[1]], 'post_treat') == id_time)
+
   } else {
     ## data
     ymean <- rbind(data$y1mean, data$y0mean)
     id_time <- data$id_time
+    time_use <- which(attr(data, 'post_treat') == id_time)
+
   }
 
   ## plot
@@ -125,7 +132,6 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
     if (is.null(lwd)) lwd <- 1.5
     if (is.null(loc)) loc <- 'topleft'
 
-    time_use <- which(attr(data[[1]], 'post_treat') == id_time)
     ## background color setup
     bg_col <- rgb(215, 196, 187, maxColorValue = 255, alpha = 80)
 
