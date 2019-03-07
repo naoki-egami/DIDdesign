@@ -65,7 +65,7 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
 
   ## gether data
   if (is.null(id_subject)) {
-    warning("treat data as repeated cross-section data")
+    message("treat data as repeated cross-section data")
     dat_use <- data %>% select_(outcome, treatment, id_time) %>% tbl_df()
     colnames(dat_use) <- c("outcome", "treatment", "id_time")
     dat_use %>% group_by(treatment, id_time) %>%
