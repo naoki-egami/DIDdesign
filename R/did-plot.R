@@ -405,7 +405,7 @@ did_plot_selection <- function(
     ## prepare plot parameters
     if (is.null(ylim)) ylim <- c(min(CIa), max(CIa))
     if (is.null(xlim)) xlim <- c(0.7, length(theta) + 0.3)
-    if (is.null(loc)) loc <- 'topleft'
+    if (is.null(loc)) loc <- 'topleft'
 
     col <- rep('gray30', length(theta))
     if (model <= length(theta)) col[model] <- "#006284"
