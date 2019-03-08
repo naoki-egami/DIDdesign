@@ -11,4 +11,10 @@ anzia2012
 \description{
 Dataset from Anzia (2012)
 }
+\references{
+Anzia, Sarah F.
+ "The Election Timing Effect: Evidence from a Policy Intervention in Texas."
+ \emph{Quarterly Journal of Political Science} 7.3 (2012):209-248.
+ \doi{10.1561/100.00011056}
+}
 \keyword{dataset}
