@@ -278,15 +278,17 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
       dat2 <- dat %>%
         dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
         mutate(id_time = ifelse(id_time == post_treatment[tt], post_treatment[1], id_time)) %>%
+        mutate(id_time2 = as.numeric(as.factor(id_time))) %>%
         na.omit()
     } else {
       dat2 <- data.frame(outcome, treatment, id_subject, id_time, Xcov) %>%
         tbl_df() %>%
         dplyr::filter(id_time < post_treatment[1] | id_time == post_treatment[tt]) %>%
         mutate(id_time = ifelse(id_time == post_treatment[tt], post_treatment[1], id_time)) %>%
+        mutate(id_time2 = as.numeric(as.factor(id_time))) %>%
         na.omit()
     }
-    dat_plm <- pdata.frame(dat2, index = c("id_subject", "id_time"))
+    dat_plm <- pdata.frame(dat2, index = c("id_subject", "id_time2"))
 
     # make formula
     pre_time <- ncol(y_tmp) - 1;
@@ -307,12 +309,15 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
 
     }
 
+    ## change id for time to be the original scale
+    dat_plm_out <- pdata.frame(data.frame(dat_plm), index = c("id_subject", "id_time"))
+
     ## output
     out[[tt]] <- list(
       "Y" = y_tmp,
       "D" = apply(d_tmp, 1, max),
       'formula' = fm,
-      'pdata' = dat_plm
+      'pdata' = dat_plm_out
     )
 
     attr(out[[tt]], 'post_treat') <- post_treatment[tt]
