@@ -62,7 +62,7 @@
 #' @export
 did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-  select = 'GMM'
+  select = 'parametric'
 ) {
 
   ## import function
@@ -187,7 +187,7 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
 
     fit <- did_nonparametric( data = dat_use,
       se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
-      select  = select, est_did = TRUE
+      select  = 'GMM', est_did = TRUE
     )
   } else if (method == "nonparametric" & isTRUE(is_covariates)) {
     # When covariates are supplied, we alwasy fit the parametric model
@@ -204,7 +204,7 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     } else {
       fit <- did_parametric(data = dat_use,
         se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
-        est_did = FALSE, is_covariates = is_covariates)
+        select = select, est_did = FALSE, is_covariates = is_covariates)
     }
   } else {
     if (isTRUE(se_boot)) {
@@ -217,7 +217,7 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     } else {
       fit <- did_parametric( data = dat_use,
         se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,
-        est_did = FALSE, is_covariates = is_covariates)
+        select = select, est_did = FALSE, is_covariates = is_covariates)
     }
   }
 
