@@ -125,7 +125,7 @@ fe_selection <- function(data, fm_list, post_time, alpha = 0.05) {
 
 
 #' Model selectin based on linear FE model
-#' @importFrom dplyr %>% filter
+#' @importFrom dplyr %>% filter mutate
 #' @keywords internal
 rcs_selection <- function(data, fm_list, post_time, alpha = 0.05) {
 
