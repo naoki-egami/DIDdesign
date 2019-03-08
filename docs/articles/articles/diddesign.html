@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">DIDdesign</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
 <h2 class="hasAnchor">
 <a href="#visualizing-data" class="anchor"></a>Visualizing Data</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># original series </span>
-<span class="kw"><a href="../../reference/did_plot.html">did_plot</a></span>(lnavgsalary_cpi <span class="op">~</span><span class="st"> </span>oncycle, <span class="dt">data =</span> anzia2012,
+<span class="kw"><a href="../../reference/did_plot.html">did_plot</a></span>(lnavgsalary_cpi ~<span class="st"> </span>oncycle, <span class="dt">data =</span> anzia2012,
   <span class="dt">post_treatment =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2007</span>, <span class="dv">2008</span>, <span class="dv">2009</span>),
   <span class="dt">id_subject =</span> <span class="st">"district"</span>,
   <span class="dt">id_time =</span> <span class="st">"year"</span>,
@@ -107,11 +107,11 @@
 <p><img src="diddesign_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
 <span class="co"># differenced series (changes-in-trend)</span>
-<span class="kw"><a href="../../reference/did_plot.html">did_plot</a></span>(lnavgsalary_cpi <span class="op">~</span><span class="st"> </span>oncycle, <span class="dt">data =</span> anzia2012,
+<span class="kw"><a href="../../reference/did_plot.html">did_plot</a></span>(lnavgsalary_cpi ~<span class="st"> </span>oncycle, <span class="dt">data =</span> anzia2012,
   <span class="dt">post_treatment =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2007</span>, <span class="dv">2008</span>, <span class="dv">2009</span>),
   <span class="dt">id_subject =</span> <span class="st">"district"</span>,
   <span class="dt">id_time =</span> <span class="st">"year"</span>,
-  <span class="dt">ylim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="fl">0.05</span>, <span class="fl">0.05</span>),
+  <span class="dt">ylim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(-<span class="fl">0.05</span>, <span class="fl">0.05</span>),
   <span class="dt">diff_order =</span> <span class="dv">1</span>,
   <span class="dt">main =</span> <span class="st">'Differenced Series'</span>
 )</code></pre></div>
@@ -121,7 +121,7 @@
 <h2 class="hasAnchor">
 <a href="#nonparametric-estimator" class="anchor"></a>Nonparametric Estimator</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># estimate ATT</span>
-fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/did.html">did</a></span>(lnavgsalary_cpi <span class="op">~</span><span class="st"> </span>oncycle, <span class="dt">data =</span> anzia2012,
+fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/did.html">did</a></span>(lnavgsalary_cpi ~<span class="st"> </span>oncycle, <span class="dt">data =</span> anzia2012,
     <span class="dt">id_subject =</span> <span class="st">"district"</span>, <span class="dt">id_time =</span> <span class="st">"year"</span>,
     <span class="dt">post_treatment =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2007</span>, <span class="dv">2008</span>, <span class="dv">2009</span>),
     <span class="dt">method =</span> <span class="st">"nonparametric"</span>,
@@ -147,7 +147,7 @@ fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/d
 <span class="co">#&gt; 2           95% CI [-0.013, -0.001] [-0.021, -0.004] [-0.022, -0.001]</span>
 <span class="co">#&gt; 3         Selected               M1               M1               M1</span>
 <span class="co">#&gt; 4 Std-DiD      ATT           -0.007           -0.011           -0.011</span>
-<span class="co">#&gt; 5           95% CI [-0.012, -0.001] [-0.019, -0.003] [-0.022, -0.002]</span>
+<span class="co">#&gt; 5           95% CI      [-0.013, 0] [-0.019, -0.003] [-0.021, -0.001]</span>
 
 
 <span class="co"># plot results</span>
@@ -157,8 +157,8 @@ fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/d
 <div id="parametric-estimator-with-covariates" class="section level2">
 <h2 class="hasAnchor">
 <a href="#parametric-estimator-with-covariates" class="anchor"></a>Parametric Estimator (with Covariates)</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_p1 &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/did.html">did</a></span>(lnavgsalary_cpi <span class="op">~</span><span class="st"> </span>oncycle <span class="op">|</span><span class="st"> </span>teachers_avg_yrs_exper <span class="op">+</span>
-<span class="st">                        </span>ami_pc <span class="op">+</span><span class="st"> </span>asian_pc <span class="op">+</span><span class="st"> </span>black_pc <span class="op">+</span><span class="st"> </span>hisp_pc,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_p1 &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/did.html">did</a></span>(lnavgsalary_cpi ~<span class="st"> </span>oncycle |<span class="st"> </span>teachers_avg_yrs_exper +
+<span class="st">                        </span>ami_pc +<span class="st"> </span>asian_pc +<span class="st"> </span>black_pc +<span class="st"> </span>hisp_pc,
   <span class="dt">data =</span> anzia2012, <span class="dt">id_subject =</span> <span class="st">'district'</span>, <span class="dt">id_time =</span> <span class="st">'year'</span>,
   <span class="dt">post_treatment =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2007</span>, <span class="dv">2008</span>, <span class="dv">2009</span>),
     <span class="dt">method =</span> <span class="st">'parametric'</span>)
@@ -178,11 +178,11 @@ fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/d
 <span class="co">#&gt; 5           95% CI [-0.013, -0.003] [-0.022, -0.008] [-0.024, -0.006]</span>
 
 <span class="co"># plot function</span>
-<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_p1, <span class="dt">full =</span> <span class="ot">TRUE</span>, <span class="dt">ylim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="fl">0.025</span>, <span class="fl">0.005</span>), <span class="dt">xlim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="fl">0.5</span>, <span class="fl">3.5</span>))
+<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_p1, <span class="dt">full =</span> <span class="ot">TRUE</span>, <span class="dt">ylim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(-<span class="fl">0.025</span>, <span class="fl">0.005</span>), <span class="dt">xlim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(-<span class="fl">0.5</span>, <span class="fl">3.5</span>))
 <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/abline">abline</a></span>(<span class="dt">h =</span> <span class="dv">0</span>, <span class="dt">col =</span> <span class="st">'gray'</span>, <span class="dt">lwd =</span> <span class="fl">1.5</span>, <span class="dt">lty =</span> <span class="dv">3</span>)</code></pre></div>
 <p><img src="diddesign_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>We can compare estimates from a model without covariates.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_p2 &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/did.html">did</a></span>(lnavgsalary_cpi <span class="op">~</span><span class="st"> </span>oncycle, <span class="dt">data =</span> anzia2012,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_p2 &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/did.html">did</a></span>(lnavgsalary_cpi ~<span class="st"> </span>oncycle, <span class="dt">data =</span> anzia2012,
     <span class="dt">id_subject =</span> <span class="st">"district"</span>, <span class="dt">id_time =</span> <span class="st">"year"</span>,
     <span class="dt">post_treatment =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2007</span>, <span class="dv">2008</span>, <span class="dv">2009</span>),
     <span class="dt">method =</span> <span class="st">"parametric"</span>)
@@ -203,9 +203,9 @@ fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/d
 
 <span class="co"># plot function</span>
 <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/par">par</a></span>(<span class="dt">mfrow =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="dt">mar =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">4</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="dv">1</span>))
-<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_p1, <span class="dt">full =</span> <span class="ot">TRUE</span>, <span class="dt">ylim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="fl">0.025</span>, <span class="fl">0.005</span>), <span class="dt">xlim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="fl">0.5</span>, <span class="fl">3.5</span>), <span class="dt">main =</span> <span class="st">"With Covariates"</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_p1, <span class="dt">full =</span> <span class="ot">TRUE</span>, <span class="dt">ylim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(-<span class="fl">0.025</span>, <span class="fl">0.005</span>), <span class="dt">xlim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(-<span class="fl">0.5</span>, <span class="fl">3.5</span>), <span class="dt">main =</span> <span class="st">"With Covariates"</span>)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/abline">abline</a></span>(<span class="dt">h =</span> <span class="dv">0</span>, <span class="dt">col =</span> <span class="st">'gray'</span>, <span class="dt">lwd =</span> <span class="fl">1.5</span>, <span class="dt">lty =</span> <span class="dv">3</span>)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_p2, <span class="dt">full =</span> <span class="ot">TRUE</span>, <span class="dt">ylim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="fl">0.025</span>, <span class="fl">0.005</span>), <span class="dt">xlim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span><span class="fl">0.5</span>, <span class="fl">3.5</span>), <span class="dt">main =</span> <span class="st">'Without Covariates'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_p2, <span class="dt">full =</span> <span class="ot">TRUE</span>, <span class="dt">ylim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(-<span class="fl">0.025</span>, <span class="fl">0.005</span>), <span class="dt">xlim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(-<span class="fl">0.5</span>, <span class="fl">3.5</span>), <span class="dt">main =</span> <span class="st">'Without Covariates'</span>)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/abline">abline</a></span>(<span class="dt">h =</span> <span class="dv">0</span>, <span class="dt">col =</span> <span class="st">'gray'</span>, <span class="dt">lwd =</span> <span class="fl">1.5</span>, <span class="dt">lty =</span> <span class="dv">3</span>)</code></pre></div>
 <p><img src="diddesign_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>

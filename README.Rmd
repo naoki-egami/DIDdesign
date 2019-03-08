@@ -27,4 +27,4 @@ Reference
 
 ## Example Usage
 
-- You can find a detailed example in the package's website
+- You can find detailed examples in the package's website

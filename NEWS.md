@@ -1,4 +1,9 @@
 
+# DIDdesign 0.2.2
+
++ Fixed bugs in helper functions.
++ Addressed bug reports: [#5](https://github.com/naoki-egami/DIDdesign/issues/5), [#6](https://github.com/naoki-egami/DIDdesign/issues/6)
+
 # DIDdesign 0.2.1
 
 + Added a new feature `did_plot_selection()`. It generates a plot for model selection statistics.

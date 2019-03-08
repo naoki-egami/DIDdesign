@@ -25,7 +25,7 @@ See also \code{eL} and \code{eU} arguments to set the upper and the lower bound 
 
 \item{ylim}{ylim. See \code{\link{plot}} function.}
 
-\item{loc}{location of legend. See \code{link{legend}} function.}
+\item{loc}{location of legend. See \code{\link{legend}} function.}
 }
 \description{
 Plot function for selection

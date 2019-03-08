@@ -356,7 +356,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 #' @param eL lower bound of equivalence region. If unspecified, the smallest value of 1 - alpha level sets is used.
 #' @param xlim xlim. See \code{\link{plot}} function.
 #' @param ylim ylim. See \code{\link{plot}} function.
-#' @param loc location of legend. See \code{link{legend}} function.
+#' @param loc location of legend. See \code{\link{legend}} function.
 #' @examples
 #' # load package
 #' require(DIDdesign)
