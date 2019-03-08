@@ -9,10 +9,11 @@
 #' @param boot_min If \code{TRUE}, bootstrap is used only for the selected model.
 #'  This option helps reduce computational burdens.
 #'  The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
+#' @param selection either \code{"parametric"} or \code{'GMM'}.
 #' @importFrom plm plm vcovHC
 #' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-                           est_did = FALSE, is_covariates
+                           select = 'parametric', est_did = FALSE, is_covariates
 ) {
 
   ## input checks
@@ -34,7 +35,15 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
   #           - use only pre-treatment data                   #
   #                                                           #
   # ********************************************************* #
-  select_tmp <- fe_selection(data[[1]]$pdata, data[[1]]$formula, attr(data[[1]], 'post_treat'))
+  if (select == 'parametric') {
+    select_tmp <- fe_selection(data[[1]]$pdata, data[[1]]$formula, attr(data[[1]], 'post_treat'))
+  } else {
+    m_vec <- 1:t_pre
+    select_tmp <- gmm_selection(Y = data[[1]]$Y, D = data[[1]]$D,
+                                mvec = m_vec, t_pre = t_pre, select = 'GMM',
+                                alpha = 0.05, n_boot = n_boot)
+  }
+
   min_model  <- select_tmp$min_model
 
   ## save

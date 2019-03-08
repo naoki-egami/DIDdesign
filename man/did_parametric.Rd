@@ -5,7 +5,7 @@
 \title{Parametric Double Difference-in-Differences Estimator}
 \usage{
 did_parametric(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-  est_did = FALSE, is_covariates)
+  select = "parametric", est_did = FALSE, is_covariates)
 }
 \arguments{
 \item{data}{data}
@@ -19,6 +19,8 @@ Bootstrap iterations are set by \code{n_boot} argument.}
 \item{boot_min}{If \code{TRUE}, bootstrap is used only for the selected model.
 This option helps reduce computational burdens.
 The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.}
+
+\item{selection}{either \code{"parametric"} or \code{'GMM'}.}
 }
 \description{
 Parametric Double Difference-in-Differences Estimator
