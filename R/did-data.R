@@ -310,14 +310,14 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
     }
 
     ## change id for time to be the original scale
-    dat_plm_out <- pdata.frame(data.frame(dat_plm), index = c("id_subject", "id_time"))
+    # dat_plm_out <- pdata.frame(data.frame(dat_plm), index = c("id_subject", "id_time"))
 
     ## output
     out[[tt]] <- list(
       "Y" = y_tmp,
       "D" = apply(d_tmp, 1, max),
       'formula' = fm,
-      'pdata' = dat_plm_out
+      'pdata' = dat_plm
     )
 
     attr(out[[tt]], 'post_treat') <- post_treatment[tt]
