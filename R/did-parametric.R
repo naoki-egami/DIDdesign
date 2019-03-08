@@ -8,13 +8,11 @@
 #' @param n_boot The number of bootstrap iterations. Required when \code{se_boot == TRUE}.
 #' @param boot_min If \code{TRUE}, bootstrap is used only for the selected model.
 #'  This option helps reduce computational burdens.
-#' @param select Selection criteria used,
-#'  one of "HQIC", "BIC", "tt1" (T-test), "tt2" (T-test with Bonferroni correction).
 #'  The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
 #' @importFrom plm plm vcovHC
 #' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-                           select = "HQIC", est_did = FALSE, is_covariates
+                           est_did = FALSE, is_covariates
 ) {
 
   ## input checks
@@ -170,7 +168,6 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       'results_bootstraps' = tmp_min,
       'results_standardDiD' = did_save,
       'min_model' = min_model,
-      'select' = select,
       'ATT' = tmp[[min_model]]$ATT,
       'ci95' = ci95,
       'ci90' = ci90
