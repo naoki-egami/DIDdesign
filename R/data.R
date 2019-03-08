@@ -40,7 +40,6 @@
 #' # view results
 #' summary(fit)
 #'
-#' par(mar = c(4, 2.5, 3.5, 1))
 #' plot(fit, full = TRUE)
 #'
 #' did_plot_selection(fit, equivalence = FALSE, ylim = c(0, 0.1))

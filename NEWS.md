@@ -2,7 +2,7 @@
 # DIDdesign 0.2.2
 
 + Fixed bugs in helper functions.
-+ Addressed bug reports: [#5](https://github.com/naoki-egami/DIDdesign/issues/5), [#6](https://github.com/naoki-egami/DIDdesign/issues/6) and [#7](https://github.com/naoki-egami/DIDdesign/issues/7)
++ Addressed bug reports: [#5](https://github.com/naoki-egami/DIDdesign/issues/5), [#6](https://github.com/naoki-egami/DIDdesign/issues/6)
 
 # DIDdesign 0.2.1
 
