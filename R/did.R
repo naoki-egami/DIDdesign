@@ -1,5 +1,4 @@
 
-
 #' Double Difference-in-Differences
 #'
 #' Estimate average treatment effect on the treated using double difference-in-difference estimator.
