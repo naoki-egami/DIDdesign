@@ -2,7 +2,7 @@
 % Please edit documentation in R/did-summary.R
 \name{summary.diddesign}
 \alias{summary.diddesign}
-\title{Summarize output from did function}
+\title{Summarize output from \code{\link{did}} function}
 \usage{
 \method{summary}{diddesign}(obj, full = TRUE)
 }
@@ -17,12 +17,12 @@ a list of the following components:
   \item{method}{a method used to estimate ATT, either \code{parametric} or \code{nonparametric}}
   \item{call}{a formula used in estimation.}
   \item{main}{a matrix of selected estimates.}
-  \item{results}{A list of result matrices.
+  \item{results}{a list of result matrices.
     Each element of list corresponds to a post-period. Returned only when \code{full = TRUE}.}
-  \item{selection}{A matrix of statistics used to select the model. Returned only when \code{full = TRUE}.}
+  \item{selection}{a matrix of statistics used to select the model. Returned only when \code{full = TRUE}.}
 }
 \description{
-Summarize output from did function
+Summarize output from \code{\link{did}} function
 }
 \seealso{
 Other main functions: \code{\link{did_plot_selection}},

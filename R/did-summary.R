@@ -90,7 +90,7 @@ summarize.diddesign <- function(data) {
 
 }
 
-#' Summarize output from did function
+#' Summarize output from \code{\link{did}} function
 #' @param obj an object of \code{diddesign_data} or \code{diddesign} class.
 #'  Prints estimated ATT along with 95\% confidence intervals when output of \code{\code{did}} is suppplied.
 #' @param full a boolean. If \code{TRUE}, all estimates are returned. Default is \code{TRUE}.
@@ -98,9 +98,9 @@ summarize.diddesign <- function(data) {
 #'   \item{method}{a method used to estimate ATT, either \code{parametric} or \code{nonparametric}}
 #'   \item{call}{a formula used in estimation.}
 #'   \item{main}{a matrix of selected estimates.}
-#'   \item{results}{A list of result matrices.
+#'   \item{results}{a list of result matrices.
 #'     Each element of list corresponds to a post-period. Returned only when \code{full = TRUE}.}
-#'   \item{selection}{A matrix of statistics used to select the model. Returned only when \code{full = TRUE}.}
+#'   \item{selection}{a matrix of statistics used to select the model. Returned only when \code{full = TRUE}.}
 #' @family main functions
 #' @export
 summary.diddesign <- function(obj, full = TRUE) {
