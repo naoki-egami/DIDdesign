@@ -118,7 +118,7 @@
 
     <pre class="usage"><span class='fu'>did</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>id_time</span>, <span class='no'>post_treatment</span>,
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"parametric"</span>, <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>n_boot</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='st'>"GMM"</span>)</pre>
+  <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='st'>"parametric"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -215,12 +215,62 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
 #&gt; ... computing asymptotic variance ...
 #&gt; ... computing the standard DiD estimate ...</div><div class='input'>
   <span class='co'># view summary</span>
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt;                                2007             2008             2009
-#&gt; 1   D-DiD      ATT           -0.007           -0.012           -0.012
-#&gt; 2           95% CI [-0.013, -0.001] [-0.021, -0.004] [-0.022, -0.001]
-#&gt; 3         Selected               M1               M1               M1
-#&gt; 4 Std-DiD      ATT           -0.007           -0.011           -0.011
-#&gt; 5           95% CI [-0.012, -0.001] [-0.019, -0.003]      [-0.022, 0]</div><div class='input'>
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; 
+#&gt; Method:
+#&gt; nonparametric
+#&gt; 
+#&gt; 
+#&gt; Call:
+#&gt; lnavgsalary_cpi ~ oncycle
+#&gt; 
+#&gt; 
+#&gt; Main:
+#&gt;         ATT   95% Conf. Int. Selected
+#&gt; 2007 -0.007 [-0.013, -0.001]       M1
+#&gt; 2008 -0.012 [-0.021, -0.004]       M1
+#&gt; 2009 -0.012 [-0.022, -0.001]       M1
+#&gt; 
+#&gt; 
+#&gt; 
+#&gt; Results:
+#&gt; 
+#&gt;  T =  2007 
+#&gt; 
+#&gt;        ATT   95% Conf. Int.  
+#&gt; DiD -0.007 [-0.012, -0.001]  
+#&gt; M1  -0.007 [-0.013, -0.001] ✔
+#&gt; M2  -0.008 [-0.014, -0.001]  
+#&gt; M3  -0.013  [-0.029, 0.003]  
+#&gt; M4   0.013  [-0.027, 0.053]  
+#&gt; 
+#&gt;  T =  2008 
+#&gt; 
+#&gt;        ATT   95% Conf. Int.  
+#&gt; DiD -0.011 [-0.019, -0.003]  
+#&gt; M1  -0.012 [-0.021, -0.004] ✔
+#&gt; M2  -0.013 [-0.022, -0.004]  
+#&gt; M3  -0.018 [-0.036, -0.000]  
+#&gt; M4   0.009  [-0.034, 0.051]  
+#&gt; 
+#&gt;  T =  2009 
+#&gt; 
+#&gt;        ATT   95% Conf. Int.  
+#&gt; DiD -0.011      [-0.022, 0]  
+#&gt; M1  -0.012 [-0.022, -0.001] ✔
+#&gt; M2  -0.012 [-0.023, -0.001]  
+#&gt; M3  -0.017  [-0.033, 0.000]  
+#&gt; M4   0.009  [-0.031, 0.048]  
+#&gt; 
+#&gt; 
+#&gt; Selection:
+#&gt; 
+#&gt;   M1 is selected
+#&gt; 
+#&gt;        Theta Std. Error
+#&gt; M2 -0.012047    0.00881
+#&gt; M3  0.002234    0.00336
+#&gt; M4  0.000498    0.00138
+#&gt; </div><div class='input'>
   <span class='co'># view effect plot</span>
   <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit1</span>, <span class='kw'>full</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='did-1.png' alt='' width='700' height='433' /></div><div class='input'>
   <span class='co'># view selection plot</span>

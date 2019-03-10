@@ -229,8 +229,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
     ##
     ATT <- sapply(data, function(x) round(x$ATT, 3))
     xlab <- sapply(data, function(x) attr(x, 'post_treat'))
-    if (isTRUE(attr(data[[1]], 'boot') & isTRUE(full)) &
-        !is.null(data[[1]]$results_standardDiD)) {
+    if (isTRUE(full) & !is.null(data[[1]]$results_standardDiD)) {
       se_list <- ATT_list <- colors <- list()
       for (i in 1:length(data)) {
         se_mat <- matrix(NA, nrow = length(data[[i]]$results_variance) + 1, ncol = 4)
@@ -280,7 +279,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       legend("topleft", legend = c(lab_method, paste("M", 1:length(data[[1]]$results_variance))),
         pch = points, lty = 1, bty = 'n')
 
-    } else if (isTRUE(attr(data[[1]], 'boot') & isTRUE(full))) {
+    } else if (isTRUE(full)) {
       se_list <- ATT_list<- list()
       for (i in 1:length(data)) {
         se_mat <- matrix(NA, nrow = length(data[[i]]$results_variance), ncol = 4)
@@ -317,7 +316,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       legend("topleft", legend = paste("M", 1:length(data[[1]]$results_variance)),
         pch = points, lty = 1, bty = 'n')
 
-    } else if (isTRUE(attr(data[[1]], 'boot'))) {
+    } else {
       se_mat <- matrix(NA, nrow = length(data), ncol = 4)
       for (i in 1:length(data)) {
         se_mat[i,1:2] <- data[[i]]$ci90
@@ -336,9 +335,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
         arrows(i, se_mat[i,3], i, se_mat[i,4], length=0.05, angle=90, code=3)
       }
 
-    } else {
-      stop("Plot function is not suppored for estimates without bootstrap se's")
-    }
+    } 
   }
 }
 

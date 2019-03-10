@@ -73,7 +73,7 @@
     <div class="page-header toc-ignore">
       <h1>Example Usage (Panel Data)</h1>
             
-            <h4 class="date">2019-03-07</h4>
+            <h4 class="date">2019-03-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/naoki-egami/DIDdesign/blob/master/vignettes/articles/diddesign.Rmd"><code>vignettes/articles/diddesign.Rmd</code></a></small>
       <div class="hidden name"><code>diddesign.Rmd</code></div>
@@ -142,12 +142,61 @@ fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/d
 
 <span class="co"># summary function</span>
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(fit_np)
-<span class="co">#&gt;                                2007             2008             2009</span>
-<span class="co">#&gt; 1   D-DiD      ATT           -0.007           -0.012           -0.012</span>
-<span class="co">#&gt; 2           95% CI [-0.013, -0.001] [-0.021, -0.004] [-0.022, -0.001]</span>
-<span class="co">#&gt; 3         Selected               M1               M1               M1</span>
-<span class="co">#&gt; 4 Std-DiD      ATT           -0.007           -0.011           -0.011</span>
-<span class="co">#&gt; 5           95% CI      [-0.013, 0] [-0.019, -0.003] [-0.021, -0.001]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Method:</span>
+<span class="co">#&gt; nonparametric</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; lnavgsalary_cpi ~ oncycle</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Main:</span>
+<span class="co">#&gt;         ATT   95% Conf. Int. Selected</span>
+<span class="co">#&gt; 2007 -0.007 [-0.013, -0.001]       M1</span>
+<span class="co">#&gt; 2008 -0.012 [-0.021, -0.004]       M1</span>
+<span class="co">#&gt; 2009 -0.012 [-0.022, -0.001]       M1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Results:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  T =  2007 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        ATT   95% Conf. Int.  </span>
+<span class="co">#&gt; DiD -0.007 [-0.013, -0.001]  </span>
+<span class="co">#&gt; M1  -0.007 [-0.013, -0.001] ✔</span>
+<span class="co">#&gt; M2  -0.008 [-0.014, -0.001]  </span>
+<span class="co">#&gt; M3  -0.013  [-0.029, 0.003]  </span>
+<span class="co">#&gt; M4   0.013  [-0.027, 0.053]  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  T =  2008 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        ATT   95% Conf. Int.  </span>
+<span class="co">#&gt; DiD -0.011 [-0.019, -0.003]  </span>
+<span class="co">#&gt; M1  -0.012 [-0.021, -0.004] ✔</span>
+<span class="co">#&gt; M2  -0.013 [-0.022, -0.004]  </span>
+<span class="co">#&gt; M3  -0.018 [-0.036, -0.000]  </span>
+<span class="co">#&gt; M4   0.009  [-0.034, 0.051]  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  T =  2009 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        ATT   95% Conf. Int.  </span>
+<span class="co">#&gt; DiD -0.011 [-0.022, -0.001]  </span>
+<span class="co">#&gt; M1  -0.012 [-0.022, -0.001] ✔</span>
+<span class="co">#&gt; M2  -0.012 [-0.023, -0.001]  </span>
+<span class="co">#&gt; M3  -0.017  [-0.033, 0.000]  </span>
+<span class="co">#&gt; M4   0.009  [-0.031, 0.048]  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Selection:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   M1 is selected</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        Theta Std. Error</span>
+<span class="co">#&gt; M2 -0.012047    0.00881</span>
+<span class="co">#&gt; M3  0.002234    0.00336</span>
+<span class="co">#&gt; M4  0.000498    0.00138</span>
 
 
 <span class="co"># plot results</span>
@@ -170,12 +219,62 @@ fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/d
 <span class="co">#&gt; ... estimating treatment effect for  2009  ...</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># summary function</span>
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(fit_p1)
-<span class="co">#&gt;                                2007             2008             2009</span>
-<span class="co">#&gt; 1   D-DiD      ATT           -0.008           -0.015           -0.015</span>
-<span class="co">#&gt; 2           95% CI [-0.013, -0.004] [-0.022, -0.008] [-0.024, -0.006]</span>
-<span class="co">#&gt; 3         Selected               M1               M1               M1</span>
-<span class="co">#&gt; 4 2way-FE      ATT           -0.008           -0.015           -0.015</span>
-<span class="co">#&gt; 5           95% CI [-0.013, -0.003] [-0.022, -0.008] [-0.024, -0.006]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Method:</span>
+<span class="co">#&gt; parametric</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper + ami_pc + </span>
+<span class="co">#&gt;     asian_pc + black_pc + hisp_pc</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Main:</span>
+<span class="co">#&gt;         ATT   95% Conf. Int. Selected</span>
+<span class="co">#&gt; 2007 -0.008 [-0.013, -0.004]       M1</span>
+<span class="co">#&gt; 2008 -0.015 [-0.022, -0.008]       M1</span>
+<span class="co">#&gt; 2009 -0.015 [-0.024, -0.006]       M1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Results:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  T =  2007 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        ATT   95% Conf. Int.  </span>
+<span class="co">#&gt; DiD -0.008 [-0.013, -0.003]  </span>
+<span class="co">#&gt; M1  -0.008 [-0.013, -0.004] ✔</span>
+<span class="co">#&gt; M2  -0.008 [-0.014, -0.002]  </span>
+<span class="co">#&gt; M3  -0.007  [-0.014, 0.000]  </span>
+<span class="co">#&gt; M4  -0.003  [-0.011, 0.005]  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  T =  2008 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        ATT   95% Conf. Int.  </span>
+<span class="co">#&gt; DiD -0.015 [-0.022, -0.008]  </span>
+<span class="co">#&gt; M1  -0.015 [-0.022, -0.008] ✔</span>
+<span class="co">#&gt; M2  -0.015 [-0.022, -0.007]  </span>
+<span class="co">#&gt; M3  -0.015 [-0.023, -0.006]  </span>
+<span class="co">#&gt; M4  -0.011 [-0.020, -0.002]  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  T =  2009 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        ATT   95% Conf. Int.  </span>
+<span class="co">#&gt; DiD -0.015 [-0.024, -0.006]  </span>
+<span class="co">#&gt; M1  -0.015 [-0.024, -0.006] ✔</span>
+<span class="co">#&gt; M2  -0.015 [-0.025, -0.005]  </span>
+<span class="co">#&gt; M3  -0.015 [-0.026, -0.004]  </span>
+<span class="co">#&gt; M4  -0.012 [-0.023, -0.001]  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Selection:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   M1 is selected</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;       Theta Std. Error</span>
+<span class="co">#&gt; M2 -0.00260    0.00478</span>
+<span class="co">#&gt; M3 -0.00622    0.00404</span>
+<span class="co">#&gt; M4 -0.00278    0.00237</span>
 
 <span class="co"># plot function</span>
 <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit_p1, <span class="dt">full =</span> <span class="ot">TRUE</span>, <span class="dt">ylim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(-<span class="fl">0.025</span>, <span class="fl">0.005</span>), <span class="dt">xlim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(-<span class="fl">0.5</span>, <span class="fl">3.5</span>))
@@ -194,12 +293,61 @@ fit_np &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/d
 <span class="co">#&gt; ... estimating treatment effect for  2009  ...</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># summary function</span>
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(fit_p2)
-<span class="co">#&gt;                                2007            2008             2009</span>
-<span class="co">#&gt; 1   D-DiD      ATT           -0.007          -0.012           -0.012</span>
-<span class="co">#&gt; 2           95% CI [-0.013, -0.001] [-0.02, -0.004] [-0.022, -0.001]</span>
-<span class="co">#&gt; 3         Selected               M1              M1               M1</span>
-<span class="co">#&gt; 4 2way-FE      ATT           -0.006          -0.011           -0.011</span>
-<span class="co">#&gt; 5           95% CI  [-0.014, 0.001] [-0.02, -0.002]      [-0.022, 0]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Method:</span>
+<span class="co">#&gt; parametric</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; lnavgsalary_cpi ~ oncycle</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Main:</span>
+<span class="co">#&gt;         ATT   95% Conf. Int. Selected</span>
+<span class="co">#&gt; 2007 -0.007 [-0.013, -0.001]       M1</span>
+<span class="co">#&gt; 2008 -0.012 [-0.020, -0.004]       M1</span>
+<span class="co">#&gt; 2009 -0.012 [-0.022, -0.001]       M1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Results:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  T =  2007 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        ATT   95% Conf. Int.  </span>
+<span class="co">#&gt; DiD -0.006  [-0.014, 0.001]  </span>
+<span class="co">#&gt; M1  -0.007 [-0.013, -0.001] ✔</span>
+<span class="co">#&gt; M2  -0.007 [-0.014, -0.001]  </span>
+<span class="co">#&gt; M3  -0.007  [-0.015, 0.001]  </span>
+<span class="co">#&gt; M4  -0.004  [-0.013, 0.004]  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  T =  2008 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        ATT   95% Conf. Int.  </span>
+<span class="co">#&gt; DiD -0.011  [-0.02, -0.002]  </span>
+<span class="co">#&gt; M1  -0.012 [-0.020, -0.004] ✔</span>
+<span class="co">#&gt; M2  -0.012 [-0.021, -0.004]  </span>
+<span class="co">#&gt; M3  -0.012 [-0.022, -0.002]  </span>
+<span class="co">#&gt; M4  -0.009  [-0.019, 0.002]  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  T =  2009 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        ATT   95% Conf. Int.  </span>
+<span class="co">#&gt; DiD -0.011      [-0.022, 0]  </span>
+<span class="co">#&gt; M1  -0.012 [-0.022, -0.001] ✔</span>
+<span class="co">#&gt; M2  -0.012 [-0.023, -0.001]  </span>
+<span class="co">#&gt; M3  -0.012  [-0.024, 0.000]  </span>
+<span class="co">#&gt; M4  -0.009  [-0.022, 0.004]  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Selection:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   M1 is selected</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        Theta Std. Error</span>
+<span class="co">#&gt; M2  0.000425    0.00503</span>
+<span class="co">#&gt; M3 -0.002693    0.00430</span>
+<span class="co">#&gt; M4  0.000118    0.00306</span>
 
 <span class="co"># plot function</span>
 <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/par">par</a></span>(<span class="dt">mfrow =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="dt">mar =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">4</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="dv">1</span>))

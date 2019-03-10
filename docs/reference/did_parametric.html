@@ -117,7 +117,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>did_parametric</span>(<span class='no'>data</span>, <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>n_boot</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>est_did</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>is_covariates</span>)</pre>
+  <span class='kw'>select</span> <span class='kw'>=</span> <span class='st'>"parametric"</span>, <span class='kw'>est_did</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>is_covariates</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -141,6 +141,10 @@ Bootstrap iterations are set by <code>n_boot</code> argument.</p></td>
       <td><p>If <code>TRUE</code>, bootstrap is used only for the selected model.
 This option helps reduce computational burdens.
 The selected model is used to estimate bootstrap variance when <code>boot_min = TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>selection</th>
+      <td><p>either <code>"parametric"</code> or <code>'GMM'</code>.</p></td>
     </tr>
     </table>
     
