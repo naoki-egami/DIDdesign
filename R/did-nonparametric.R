@@ -163,7 +163,6 @@ did_nonparametric <- function(
     )
 
     attr(result[[j]], 'post_treat') <- attr(data[[j]], 'post_treat')
-    attr(result[[j]], 'boot') <- TRUE
     attr(result[[j]], 'method') <- 'nonparametric'
   }
 

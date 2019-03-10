@@ -47,6 +47,8 @@ summary.diddesign <- function(obj) {
     colnames(res_tab) <- summary_dat$id_time
     # rownames(res_tab) <- c("Status", "Y:Treated", "Y:Control")
   } else if ('diddesign' %in% class(obj)){
+    
+    
     ATT <- sapply(obj, function(x) round(x$ATT, 3))
     selected <- paste("M", sapply(obj, function(x) as.character(x$min_model)), sep = '')
 

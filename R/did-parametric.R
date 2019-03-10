@@ -183,7 +183,6 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     )
 
     attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
-    attr(result[[tt]], 'boot')       <- TRUE
     attr(result[[tt]], 'method')     <- 'parametric'
   }
 
