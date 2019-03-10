@@ -174,7 +174,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
 
     result[[tt]] <- list(
       'results_estimates' = tmp,
-      'results_bootstraps' = tmp_min,
+      'results_variance' = tmp_min,
       'results_standardDiD' = did_save,
       'min_model' = min_model,
       'ATT' = tmp[[min_model]]$ATT,

@@ -65,7 +65,7 @@ summary.diddesign <- function(obj) {
         DiD_se_save <- rep(NA, length(DiD))
         for (i in 1:length(ATT)) {
           DiD_se_save[i] <- paste("[",
-            paste(round(obj[[i]]$results_standardDiD$results_bootstraps$ci95, 3),
+            paste(round(obj[[i]]$results_standardDiD$results_variance$ci95, 3),
             collapse = ', '), "]", sep = '')
         }
 
@@ -93,7 +93,7 @@ summary.diddesign <- function(obj) {
         DiD_se_save <- rep(NA, length(DiD))
         for (i in 1:length(ATT)) {
           DiD_se_save[i] <- paste("[",
-            paste(round(obj[[i]]$results_standardDiD$results_bootstraps$ci95, 3),
+            paste(round(obj[[i]]$results_standardDiD$results_variance$ci95, 3),
             collapse = ', '), "]", sep = '')
         }
 

@@ -153,7 +153,7 @@ did_nonparametric <- function(
     ## ==== save results ==== ##
     result[[j]] <- list(
       'results_estimates' = tmp,
-      'results_bootstraps' = tmp_min,
+      'results_variance' = tmp_min,
       'results_standardDiD' = did_save,
       'min_model' = min_model,
       'select' = select,

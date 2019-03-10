@@ -94,7 +94,7 @@ did_parametric_rcs <- function(data) {
 
     result[[tt]] <- list(
       'results_estimates' = tmp,
-      'results_bootstraps' = tmp_min,
+      'results_variance' = tmp_min,
       'results_standardDiD' = did_save,
       'min_model' = min_model,
       'ATT' = tmp[[1]]$ATT,
