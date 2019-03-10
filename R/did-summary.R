@@ -125,7 +125,6 @@ summary.diddesign <- function(obj, full = TRUE) {
 
 
 
-
 #' Generate Table for Parametric Method 
 #' @keywords internal
 generate_tab_parametric <- function(obj, ATT, se_save, selected, full = TRUE) {
