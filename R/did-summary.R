@@ -9,8 +9,24 @@ print.summary.diddesign <- function(obj) {
   cat("\nCall:\n", paste(deparse(obj$call), sep="\n", collapse = "\n"), "\n\n", sep = "")
   
   cat("\nMain:\n")
-  print(obj$main, quote = FALSE, right = TRUE)
-  cat("\n")
+  print.default(obj$main, quote = FALSE, right = TRUE)
+  cat("\n\n")
+  
+  if (!is.null(obj$results)) {
+    cat("\nResults:\n\n")
+    for (i in 1:length(obj$results)) {
+      cat(" T = ", obj$results[[i]][["post_treat"]], "\n\n")
+      print.default(obj$results[[i]][['results']], quote = FALSE, right = TRUE)      
+      cat("\n")
+    }
+    
+    cat("\nSelection:\n\n")
+    cat(" ", paste("M", obj$selection[['model']], sep = ''), "is selected\n\n")
+    print.default(obj$selection[['selection']], quote = FALSE, right = TRUE, digits = 3)
+    cat("\n")
+
+  }
+
   invisible(obj)
   
 }
@@ -162,24 +178,57 @@ generate_tab_parametric <- function(obj, ATT, se_save, selected, full = TRUE) {
   
   ## attach full results
   if (isTRUE(full)) {
+    results_list <- list()
+     
     for (i in 1:length(obj)) {
+      ## save obj 
+      results <- matrix(NA, nrow = length(obj[[1]]$results_estimates)+1, ncol = 3)      
+
+      ## save DID 
+      results[1, 1] <- DiD[i]
+      results[1, 2] <- DiD_se_save[i]
+
       
       ## se 
       ci_tmp <- sapply(1:length(obj[[i]]$results_variance), function(j) {
-        tmp <- paste(round(obj[[i]]$results_variance[[j]]$ci95, 3), collapse = ', ')
+        tmp <- paste(formatC(round(obj[[i]]$results_variance[[j]]$ci95, 3), format = 'f', digits = 3), 
+                    collapse = ', ')
         paste("[", tmp , "]", sep = '')                
       })
       
       ## ATT 
       ATT <- sapply(obj[[i]]$results_estimates, function(x) round(x$ATT, 3))
       
-      ## 
-      full_tab <- data.frame(rbind(ATT, ci_tmp))
-      rownames(full_tab) <- c("ATT", "95% Conf. Int.")
-      colnames(full_tab) <- paste("M", 1:ncol(full_tab), sep = '')
-      year_name <- as.character(attr(obj[[i]], 'post_treat'))
-      res_tab[[year_name]] <- full_tab
+      ## selected model 
+      check_mark <- rep("", length(obj[[1]]$results_estimates)+1)
+      check_mark[attr(obj, 'selection')$min_model+1] <- "✔"
+      
+      ## save 
+      results[-1, 1] <- ATT
+      results[-1, 2] <- ci_tmp 
+      results[,3]    <- check_mark
+
+      colnames(results) <- c("ATT", "95% Conf. Int.", "")
+      rownames(results) <- c("DiD", paste("M", 1:length(ATT), sep = ''))
+      results_list[[i]] <- list('results' = results, 'post_treat' = attr(obj[[i]], 'post_treat'))
+      # full_tab <- data.frame(rbind(ATT, ci_tmp))
+      # rownames(full_tab) <- c("ATT", "95% Conf. Int.")
+      # colnames(full_tab) <- paste("M", 1:ncol(full_tab), sep = '')
+      # year_name <- as.character()
+      # res_tab[[year_name]] <- full_tab
     }
+    
+    res_tab$results <- results_list
+    
+    
+    ## save selection 
+    selection <- matrix(NA, nrow = length(attr(obj, "selection")$test_theta), ncol = 2)
+    selection[,1] <- attr(obj, "selection")$test_theta
+    selection[,2] <- attr(obj, "selection")$test_se
+    colnames(selection) <- c("Theta", 'Std. Error')
+    rownames(selection) <- paste("M", 2:(length(attr(obj, "selection")$test_theta)+1), sep = "")
+    res_tab$selection <- list("selection" = selection, "model" = attr(obj, "selection")$min_model)
+    
   }
   
   return(res_tab)
