@@ -4,7 +4,7 @@
 \alias{summary.diddesign}
 \title{Summary Function}
 \usage{
-\method{summary}{diddesign}(obj)
+\method{summary}{diddesign}(obj, full = TRUE)
 }
 \description{
 Summary Function

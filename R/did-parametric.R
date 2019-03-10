@@ -148,7 +148,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       # }
 
       ## save obj
-      did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
+      did_save <- list("ATT" = did_est, 'results_variance' = did_boot_list)
     } else {
       # RETURN TWO-WAY FIXED EFFECT ESTIMATE
       did_est <- fit[[1]]$coef[1]
@@ -162,7 +162,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       tmp_se90 <- c(did_est + qnorm(0.050) * sqrt(did_var), did_est + qnorm(1 - 0.050) * sqrt(did_var))
 
       did_boot_list <- list('boot_est' = NULL, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
-      did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
+      did_save <- list("ATT" = did_est, 'results_variance' = did_boot_list)
 
     }
 

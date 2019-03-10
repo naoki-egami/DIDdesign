@@ -145,7 +145,7 @@ did_nonparametric <- function(
       # }
 
       ## save obj
-      did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
+      did_save <- list("ATT" = did_est, 'results_variance' = did_boot_list)
     } else {
       did_save <- NULL
     }
