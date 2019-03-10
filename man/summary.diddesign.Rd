@@ -2,10 +2,13 @@
 % Please edit documentation in R/did-summary.R
 \name{summary.diddesign}
 \alias{summary.diddesign}
-\title{Summary Function}
+\title{Summarize Output from DiD Function}
 \usage{
 \method{summary}{diddesign}(obj, full = TRUE)
 }
+\arguments{
+\item{obj}{an object of \code{diddesign_data} or \code{diddesign} class.}
+}
 \description{
-Summary Function
+Summarize Output from DiD Function
 }

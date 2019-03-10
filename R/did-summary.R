@@ -4,7 +4,9 @@
 ##
 
 
-# print function 
+#' Print output from summary function
+#' @param obj an object of \code{summary.diddesign} class, typically an ouput from \code{\link{summary.diddesign}}.
+#' @export
 print.summary.diddesign <- function(obj) {
   cat("\nCall:\n", paste(deparse(obj$call), sep="\n", collapse = "\n"), "\n\n", sep = "")
   
@@ -31,6 +33,9 @@ print.summary.diddesign <- function(obj) {
   
 }
 
+#' Print output from summary function
+#' @param obj an object of \code{summary.diddesign_data} class, typically an ouput from \code{\link{summary.diddesign}}.
+#' @export
 print.summary.diddesign_data <- function(obj) {
   cat("\nSummary:\n")
   res_tab <- rbind(
@@ -47,7 +52,8 @@ print.summary.diddesign_data <- function(obj) {
   invisible(obj)
 }
 
-# helper function 
+#' helper function 
+#' @keywords internal
 summarize.diddesign <- function(data) {
   n_post <- length(data)
   ## get some data
@@ -76,7 +82,8 @@ summarize.diddesign <- function(data) {
 
 }
 
-#' Summary Function
+#' Summarize Output from DiD Function
+#' @param obj an object of \code{diddesign_data} or \code{diddesign} class.
 #' @export
 summary.diddesign <- function(obj, full = TRUE) {
   if ('diddesign_data' %in% class(obj)) {
