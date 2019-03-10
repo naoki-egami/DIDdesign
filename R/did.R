@@ -221,5 +221,10 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     }
   }
 
+
+  ## add attributes 
+  attr(fit, 'call') <- formula
+  attr(fit, 'method') <- method
+ 
   return(fit)
 }

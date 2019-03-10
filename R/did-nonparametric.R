@@ -145,7 +145,7 @@ did_nonparametric <- function(
       # }
 
       ## save obj
-      did_save <- list("ATT" = did_est, 'results_bootstraps' = did_boot_list)
+      did_save <- list("ATT" = did_est, 'results_variance' = did_boot_list)
     } else {
       did_save <- NULL
     }
@@ -153,7 +153,7 @@ did_nonparametric <- function(
     ## ==== save results ==== ##
     result[[j]] <- list(
       'results_estimates' = tmp,
-      'results_bootstraps' = tmp_min,
+      'results_variance' = tmp_min,
       'results_standardDiD' = did_save,
       'min_model' = min_model,
       'select' = select,
@@ -163,7 +163,6 @@ did_nonparametric <- function(
     )
 
     attr(result[[j]], 'post_treat') <- attr(data[[j]], 'post_treat')
-    attr(result[[j]], 'boot') <- TRUE
     attr(result[[j]], 'method') <- 'nonparametric'
   }
 

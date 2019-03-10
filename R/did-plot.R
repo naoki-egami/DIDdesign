@@ -233,18 +233,18 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
         !is.null(data[[1]]$results_standardDiD)) {
       se_list <- ATT_list <- colors <- list()
       for (i in 1:length(data)) {
-        se_mat <- matrix(NA, nrow = length(data[[i]]$results_bootstraps) + 1, ncol = 4)
-        att_vec <- rep(NA, length(data[[i]]$results_bootstraps) + 1)
+        se_mat <- matrix(NA, nrow = length(data[[i]]$results_variance) + 1, ncol = 4)
+        att_vec <- rep(NA, length(data[[i]]$results_variance) + 1)
 
         ## save DiD
-        se_mat[1,1:2] <- data[[i]]$results_standardDiD$results_bootstraps$ci90
-        se_mat[1,3:4] <- data[[i]]$results_standardDiD$results_bootstraps$ci95
+        se_mat[1,1:2] <- data[[i]]$results_standardDiD$results_variance$ci90
+        se_mat[1,3:4] <- data[[i]]$results_standardDiD$results_variance$ci95
         att_vec[1] <- data[[i]]$results_standardDiD$ATT
 
-        colors[[i]] <- rep('gray60', length(data[[i]]$results_bootstraps))
-        for (j in 1:length(data[[i]]$results_bootstraps)) {
-          se_mat[j+1,1:2] <- data[[i]]$results_bootstraps[[j]]$ci90
-          se_mat[j+1,3:4] <- data[[i]]$results_bootstraps[[j]]$ci95
+        colors[[i]] <- rep('gray60', length(data[[i]]$results_variance))
+        for (j in 1:length(data[[i]]$results_variance)) {
+          se_mat[j+1,1:2] <- data[[i]]$results_variance[[j]]$ci90
+          se_mat[j+1,3:4] <- data[[i]]$results_variance[[j]]$ci95
           att_vec[j+1]    <- data[[i]]$results_estimates[[j]]$ATT
           colors[[i]][j+1]  <- ifelse(data[[i]]$min_model == j, "#006284", 'gray40')
         }
@@ -256,15 +256,15 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 
       ## plot
       points_master <- c(16:17, 15, 2, 4:9)
-      locs <- seq(-0.3, 0.3, length.out = length(data[[1]]$results_bootstraps)+1)
-      points <- c(1, points_master[1:length(data[[1]]$results_bootstraps)])
+      locs <- seq(-0.3, 0.3, length.out = length(data[[1]]$results_variance)+1)
+      points <- c(1, points_master[1:length(data[[1]]$results_variance)])
 
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(unlist(se_list)), max(unlist(se_list)))
       plot (1, 1, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", ylab = "ATT", xlab = "", ...)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
-        for (j in 1:(length(data[[i]]$results_bootstraps)+1)) {
+        for (j in 1:(length(data[[i]]$results_variance)+1)) {
           # point
           points(i+locs[j], ATT_list[[i]][j], pch = points[j], col = colors[[i]][j])
           # 90%
@@ -277,17 +277,17 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
         }
       }
       lab_method <- ifelse(attr(data[[1]], 'method') == 'parametric', 'TFE', 'DiD')
-      legend("topleft", legend = c(lab_method, paste("M", 1:length(data[[1]]$results_bootstraps))),
+      legend("topleft", legend = c(lab_method, paste("M", 1:length(data[[1]]$results_variance))),
         pch = points, lty = 1, bty = 'n')
 
     } else if (isTRUE(attr(data[[1]], 'boot') & isTRUE(full))) {
       se_list <- ATT_list<- list()
       for (i in 1:length(data)) {
-        se_mat <- matrix(NA, nrow = length(data[[i]]$results_bootstraps), ncol = 4)
-        att_vec <- rep(NA, length(data[[i]]$results_bootstraps))
-        for (j in 1:length(data[[i]]$results_bootstraps)) {
-          se_mat[j,1:2] <- data[[i]]$results_bootstraps[[j]]$ci90
-          se_mat[j,3:4] <- data[[i]]$results_bootstraps[[j]]$ci95
+        se_mat <- matrix(NA, nrow = length(data[[i]]$results_variance), ncol = 4)
+        att_vec <- rep(NA, length(data[[i]]$results_variance))
+        for (j in 1:length(data[[i]]$results_variance)) {
+          se_mat[j,1:2] <- data[[i]]$results_variance[[j]]$ci90
+          se_mat[j,3:4] <- data[[i]]$results_variance[[j]]$ci95
           att_vec[j] <- data[[i]]$results_estimates[[j]]$ATT
         }
         se_list[[i]] <- se_mat
@@ -296,15 +296,15 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 
       ## plot
       points_master <- c(16:17, 1:9)
-      locs <- seq(-0.3, 0.3, length.out = length(data[[1]]$results_bootstraps))
-      points <- points_master[1:length(data[[1]]$results_bootstraps)]
+      locs <- seq(-0.3, 0.3, length.out = length(data[[1]]$results_variance))
+      points <- points_master[1:length(data[[1]]$results_variance)]
 
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(unlist(se_list)), max(unlist(se_list)))
       plot (1, 1, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", ylab = "ATT", xlab = "", ...)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
-        for (j in 1:length(data[[i]]$results_bootstraps)) {
+        for (j in 1:length(data[[i]]$results_variance)) {
           # point
           points(i+locs[j], ATT_list[[i]][j], pch = points[j])
           # 90%
@@ -314,7 +314,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 
         }
       }
-      legend("topleft", legend = paste("M", 1:length(data[[1]]$results_bootstraps)),
+      legend("topleft", legend = paste("M", 1:length(data[[1]]$results_variance)),
         pch = points, lty = 1, bty = 'n')
 
     } else if (isTRUE(attr(data[[1]], 'boot'))) {
