@@ -9,7 +9,10 @@ print.summary.diddesign <- function(obj) {
   cat("\nCall:\n", paste(deparse(obj$call), sep="\n", collapse = "\n"), "\n\n", sep = "")
   
   cat("\nMain:\n")
-  print(obj$main)
+  print(obj$main, quote = FALSE, right = TRUE)
+  cat("\n")
+  invisible(obj)
+  
 }
 
 print.summary.diddesign_data <- function(obj) {
@@ -24,7 +27,8 @@ print.summary.diddesign_data <- function(obj) {
   
   ##
   print.default(res_tab, quote = FALSE, right = TRUE)
-
+  cat("\n")
+  invisible(obj)
 }
 
 # helper function 
@@ -82,7 +86,8 @@ summary.diddesign <- function(obj, full = TRUE) {
     selected <- paste("M", sapply(obj, function(x) as.character(x$min_model)), sep = '')
     ## obtain estiamted se for all years (for selected models )
     se_save <- sapply(1:length(ATT), function(i) {
-      paste("[", paste(round(obj[[i]]$ci95, 3), collapse = ', '), "]", sep = '')
+      tmp <- paste(formatC(round(obj[[i]]$ci95, 3), format = 'f', digits = 3), collapse = ', ')
+      paste("[", tmp, "]", sep = '')
     })
     
     ## get information about fitted method 
@@ -91,6 +96,7 @@ summary.diddesign <- function(obj, full = TRUE) {
     ## summary function 
     if (isTRUE(is_parametric)) {
       res_tab <- generate_tab_parametric(obj, ATT, se_save, selected, full = full)
+      class(res_tab) <- 'summary.diddesign'      
     } else {
       DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
       DiD_se_save <- rep(NA, length(DiD))
@@ -112,76 +118,6 @@ summary.diddesign <- function(obj, full = TRUE) {
       rownames(res_tab) <- NULL    
       class(res_tab) <- 'summary.diddesign'  
     }
-      # 
-      # # did estimates
-      # if (!is.null(obj[[1]]$results_standardDiD) & attr(obj[[1]], 'method') == 'nonparametric') {
-      #   # BIC <- sapply(obj, function(x) round(x$BIC_min, 3))
-      #   # HQIC <- sapply(obj, function(x) round(x$HQIC_min, 3))
-      # 
-      #   DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
-      #   DiD_se_save <- rep(NA, length(DiD))
-      #   for (i in 1:length(ATT)) {
-      #     DiD_se_save[i] <- paste("[",
-      #       paste(round(obj[[i]]$results_standardDiD$results_variance$ci95, 3),
-      #       collapse = ', '), "]", sep = '')
-      #   }
-      # 
-      #   # make a table
-      #   tabs_var <- c("D-DiD", "", "", "Std-DiD", "")
-      #   labs_var <- c("ATT", "95% CI", "Selected", "ATT",  "95% CI")
-      #   res_tab <- data.frame(cbind(tabs_var, labs_var,
-      #     rbind(ATT, se_save, selected, DiD, DiD_se_save))
-      #   )
-      # 
-      #   # col labels
-      #   colnames(res_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
-      #   rownames(res_tab) <- NULL
-      # } else if(attr(obj[[1]], 'method') == 'nonparametric') {
-      #   # BIC <- sapply(obj, function(x) round(x$BIC_min, 3))
-      #   # HQIC <- sapply(obj, function(x) round(x$HQIC_min, 3))
-      # 
-      #   res_tab <- data.frame(rbind(
-      #     ATT, se_save, selected
-      #   ), row.names = c("ATT", "95% CI", "Selected Model"))
-      #   colnames(res_tab) <- sapply(obj, function(x) attr(x, 'post_treat'))
-      # 
-      # } else if (!is.null(obj[[1]]$results_standardDiD) & attr(obj[[1]], 'method') == 'parametric') {
-      #   DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
-      #   DiD_se_save <- rep(NA, length(DiD))
-      #   for (i in 1:length(ATT)) {
-      #     DiD_se_save[i] <- paste("[",
-      #       paste(round(obj[[i]]$results_standardDiD$results_variance$ci95, 3),
-      #       collapse = ', '), "]", sep = '')
-      #   }
-      # 
-      #   # make a table
-      #   tabs_var <- c("D-DiD", "", "", "2way-FE", "")
-      #   labs_var <- c("ATT", "95% CI", "Selected", "ATT",  "95% CI")
-      #   res_tab <- data.frame(cbind(tabs_var, labs_var,
-      #     rbind(ATT, se_save, selected, DiD, DiD_se_save))
-      #   )
-      # 
-      #   # col labels
-      #   colnames(res_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
-      #   rownames(res_tab) <- NULL
-      # } else {
-      #   res_tab <- data.frame(rbind(
-      #     ATT, se_save, selected
-      #   ), row.names = c("ATT", "95% CI", "Selected Model"))
-      #   colnames(res_tab) <- sapply(obj, function(x) attr(x, 'post_treat'))
-      # 
-      # }
-
-    ##
-    ## this is left as legacy code (no variance estimates)
-    ##
-    # } else {
-    #   res_tab <- data.frame(rbind(
-    #     ATT, selected
-    #   ), row.names = c("ATT", "Selected Model"))
-    #   colnames(res_tab) <- sapply(obj, function(x) attr(x, 'post_treat'))
-    # 
-    # }
   }
   
   return(res_tab)
@@ -206,15 +142,21 @@ generate_tab_parametric <- function(obj, ATT, se_save, selected, full = TRUE) {
   })
 
   ## make a main table
-  tabs_var <- c("D-DiD", "", "", "2way-FE", "")
-  labs_var <- c("ATT", "95% CI", "Selected", "ATT",  "95% CI")
-  main_tab <- data.frame(cbind(tabs_var, labs_var,
-    rbind(ATT, se_save, selected, DiD, DiD_se_save))
-  )
+  # tabs_var <- c("D-DiD", "", "", "2way-FE", "")
+  # labs_var <- c("ATT", "95% CI", "Selected", "ATT",  "95% CI")
+  # main_tab <- data.frame(cbind(tabs_var, labs_var,
+  #   rbind(ATT, se_save, selected, DiD, DiD_se_save))
+  # )
+  # 
+  # ## col labels
+  # colnames(main_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
+  # rownames(main_tab) <- NULL    
 
+  main_tab <- cbind(ATT, se_save, selected)
+  
   ## col labels
-  colnames(main_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
-  rownames(main_tab) <- NULL    
+  rownames(main_tab) <- sapply(obj, function(x) as.character(attr(x, 'post_treat')))
+  colnames(main_tab) <- c("ATT", "95% Conf. Int.", "Selected")
 
   ## add 
   res_tab$main <- main_tab
@@ -234,7 +176,7 @@ generate_tab_parametric <- function(obj, ATT, se_save, selected, full = TRUE) {
       
       ## 
       full_tab <- data.frame(rbind(ATT, ci_tmp))
-      rownames(full_tab) <- c("ATT", "95% CI")
+      rownames(full_tab) <- c("ATT", "95% Conf. Int.")
       colnames(full_tab) <- paste("M", 1:ncol(full_tab), sep = '')
       year_name <- as.character(attr(obj[[i]], 'post_treat'))
       res_tab[[year_name]] <- full_tab
