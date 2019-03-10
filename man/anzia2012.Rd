@@ -4,7 +4,14 @@
 \name{anzia2012}
 \alias{anzia2012}
 \title{Dataset from Anzia (2012)}
-\format{A \code{tbl} format data.}
+\format{A panel data in \code{tbl} and \code{data.frame} format
+  with 6,377 rows and 11 variables:
+ \describe{
+   \item{district}{district id}
+   \item{year}{time index}
+   \item{lnavgsalary_cpi}{main outcome variable}
+   \item{oncycle}{main treatment variable}
+ }}
 \usage{
 data(anzia2012)
 }

@@ -27,4 +27,5 @@ Reference
 
 ## Example Usage
 
-- You can find detailed examples in the package's website
+- [Example of analyzing panel data](./docs/articles/articles/diddesign.html)
+- Example of analyzing repeated cross-section data

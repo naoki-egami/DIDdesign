@@ -4,7 +4,14 @@
 #' @name anzia2012
 #' @usage data(anzia2012)
 #' @docType data
-#' @format A \code{tbl} format data.
+#' @format A panel data in \code{tbl} and \code{data.frame} format
+#'   with 6,377 rows and 11 variables:
+#'  \describe{
+#'    \item{district}{district id}
+#'    \item{year}{time index}
+#'    \item{lnavgsalary_cpi}{main outcome variable}
+#'    \item{oncycle}{main treatment variable}
+#'  }
 #' @references Anzia, Sarah F.
 #'  "The Election Timing Effect: Evidence from a Policy Intervention in Texas."
 #'  \emph{Quarterly Journal of Political Science} 7.3 (2012):209-248.
@@ -18,7 +25,7 @@
 #' @name dekadt2018
 #' @usage data(dekadt2018)
 #' @docType data
-#' @format A \code{tbl} format data.
+#' @format A panel data in \code{tbl} and \code{data.frame} format.
 #' @references  De Kadt, Daniel, and Horacio A. Larreguy.
 #'  "Agents of the regime? Traditional leaders and electoral politics in South Africa."
 #'  \emph{The Journal of Politics} 80.2 (2018): 382-399.

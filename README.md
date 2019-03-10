@@ -19,7 +19,8 @@ Installation
     install_github("naoki-egami/DIDdesign", dependencies = TRUE)
     ```
 
-Example Usage of `DIDdesign`
-----------------------------
+Example Usage
+-------------
 
--   You can find a detailed example in the package's website
+-   [Example of analyzing panel data](./docs/articles/articles/diddesign.html)
+-   Example of analyzing repeated cross-section data
