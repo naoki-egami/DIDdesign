@@ -4,21 +4,22 @@
 \alias{did_data_rcs}
 \title{Data processing function for repeated cross-section data}
 \usage{
-did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov)
+did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov,
+  x_formula = NULL)
 }
 \arguments{
-\item{outcome}{A vector of outcome variable.}
+\item{outcome}{a vector of outcome variable.}
 
-\item{treatment}{A vector of treatment indicator variable.}
+\item{treatment}{a vector of treatment indicator variable.}
 
-\item{post_treatment}{A vector of numeric time index for post treatment periods.}
+\item{post_treatment}{a vector of numeric time index for post treatment periods.}
 
-\item{id_time}{A vector of time index variable.}
+\item{id_time}{a vector of time index variable.}
 
-\item{Xcov}{A matrix of covariates.}
+\item{Xcov}{a matrix of covariates.}
 }
 \value{
-A list. Each element corresponds to each post-treatment period.
+\code{\link{did_data_rcs}} returns a list. Each element corresponds to each post-treatment period.
  Each element of the returned list is also a list consists of the following:
 \itemize{
  \item \code{Y}: outcome vector.
