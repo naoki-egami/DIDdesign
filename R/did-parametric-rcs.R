@@ -2,6 +2,7 @@
 
 #' Parametric Double Difference-in-Differences Estimator with Repeated Cross-Section Data
 #' @param data A \code{diddesign_data} object.
+#' @family estimation functions
 #' @export
 did_parametric_rcs <- function(data) {
   ## input checks

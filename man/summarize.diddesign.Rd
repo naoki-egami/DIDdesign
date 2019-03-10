@@ -2,11 +2,21 @@
 % Please edit documentation in R/did-summary.R
 \name{summarize.diddesign}
 \alias{summarize.diddesign}
-\title{helper function}
+\title{helper function to summarize data}
 \usage{
 summarize.diddesign(data)
 }
+\arguments{
+\item{data}{an object of \code{diddesign_data} class, typically an output from \code{\link{did_data}}.}
+
+\item{return}{a list consists of the following
+\itemize{
+  \item{ymean}{a matrix of mean outcome. The first row is for the treated and the second row is for the control.
+               Columns correspond to time index (ascending order).}
+  \item{id_time}{a vector of unique time index (ascending order).}
+}}
+}
 \description{
-helper function
+helper function to summarize data
 }
 \keyword{internal}

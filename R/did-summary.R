@@ -8,21 +8,21 @@
 #' @param obj an object of \code{summary.diddesign} class, typically an ouput from \code{\link{summary.diddesign}}.
 #' @export
 print.summary.diddesign <- function(obj) {
-  cat("\nMethod:\n", obj$method, "\n\n", sep = "")  
+  cat("\nMethod:\n", obj$method, "\n\n", sep = "")
   cat("\nCall:\n", paste(deparse(obj$call), sep="\n", collapse = "\n"), "\n\n", sep = "")
-  
+
   cat("\nMain:\n")
   print.default(obj$main, quote = FALSE, right = TRUE)
   cat("\n\n")
-  
+
   if (!is.null(obj$results)) {
     cat("\nResults:\n\n")
     for (i in 1:length(obj$results)) {
       cat(" T = ", obj$results[[i]][["post_treat"]], "\n\n")
-      print.default(obj$results[[i]][['results']], quote = FALSE, right = TRUE)      
+      print.default(obj$results[[i]][['results']], quote = FALSE, right = TRUE)
       cat("\n")
     }
-    
+
     cat("\nSelection:\n\n")
     cat(" ", paste("M", obj$selection[['model']], sep = ''), "is selected\n\n")
     print.default(obj$selection[['selection']], quote = FALSE, right = TRUE, digits = 3)
@@ -31,7 +31,7 @@ print.summary.diddesign <- function(obj) {
   }
 
   invisible(obj)
-  
+
 }
 
 #' Print output from summary function
@@ -46,14 +46,21 @@ print.summary.diddesign_data <- function(obj) {
   ##
   colnames(res_tab) <- obj$id_time
   rownames(res_tab) <- c("Status", "Y:Treated", "Y:Control", "YT-YC")
-  
+
   ##
   print.default(res_tab, quote = FALSE, right = TRUE)
   cat("\n")
   invisible(obj)
 }
 
-#' helper function 
+#' helper function to summarize data
+#' @param data an object of \code{diddesign_data} class, typically an output from \code{\link{did_data}}.
+#' @param return a list consists of the following
+#' \itemize{
+#'   \item{ymean}{a matrix of mean outcome. The first row is for the treated and the second row is for the control.
+#'                Columns correspond to time index (ascending order).}
+#'   \item{id_time}{a vector of unique time index (ascending order).}
+#' }
 #' @keywords internal
 summarize.diddesign <- function(data) {
   n_post <- length(data)
@@ -83,8 +90,18 @@ summarize.diddesign <- function(data) {
 
 }
 
-#' Summarize Output from DiD Function
+#' Summarize output from did function
 #' @param obj an object of \code{diddesign_data} or \code{diddesign} class.
+#'  Prints estimated ATT along with 95\% confidence intervals when output of \code{\code{did}} is suppplied.
+#' @param full a boolean. If \code{TRUE}, all estimates are returned. Default is \code{TRUE}.
+#' @return a list of the following components:
+#'   \item{method}{a method used to estimate ATT, either \code{parametric} or \code{nonparametric}}
+#'   \item{call}{a formula used in estimation.}
+#'   \item{main}{a matrix of selected estimates.}
+#'   \item{results}{A list of result matrices.
+#'     Each element of list corresponds to a post-period. Returned only when \code{full = TRUE}.}
+#'   \item{selection}{A matrix of statistics used to select the model. Returned only when \code{full = TRUE}.}
+#' @family main functions
 #' @export
 summary.diddesign <- function(obj, full = TRUE) {
   if ('diddesign_data' %in% class(obj)) {
@@ -92,137 +109,120 @@ summary.diddesign <- function(obj, full = TRUE) {
     post_first <- attr(obj[[1]], 'post_treat')
     post_bool  <- summary_dat$id_time >= post_first
     status <- ifelse(post_bool, "T", "C")
-    
-    res_tab <- list() 
-    res_tab[["Status"]]    <- status 
+
+    res_tab <- list()
+    res_tab[["Status"]]    <- status
     res_tab[["Y:Treated"]] <- round(summary_dat$ymean[1,], 3)
     res_tab[["Y:Control"]] <- round(summary_dat$ymean[2,], 3)
     res_tab[["YT-YC"]]     <- round(summary_dat$ymean[1,] - summary_dat$ymean[2,], 3)
     res_tab[["id_time"]]   <- summary_dat$id_time
     class(res_tab) <- 'summary.diddesign_data'
-    
-    # rownames(res_tab) <- c("Status", "Y:Treated", "Y:Control")
+
   } else if ('diddesign' %in% class(obj)){
-    
-    ## get estimated ATT 
-    ATT <- sapply(obj, function(x) round(x$ATT, 3))
-    ## get selected models 
-    selected <- paste("M", sapply(obj, function(x) as.character(x$min_model)), sep = '')
-    ## obtain estiamted se for all years (for selected models )
-    se_save <- sapply(1:length(ATT), function(i) {
-      tmp <- paste(formatC(round(obj[[i]]$ci95, 3), format = 'f', digits = 3), collapse = ', ')
-      paste("[", tmp, "]", sep = '')
-    })
-    
-    ## get information about fitted method 
-    is_parametric <- attr(obj[[1]], 'method') == 'parametric'
-    
-    ## summary function 
-    if (isTRUE(is_parametric)) {
-      res_tab <- generate_tab_parametric(obj, ATT, se_save, selected, full = full)
-      res_tab[['method']] <- attr(obj, 'method')
-      class(res_tab) <- 'summary.diddesign'      
-    } else {
-      res_tab <- generate_tab_parametric(obj, ATT, se_save, selected, full = full)
-      res_tab[['method']] <- attr(obj, 'method')  
-      class(res_tab) <- 'summary.diddesign'  
-    }
+    ## summary function
+    res_tab <- generate_tab_parametric(obj, ATT, se_save, selected, full = full)
+    res_tab[['method']] <- attr(obj, 'method')
+    class(res_tab) <- 'summary.diddesign'
   }
-  
+
   return(res_tab)
 }
 
 
 
-#' Generate Table for Parametric Method 
+#' Generate Table for Parametric Method
+#' @param obj an object of \code{diddesign} class.
+#' @param full a boolean; if \code{TRUE} all results are attached.
 #' @keywords internal
-generate_tab_parametric <- function(obj, ATT, se_save, selected, full = TRUE) {
+generate_tab_parametric <- function(obj, full = TRUE) {
   res_tab <- list()
-  
-  ## formula 
+
+  ## formula
   res_tab$call <- attr(obj, 'call')
-  
-  ## get did estimates 
-  DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
-  DiD_se_save <- sapply(1:length(ATT), function(i) {
-    paste("[", 
-      paste(round(obj[[i]]$results_standardDiD$results_variance$ci95, 3), collapse = ', '), "]", sep = '')
+
+  ##
+  ## main table
+  ##
+
+  ## get estimated ATT
+  ATT <- sapply(obj, function(x) round(x$ATT, 3))
+
+  ## obtain estiamted se for all years (for selected models )
+  se_save <- sapply(1:length(ATT), function(i) {
+    tmp <- paste(formatC(round(obj[[i]]$ci95, 3), format = 'f', digits = 3), collapse = ', ')
+    paste("[", tmp, "]", sep = '')
   })
 
-  ## make a main table
-  # tabs_var <- c("D-DiD", "", "", "2way-FE", "")
-  # labs_var <- c("ATT", "95% CI", "Selected", "ATT",  "95% CI")
-  # main_tab <- data.frame(cbind(tabs_var, labs_var,
-  #   rbind(ATT, se_save, selected, DiD, DiD_se_save))
-  # )
-  # 
-  # ## col labels
-  # colnames(main_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
-  # rownames(main_tab) <- NULL    
+  ## get selected models
+  selected <- paste("M", sapply(obj, function(x) as.character(x$min_model)), sep = '')
 
+  ## make a table and add col labels
   main_tab <- cbind(ATT, se_save, selected)
-  
-  ## col labels
   rownames(main_tab) <- sapply(obj, function(x) as.character(attr(x, 'post_treat')))
   colnames(main_tab) <- c("ATT", "95% Conf. Int.", "Selected")
 
-  ## add 
+  ## add to return table
   res_tab$main <- main_tab
-  
+
+  ##
   ## attach full results
+  ##
   if (isTRUE(full)) {
     results_list <- list()
-     
-    for (i in 1:length(obj)) {
-      ## save obj 
-      results <- matrix(NA, nrow = length(obj[[1]]$results_estimates)+1, ncol = 3)      
 
-      ## save DID 
+    ## get DID estimates
+    DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
+    DiD_se_save <- sapply(1:length(ATT), function(i) {
+      paste("[",
+        paste(round(obj[[i]]$results_standardDiD$results_variance$ci95, 3), collapse = ', '), "]", sep = '')
+    })
+
+    for (i in 1:length(obj)) {
+      ## save obj
+      results <- matrix(NA, nrow = length(obj[[1]]$results_estimates)+1, ncol = 3)
+
+      ## save DID
       results[1, 1] <- DiD[i]
       results[1, 2] <- DiD_se_save[i]
 
-      
-      ## se 
+
+      ## se
       ci_tmp <- sapply(1:length(obj[[i]]$results_variance), function(j) {
-        tmp <- paste(formatC(round(obj[[i]]$results_variance[[j]]$ci95, 3), format = 'f', digits = 3), 
+        tmp <- paste(formatC(round(obj[[i]]$results_variance[[j]]$ci95, 3), format = 'f', digits = 3),
                     collapse = ', ')
-        paste("[", tmp , "]", sep = '')                
+        paste("[", tmp , "]", sep = '')
       })
-      
-      ## ATT 
+
+      ## ATT
       ATT <- sapply(obj[[i]]$results_estimates, function(x) round(x$ATT, 3))
-      
-      ## selected model 
+
+      ## selected model
       check_mark <- rep("", length(obj[[1]]$results_estimates)+1)
       check_mark[attr(obj, 'selection')$min_model+1] <- "✔"
-      
-      ## save 
+
+      ## save
       results[-1, 1] <- ATT
-      results[-1, 2] <- ci_tmp 
+      results[-1, 2] <- ci_tmp
       results[,3]    <- check_mark
 
+      ## add labels
       colnames(results) <- c("ATT", "95% Conf. Int.", "")
       rownames(results) <- c("DiD", paste("M", 1:length(ATT), sep = ''))
       results_list[[i]] <- list('results' = results, 'post_treat' = attr(obj[[i]], 'post_treat'))
-      # full_tab <- data.frame(rbind(ATT, ci_tmp))
-      # rownames(full_tab) <- c("ATT", "95% Conf. Int.")
-      # colnames(full_tab) <- paste("M", 1:ncol(full_tab), sep = '')
-      # year_name <- as.character()
-      # res_tab[[year_name]] <- full_tab
     }
-    
+
     res_tab$results <- results_list
-    
-    
-    ## save selection 
+
+    ##
+    ## save selection
+    ##
     selection <- matrix(NA, nrow = length(attr(obj, "selection")$test_theta), ncol = 2)
     selection[,1] <- attr(obj, "selection")$test_theta
     selection[,2] <- attr(obj, "selection")$test_se
     colnames(selection) <- c("Theta", 'Std. Error')
     rownames(selection) <- paste("M", length(attr(obj, "selection")$test_theta):1, sep = "")
     res_tab$selection <- list("selection" = selection, "model" = attr(obj, "selection")$min_model)
-    
   }
-  
+
   return(res_tab)
 }

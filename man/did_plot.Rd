@@ -63,3 +63,9 @@ did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
   main = 'Differenced Series'
 )
 }
+\seealso{
+Other main functions: \code{\link{did_plot_selection}},
+  \code{\link{did}}, \code{\link{plot.diddesign}},
+  \code{\link{summary.diddesign}}
+}
+\concept{main functions}

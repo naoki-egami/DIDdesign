@@ -4,7 +4,12 @@
 \alias{generate_tab_parametric}
 \title{Generate Table for Parametric Method}
 \usage{
-generate_tab_parametric(obj, ATT, se_save, selected, full = TRUE)
+generate_tab_parametric(obj, full = TRUE)
+}
+\arguments{
+\item{obj}{an object of \code{diddesign} class.}
+
+\item{full}{a boolean; if \code{TRUE} all results are attached.}
 }
 \description{
 Generate Table for Parametric Method

@@ -2,13 +2,31 @@
 % Please edit documentation in R/did-summary.R
 \name{summary.diddesign}
 \alias{summary.diddesign}
-\title{Summarize Output from DiD Function}
+\title{Summarize output from did function}
 \usage{
 \method{summary}{diddesign}(obj, full = TRUE)
 }
 \arguments{
-\item{obj}{an object of \code{diddesign_data} or \code{diddesign} class.}
+\item{obj}{an object of \code{diddesign_data} or \code{diddesign} class.
+Prints estimated ATT along with 95\% confidence intervals when output of \code{\code{did}} is suppplied.}
+
+\item{full}{a boolean. If \code{TRUE}, all estimates are returned. Default is \code{TRUE}.}
+}
+\value{
+a list of the following components:
+  \item{method}{a method used to estimate ATT, either \code{parametric} or \code{nonparametric}}
+  \item{call}{a formula used in estimation.}
+  \item{main}{a matrix of selected estimates.}
+  \item{results}{A list of result matrices.
+    Each element of list corresponds to a post-period. Returned only when \code{full = TRUE}.}
+  \item{selection}{A matrix of statistics used to select the model. Returned only when \code{full = TRUE}.}
 }
 \description{
-Summarize Output from DiD Function
+Summarize output from did function
 }
+\seealso{
+Other main functions: \code{\link{did_plot_selection}},
+  \code{\link{did_plot}}, \code{\link{did}},
+  \code{\link{plot.diddesign}}
+}
+\concept{main functions}

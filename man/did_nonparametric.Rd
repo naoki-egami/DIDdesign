@@ -55,3 +55,8 @@ Nonparametric Double Difference-in-Differences Estimator
  summary(fit)
 }
 }
+\seealso{
+Other estimation functions: \code{\link{did_parametric_rcs}},
+  \code{\link{did_parametric}}
+}
+\concept{estimation functions}

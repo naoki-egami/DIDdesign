@@ -25,3 +25,8 @@ The selected model is used to estimate bootstrap variance when \code{boot_min = 
 \description{
 Parametric Double Difference-in-Differences Estimator
 }
+\seealso{
+Other estimation functions: \code{\link{did_nonparametric}},
+  \code{\link{did_parametric_rcs}}
+}
+\concept{estimation functions}

@@ -11,6 +11,7 @@
 #'  The selected model is used to estimate bootstrap variance when \code{boot_min = TRUE}.
 #' @param selection either \code{"parametric"} or \code{'GMM'}.
 #' @importFrom plm plm vcovHC
+#' @family estimation functions
 #' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
                            select = 'parametric', est_did = FALSE, is_covariates

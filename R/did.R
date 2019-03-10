@@ -14,17 +14,13 @@
 #' @param n_boot Number of bootstrap iterations.
 #' @param boot_min If \code{TRUE} bootstrap is carried out only for the selected model.
 #' @param select Selection criteria.
-#' @return A \code{diddesign} class object, which is a list of results for each post treatment period.
-#'  A result for one period contains:
+#' @return It is recommended to use \code{\link{summary}} function to extract estimates. Please see \code{\link{summary.diddesign}}.
+#'
+#' \code{\link{did}} returns an object of \code{diddesign} class, which is a list of results for each post treatment period.
+#' A result for one period contains:
 #'  \itemize{
 #'    \item \code{results_estimates}:
-#'    \item \code{results_bootstraps}: bootstrap estimates.
-#'    \item \code{BIC}: BIC for all models .
-#'    \item \code{HQIC}: HQIC for all models.
-#'    \item \code{BIC_min}: BIC for the selected model.
-#'      This is the smallest BIC among values reported in \code{BIC}.
-#'    \item \code{HQIC_min}: HQIC for the selected model.
-#'      This is the smallest HQIC among values reported in \code{HQIC}.
+#'    \item \code{results_variance}: variance estimates.
 #'    \item \code{min_model}: Selected model.
 #'    \item \code{select}: A criteria used to select the model.
 #'    \item \code{ATT}: Estimated average treatment effect on the treated.
@@ -34,31 +30,33 @@
 #' @importFrom dplyr %>% pull tbl_df
 #' @importFrom Formula as.Formula
 #' @importFrom utils getFromNamespace
+#' @seealso summary.diddesign
 #' @examples
-#'   # load package
-#'   require(DIDdesign)
+#'  # load package
+#'  require(DIDdesign)
 #'
-#'   # load  data
-#'   data(anzia2012)
+#'  # load  data
+#'  data(anzia2012)
 #'
-#'   # nonparametric estimator without covariates
-#'   fit1 <- did(
-#'     formula = lnavgsalary_cpi ~ oncycle,
-#'     data = anzia2012,
-#'     id_subject = "district", id_time = "year",
-#'     post_treatment = c(2007, 2008, 2009),
-#'     method = "nonparametric",
-#'     se_boot = FALSE
-#'   )
+#'  # nonparametric estimator without covariates
+#'  fit1 <- did(
+#'    formula = lnavgsalary_cpi ~ oncycle,
+#'    data = anzia2012,
+#'    id_subject = "district", id_time = "year",
+#'    post_treatment = c(2007, 2008, 2009),
+#'    method = "nonparametric",
+#'    se_boot = FALSE
+#'  )
 #'
-#'   # view summary
-#'   summary(fit1)
+#'  # view summary
+#'  summary(fit1)
 #'
-#'   # view effect plot
-#'   plot(fit1, full = TRUE)
+#'  # view effect plot
+#'  plot(fit1, full = TRUE)
 #'
-#'   # view selection plot
+#'  # view selection plot
 #'  did_plot_selection(fit1)
+#' @family main functions
 #' @export
 did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
@@ -222,9 +220,9 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   }
 
 
-  ## add attributes 
+  ## add attributes
   attr(fit, 'call') <- formula
   attr(fit, 'method') <- method
- 
+
   return(fit)
 }

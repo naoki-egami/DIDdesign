@@ -54,3 +54,9 @@ did_plot_selection(fit1, equivalence = TRUE, eL = -0.005, eU = 0.005,
 did_plot_selection(fit2, equivalence = TRUE, eL = -0.005, eU = 0.005,
  ylim = c(-0.015, 0.015), main = "Nonparametric")
 }
+\seealso{
+Other main functions: \code{\link{did_plot}},
+  \code{\link{did}}, \code{\link{plot.diddesign}},
+  \code{\link{summary.diddesign}}
+}
+\concept{main functions}

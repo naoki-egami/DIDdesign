@@ -37,6 +37,7 @@
 #'  # show result summary
 #'  summary(fit)
 #' }
+#' @family estimation functions
 #' @export
 did_nonparametric <- function(
   data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,

@@ -12,3 +12,8 @@ did_parametric_rcs(data)
 \description{
 Parametric Double Difference-in-Differences Estimator with Repeated Cross-Section Data
 }
+\seealso{
+Other estimation functions: \code{\link{did_nonparametric}},
+  \code{\link{did_parametric}}
+}
+\concept{estimation functions}

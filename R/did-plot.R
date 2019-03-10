@@ -45,6 +45,7 @@
 #' @importFrom dplyr %>% pull select tbl_df
 #' @importFrom Formula as.Formula
 #' @importFrom utils getFromNamespace
+#' @family main functions
 #' @export
 did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
   diff_order = 0, xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...
@@ -194,6 +195,7 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
 #' @param xlim xlim in plot function. If left \code{NULL}, it's automatically set.
 #' @param ylim ylim in plot function. If left \code{NULL}, it's automatically set.
 #' @param ... additional arguments supplied to the plot function.
+#' @family main functions
 #' @export
 plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NULL, full = FALSE, ...) {
   # if('diddesign_data' %in% class(data)) {
@@ -335,7 +337,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
         arrows(i, se_mat[i,3], i, se_mat[i,4], length=0.05, angle=90, code=3)
       }
 
-    } 
+    }
   }
 }
 
@@ -377,6 +379,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 #'  ylim = c(-0.015, 0.015), main = "Parametric")
 #' did_plot_selection(fit2, equivalence = TRUE, eL = -0.005, eU = 0.005,
 #'  ylim = c(-0.015, 0.015), main = "Nonparametric")
+#' @family main functions
 #' @export
 did_plot_selection <- function(
   data, alpha = 0.05, equivalence = TRUE, eL = NULL, eU = NULL,

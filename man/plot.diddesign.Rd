@@ -24,3 +24,9 @@ otherwise only estimates from the selected model will be shown. Default is \code
 \description{
 Plot function
 }
+\seealso{
+Other main functions: \code{\link{did_plot_selection}},
+  \code{\link{did_plot}}, \code{\link{did}},
+  \code{\link{summary.diddesign}}
+}
+\concept{main functions}
