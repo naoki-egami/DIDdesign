@@ -45,3 +45,18 @@
 #' did_plot_selection(fit, equivalence = FALSE, ylim = c(0, 0.1))
 #' @keywords dataset
 "dekadt2018"
+
+
+
+#' Dataset from Malesky et al. (2014)
+#'
+#' @name malesky2014
+#' @docType data
+#' @format A \code{tbl} format data.
+#' @references Malesky, Edmund J., Cuong Viet Nguyen, and Anh Tran.
+#' "The impact of recentralization on public services:
+#'     A difference-in-differences analysis of the abolition of elected councils in Vietnam."
+#'     \emph{American Political Science Review} 108.1 (2014): 144-168.
+#'     \doi{10.1017/S0003055413000580}
+#' @keywords dataset
+"malesky2014"
