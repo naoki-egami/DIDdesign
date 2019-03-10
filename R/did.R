@@ -142,6 +142,7 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     ## extract covariates names
     f2 <- getFormula(formula, lhs = 0, rhs = 2)
     x_colnames <- all.vars(f2)
+    
     if (isTRUE(is_rcs)) {
       ## subset data
       dat_use <- did_data(
@@ -151,7 +152,8 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
         id_time        = data %>% pull(id_time),
         post_treatment = post_treatment,
         long           = TRUE,
-        Xcov           = data %>% select(x_colnames)
+        Xcov           = data %>% select(x_colnames),
+        x_formula      = f2
       )
     } else {
       ## subset data
@@ -162,7 +164,8 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
         id_time        = data %>% pull(id_time),
         post_treatment = post_treatment,
         long           = TRUE,
-        Xcov           = data %>% select(x_colnames)
+        Xcov           = data %>% select(x_colnames),
+        x_formula      = f2
       )
     }
 

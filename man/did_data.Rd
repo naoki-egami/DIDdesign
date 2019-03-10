@@ -5,7 +5,7 @@
 \title{Transform data into did_double format}
 \usage{
 did_data(outcome, treatment, post_treatment = NULL, id_subject = NULL,
-  id_time = NULL, long = TRUE, Xcov = NULL)
+  id_time = NULL, long = TRUE, Xcov = NULL, x_formula = NULL)
 }
 \arguments{
 \item{outcome}{Outcome vector when \code{long = TRUE} or outcome matrix when \code{long = FALSE}.}
@@ -21,6 +21,8 @@ If left as \code{NULL}, the last period in a variable given as \code{id_time} is
 
 \item{long}{A boolean input indicating whether the input is in the long format or not.
 Default is \code{long = TRUE}.}
+
+\item{x_formula}{a formula of the right hand side (covariates). If left as \code{NULL}, original variables supplied in \code{Xcov} will be used as is.}
 }
 \value{
 A \code{diddesign} class object which is a list.
