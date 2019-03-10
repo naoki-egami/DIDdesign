@@ -3,6 +3,7 @@
 
 + Update `summary()` function. Now it has an option to print all the results.  
 + Fixed bugs on how formula input is handled.
++ Added `malesky2014` dataset.
 
 # DIDdesign 0.2.2
 
