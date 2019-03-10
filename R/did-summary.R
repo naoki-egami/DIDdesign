@@ -1,6 +1,6 @@
 
 ##
-## Summary and plot functions
+## Summary functions
 ##
 
 
