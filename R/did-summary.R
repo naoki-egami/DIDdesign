@@ -17,11 +17,14 @@ print.summary.diddesign_data <- function(obj) {
   res_tab <- rbind(
     obj[["Status"]], obj[["Y:Treated"]], obj[["Y:Control"]], obj[["YT-YC"]]
   )
-  # , row.names =  c("Status", "Y:Treated", "Y:Control", "YT-YC"))
-  # 
+
+  ##
   colnames(res_tab) <- obj$id_time
-  # 
-  print(res_tab)
+  rownames(res_tab) <- c("Status", "Y:Treated", "Y:Control", "YT-YC")
+  
+  ##
+  print.default(res_tab, quote = FALSE, right = TRUE)
+
 }
 
 # helper function 
