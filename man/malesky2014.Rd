@@ -6,7 +6,7 @@
 \title{Dataset from Malesky et al. (2014)}
 \format{A \code{tbl} format data.}
 \usage{
-malesky2014
+data(malesky2014)
 }
 \description{
 Dataset from Malesky et al. (2014)
@@ -14,8 +14,8 @@ Dataset from Malesky et al. (2014)
 \references{
 Malesky, Edmund J., Cuong Viet Nguyen, and Anh Tran.
 "The impact of recentralization on public services:
-    A difference-in-differences analysis of the abolition of elected councils in Vietnam."
-    \emph{American Political Science Review} 108.1 (2014): 144-168.
-    \doi{10.1017/S0003055413000580}
+  A difference-in-differences analysis of the abolition of elected councils in Vietnam."
+  \emph{American Political Science Review} 108.1 (2014): 144-168.
+  \doi{10.1017/S0003055413000580}
 }
 \keyword{dataset}

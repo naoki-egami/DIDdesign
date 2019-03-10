@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{obj}{an object of \code{diddesign_data} or \code{diddesign} class.
-Prints estimated ATT along with 95\% confidence intervals when output of \code{\code{did}} is suppplied.}
+Prints estimated ATT along with 95\% confidence intervals when output of \code{\link{did}} is suppplied.}
 
 \item{full}{a boolean. If \code{TRUE}, all estimates are returned. Default is \code{TRUE}.}
 }

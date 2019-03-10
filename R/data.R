@@ -2,6 +2,7 @@
 #'
 #'
 #' @name anzia2012
+#' @usage data(anzia2012)
 #' @docType data
 #' @format A \code{tbl} format data.
 #' @references Anzia, Sarah F.
@@ -15,6 +16,7 @@
 #' Dataset from de Kadt and Larreguy (2018)
 #'
 #' @name dekadt2018
+#' @usage data(dekadt2018)
 #' @docType data
 #' @format A \code{tbl} format data.
 #' @references  De Kadt, Daniel, and Horacio A. Larreguy.
@@ -51,12 +53,13 @@
 #' Dataset from Malesky et al. (2014)
 #'
 #' @name malesky2014
+#' @usage data(malesky2014)
 #' @docType data
 #' @format A \code{tbl} format data.
 #' @references Malesky, Edmund J., Cuong Viet Nguyen, and Anh Tran.
 #' "The impact of recentralization on public services:
-#'     A difference-in-differences analysis of the abolition of elected councils in Vietnam."
-#'     \emph{American Political Science Review} 108.1 (2014): 144-168.
-#'     \doi{10.1017/S0003055413000580}
+#'   A difference-in-differences analysis of the abolition of elected councils in Vietnam."
+#'   \emph{American Political Science Review} 108.1 (2014): 144-168.
+#'   \doi{10.1017/S0003055413000580}
 #' @keywords dataset
 "malesky2014"

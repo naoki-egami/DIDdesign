@@ -92,7 +92,7 @@ summarize.diddesign <- function(data) {
 
 #' Summarize output from \code{\link{did}} function
 #' @param obj an object of \code{diddesign_data} or \code{diddesign} class.
-#'  Prints estimated ATT along with 95\% confidence intervals when output of \code{\code{did}} is suppplied.
+#'  Prints estimated ATT along with 95\% confidence intervals when output of \code{\link{did}} is suppplied.
 #' @param full a boolean. If \code{TRUE}, all estimates are returned. Default is \code{TRUE}.
 #' @return a list of the following components:
 #'   \item{method}{a method used to estimate ATT, either \code{parametric} or \code{nonparametric}}
@@ -120,7 +120,7 @@ summary.diddesign <- function(obj, full = TRUE) {
 
   } else if ('diddesign' %in% class(obj)){
     ## summary function
-    res_tab <- generate_tab_parametric(obj, ATT, se_save, selected, full = full)
+    res_tab <- generate_tab_parametric(obj, full = full)
     res_tab[['method']] <- attr(obj, 'method')
     class(res_tab) <- 'summary.diddesign'
   }

@@ -168,16 +168,11 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>diddesign</code> class object, which is a list of results for each post treatment period.
- A result for one period contains:</p><ul>
+    <p>It is recommended to use <code><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></code> function to extract estimates. Please see <code><a href='summary.diddesign.html'>summary.diddesign</a></code>.</p>
+<p><code>did</code> returns an object of <code>diddesign</code> class, which is a list of results for each post treatment period.
+A result for one period contains:</p><ul>
 <li><p><code>results_estimates</code>:</p></li>
-<li><p><code>results_bootstraps</code>: bootstrap estimates.</p></li>
-<li><p><code>BIC</code>: BIC for all models .</p></li>
-<li><p><code>HQIC</code>: HQIC for all models.</p></li>
-<li><p><code>BIC_min</code>: BIC for the selected model.
-     This is the smallest BIC among values reported in <code>BIC</code>.</p></li>
-<li><p><code>HQIC_min</code>: HQIC for the selected model.
-     This is the smallest HQIC among values reported in <code>HQIC</code>.</p></li>
+<li><p><code>results_variance</code>: variance estimates.</p></li>
 <li><p><code>min_model</code>: Selected model.</p></li>
 <li><p><code>select</code>: A criteria used to select the model.</p></li>
 <li><p><code>ATT</code>: Estimated average treatment effect on the treated.</p></li>
@@ -186,23 +181,30 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
 </ul>
 
     
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>summary.diddesign</p>
+<p>Other main functions: <code><a href='did_plot_selection.html'>did_plot_selection</a></code>,
+  <code><a href='did_plot.html'>did_plot</a></code>, <code><a href='plot.diddesign.html'>plot.diddesign</a></code>,
+  <code><a href='summary.diddesign.html'>summary.diddesign</a></code></p></div>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>  <span class='co'># load package</span>
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='no'>DIDdesign</span>)
+    <pre class="examples"><div class='input'> <span class='co'># load package</span>
+ <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='no'>DIDdesign</span>)
 
-  <span class='co'># load  data</span>
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>anzia2012</span>)
+ <span class='co'># load  data</span>
+ <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>anzia2012</span>)
 
-  <span class='co'># nonparametric estimator without covariates</span>
-  <span class='no'>fit1</span> <span class='kw'>&lt;-</span> <span class='fu'>did</span>(
-    <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>lnavgsalary_cpi</span> ~ <span class='no'>oncycle</span>,
-    <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>anzia2012</span>,
-    <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>, <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
-    <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
-    <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nonparametric"</span>,
-    <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-  )</div><div class='output co'>#&gt; 
+ <span class='co'># nonparametric estimator without covariates</span>
+ <span class='no'>fit1</span> <span class='kw'>&lt;-</span> <span class='fu'>did</span>(
+   <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>lnavgsalary_cpi</span> ~ <span class='no'>oncycle</span>,
+   <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>anzia2012</span>,
+   <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>, <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
+   <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
+   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"nonparametric"</span>,
+   <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+ )</div><div class='output co'>#&gt; 
 #&gt; ... estimating treatment effect for  2007  ...
 #&gt; ... computing asymptotic variance ...
 #&gt; ... computing the standard DiD estimate ...
@@ -214,66 +216,11 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
 #&gt; ... estimating treatment effect for  2009  ...
 #&gt; ... computing asymptotic variance ...
 #&gt; ... computing the standard DiD estimate ...</div><div class='input'>
-  <span class='co'># view summary</span>
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; 
-#&gt; Method:
-#&gt; nonparametric
-#&gt; 
-#&gt; 
-#&gt; Call:
-#&gt; lnavgsalary_cpi ~ oncycle
-#&gt; 
-#&gt; 
-#&gt; Main:
-#&gt;         ATT   95% Conf. Int. Selected
-#&gt; 2007 -0.007 [-0.013, -0.001]       M1
-#&gt; 2008 -0.012 [-0.021, -0.004]       M1
-#&gt; 2009 -0.012 [-0.022, -0.001]       M1
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; Results:
-#&gt; 
-#&gt;  T =  2007 
-#&gt; 
-#&gt;        ATT   95% Conf. Int.  
-#&gt; DiD -0.007 [-0.012, -0.001]  
-#&gt; M1  -0.007 [-0.013, -0.001] ✔
-#&gt; M2  -0.008 [-0.014, -0.001]  
-#&gt; M3  -0.013  [-0.029, 0.003]  
-#&gt; M4   0.013  [-0.027, 0.053]  
-#&gt; 
-#&gt;  T =  2008 
-#&gt; 
-#&gt;        ATT   95% Conf. Int.  
-#&gt; DiD -0.011 [-0.019, -0.003]  
-#&gt; M1  -0.012 [-0.021, -0.004] ✔
-#&gt; M2  -0.013 [-0.022, -0.004]  
-#&gt; M3  -0.018 [-0.036, -0.000]  
-#&gt; M4   0.009  [-0.034, 0.051]  
-#&gt; 
-#&gt;  T =  2009 
-#&gt; 
-#&gt;        ATT   95% Conf. Int.  
-#&gt; DiD -0.011      [-0.022, 0]  
-#&gt; M1  -0.012 [-0.022, -0.001] ✔
-#&gt; M2  -0.012 [-0.023, -0.001]  
-#&gt; M3  -0.017  [-0.033, 0.000]  
-#&gt; M4   0.009  [-0.031, 0.048]  
-#&gt; 
-#&gt; 
-#&gt; Selection:
-#&gt; 
-#&gt;   M1 is selected
-#&gt; 
-#&gt;        Theta Std. Error
-#&gt; M3 -0.012047    0.00881
-#&gt; M2  0.002234    0.00336
-#&gt; M1  0.000498    0.00138
-#&gt; </div><div class='input'>
-  <span class='co'># view effect plot</span>
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit1</span>, <span class='kw'>full</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='did-1.png' alt='' width='700' height='433' /></div><div class='input'>
-  <span class='co'># view selection plot</span>
+ <span class='co'># view summary</span>
+ <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in generate_tab_parametric(obj, ATT, se_save, selected, full = full): unused arguments (ATT, se_save, selected)</span></div><div class='input'>
+ <span class='co'># view effect plot</span>
+ <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit1</span>, <span class='kw'>full</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='did-1.png' alt='' width='700' height='433' /></div><div class='input'>
+ <span class='co'># view selection plot</span>
  <span class='fu'><a href='did_plot_selection.html'>did_plot_selection</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='message'>Equivalence region: [-0.027,0.008] at the alpha = 0.05 level.</span></div><div class='img'><img src='did-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -282,6 +229,8 @@ Covariates can be added by <code>y ~ d | x1 + x2</code> where <code>x1</code> an
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

@@ -6,7 +6,7 @@
 \title{Dataset from Anzia (2012)}
 \format{A \code{tbl} format data.}
 \usage{
-anzia2012
+data(anzia2012)
 }
 \description{
 Dataset from Anzia (2012)

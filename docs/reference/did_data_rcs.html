@@ -116,36 +116,37 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>did_data_rcs</span>(<span class='no'>outcome</span>, <span class='no'>treatment</span>, <span class='no'>post_treatment</span>, <span class='no'>id_time</span>, <span class='no'>Xcov</span>)</pre>
+    <pre class="usage"><span class='fu'>did_data_rcs</span>(<span class='no'>outcome</span>, <span class='no'>treatment</span>, <span class='no'>post_treatment</span>, <span class='no'>id_time</span>, <span class='no'>Xcov</span>,
+  <span class='kw'>x_formula</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>outcome</th>
-      <td><p>A vector of outcome variable.</p></td>
+      <td><p>a vector of outcome variable.</p></td>
     </tr>
     <tr>
       <th>treatment</th>
-      <td><p>A vector of treatment indicator variable.</p></td>
+      <td><p>a vector of treatment indicator variable.</p></td>
     </tr>
     <tr>
       <th>post_treatment</th>
-      <td><p>A vector of numeric time index for post treatment periods.</p></td>
+      <td><p>a vector of numeric time index for post treatment periods.</p></td>
     </tr>
     <tr>
       <th>id_time</th>
-      <td><p>A vector of time index variable.</p></td>
+      <td><p>a vector of time index variable.</p></td>
     </tr>
     <tr>
       <th>Xcov</th>
-      <td><p>A matrix of covariates.</p></td>
+      <td><p>a matrix of covariates.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list. Each element corresponds to each post-treatment period.
+    <p><code>did_data_rcs</code> returns a list. Each element corresponds to each post-treatment period.
  Each element of the returned list is also a list consists of the following:</p><ul>
 <li><p><code>Y</code>: outcome vector.</p></li>
 <li><p><code>D</code>: treatment vector.</p></li>

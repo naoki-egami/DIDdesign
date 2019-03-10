@@ -117,7 +117,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>did_data</span>(<span class='no'>outcome</span>, <span class='no'>treatment</span>, <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>long</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>Xcov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>long</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>Xcov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_formula</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,6 +147,10 @@ If left as <code>NULL</code>, the last period in a variable given as <code>id_ti
       <th>long</th>
       <td><p>A boolean input indicating whether the input is in the long format or not.
 Default is <code>long = TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>x_formula</th>
+      <td><p>a formula of the right hand side (covariates). If left as <code>NULL</code>, original variables supplied in <code>Xcov</code> will be used as is.</p></td>
     </tr>
     </table>
     

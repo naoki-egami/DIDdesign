@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Summarize Output from DiD Function — summary.diddesign • DIDdesign</title>
+<title>Summarize output from <code><a href='did.html'>did</a></code> function — summary.diddesign • DIDdesign</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Summarize Output from DiD Function — summary.diddesign" />
+<meta property="og:title" content="Summarize output from <code><a href='did.html'>did</a></code> function — summary.diddesign" />
 
-<meta property="og:description" content="Summarize Output from DiD Function" />
+<meta property="og:description" content="Summarize output from did function" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,14 +105,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Summarize Output from DiD Function</h1>
+    <h1>Summarize output from <code><a href='did.html'>did</a></code> function</h1>
     <small class="dont-index">Source: <a href='https://github.com/naoki-egami/DIDdesign/blob/master/R/did-summary.R'><code>R/did-summary.R</code></a></small>
     <div class="hidden name"><code>summary.diddesign.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Summarize Output from DiD Function</p>
+    <p>Summarize output from <code><a href='did.html'>did</a></code> function</p>
     
     </div>
 
@@ -124,9 +124,31 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>obj</th>
-      <td><p>an object of <code>diddesign_data</code> or <code>diddesign</code> class.</p></td>
+      <td><p>an object of <code>diddesign_data</code> or <code>diddesign</code> class.
+Prints estimated ATT along with 95% confidence intervals when output of <code><a href='did.html'>did</a></code> is suppplied.</p></td>
+    </tr>
+    <tr>
+      <th>full</th>
+      <td><p>a boolean. If <code>TRUE</code>, all estimates are returned. Default is <code>TRUE</code>.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a list of the following components:</p>
+<dt>method</dt><dd><p>a method used to estimate ATT, either <code>parametric</code> or <code>nonparametric</code></p></dd>
+  <dt>call</dt><dd><p>a formula used in estimation.</p></dd>
+  <dt>main</dt><dd><p>a matrix of selected estimates.</p></dd>
+  <dt>results</dt><dd><p>a list of result matrices.
+    Each element of list corresponds to a post-period. Returned only when <code>full = TRUE</code>.</p></dd>
+  <dt>selection</dt><dd><p>a matrix of statistics used to select the model. Returned only when <code>full = TRUE</code>.</p></dd>
+
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other main functions: <code><a href='did_plot_selection.html'>did_plot_selection</a></code>,
+  <code><a href='did_plot.html'>did_plot</a></code>, <code><a href='did.html'>did</a></code>,
+  <code><a href='plot.diddesign.html'>plot.diddesign</a></code></p></div>
     
 
   </div>
@@ -134,7 +156,11 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

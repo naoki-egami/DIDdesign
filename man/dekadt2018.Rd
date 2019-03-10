@@ -6,7 +6,7 @@
 \title{Dataset from de Kadt and Larreguy (2018)}
 \format{A \code{tbl} format data.}
 \usage{
-dekadt2018
+data(dekadt2018)
 }
 \description{
 Dataset from de Kadt and Larreguy (2018)
