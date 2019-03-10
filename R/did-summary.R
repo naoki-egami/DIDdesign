@@ -8,6 +8,7 @@
 #' @param obj an object of \code{summary.diddesign} class, typically an ouput from \code{\link{summary.diddesign}}.
 #' @export
 print.summary.diddesign <- function(obj) {
+  cat("\nMethod:\n", obj$method, "\n\n", sep = "")  
   cat("\nCall:\n", paste(deparse(obj$call), sep="\n", collapse = "\n"), "\n\n", sep = "")
   
   cat("\nMain:\n")
@@ -119,26 +120,11 @@ summary.diddesign <- function(obj, full = TRUE) {
     ## summary function 
     if (isTRUE(is_parametric)) {
       res_tab <- generate_tab_parametric(obj, ATT, se_save, selected, full = full)
+      res_tab[['method']] <- attr(obj, 'method')
       class(res_tab) <- 'summary.diddesign'      
     } else {
-      DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
-      DiD_se_save <- rep(NA, length(DiD))
-      for (i in 1:length(ATT)) {
-        DiD_se_save[i] <- paste("[",
-          paste(round(obj[[i]]$results_standardDiD$results_variance$ci95, 3),
-          collapse = ', '), "]", sep = '')
-      }
-
-      # make a table
-      tabs_var <- c("D-DiD", "", "", "Std-DiD", "")
-      labs_var <- c("ATT", "95% CI", "Selected", "ATT",  "95% CI")
-      res_tab <- data.frame(cbind(tabs_var, labs_var,
-        rbind(ATT, se_save, selected, DiD, DiD_se_save))
-      )
-
-      # col labels
-      colnames(res_tab) <- c("", "", sapply(obj, function(x) attr(x, 'post_treat')))
-      rownames(res_tab) <- NULL    
+      res_tab <- generate_tab_parametric(obj, ATT, se_save, selected, full = full)
+      res_tab[['method']] <- attr(obj, 'method')  
       class(res_tab) <- 'summary.diddesign'  
     }
   }
