@@ -219,7 +219,7 @@ generate_tab_parametric <- function(obj, ATT, se_save, selected, full = TRUE) {
     selection[,1] <- attr(obj, "selection")$test_theta
     selection[,2] <- attr(obj, "selection")$test_se
     colnames(selection) <- c("Theta", 'Std. Error')
-    rownames(selection) <- paste("M", (length(attr(obj, "selection")$test_theta)-1):1, sep = "")
+    rownames(selection) <- paste("M", length(attr(obj, "selection")$test_theta):1, sep = "")
     res_tab$selection <- list("selection" = selection, "model" = attr(obj, "selection")$min_model)
     
   }
