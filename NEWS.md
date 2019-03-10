@@ -1,4 +1,8 @@
 
+# DIDdesign 0.2.3
+
++ Update `summary()` function. Now it has an option to print all the results.  
+
 # DIDdesign 0.2.2
 
 + Fixed bugs in helper functions.
