@@ -12,6 +12,7 @@
 #' @param id_time A vector of time index. Required if \code{long = TRUE}.
 #' @param long A boolean input indicating whether the input is in the long format or not.
 #' Default is \code{long = TRUE}.
+#' @param x_formula a formula of the right hand side (covariates). If left as \code{NULL}, original variables supplied in \code{Xcov} will be used as is.
 #' @return A \code{diddesign} class object which is a list.
 #'  Each element corresponds to each post-treatment period.
 #'  Each element of the returned \code{diddesign} object is also a list consists of the following:
@@ -41,7 +42,7 @@
 did_data <- function(
   outcome, treatment,
   post_treatment = NULL, id_subject = NULL, id_time = NULL, long = TRUE,
-  Xcov = NULL
+  Xcov = NULL, x_formula = NULL
 ) {
 
   is_rcs <- FALSE
@@ -53,11 +54,11 @@ did_data <- function(
   if (isTRUE(is_rcs)) {
 
     ## repeated cross-section + long
-    out <- did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov)
+    out <- did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov, x_formula)
   } else if (!isTRUE(is_rcs) & isTRUE(long)) {
 
     ## panel + long
-    out <- did_data_panelL(outcome, treatment, post_treatment, id_subject, id_time, Xcov)
+    out <- did_data_panelL(outcome, treatment, post_treatment, id_subject, id_time, Xcov, x_formula)
   } else {
 
     ## panel + wide
@@ -73,12 +74,12 @@ did_data <- function(
 
 
 #' Data processing function for repeated cross-section data
-#' @param outcome A vector of outcome variable.
-#' @param treatment A vector of treatment indicator variable.
-#' @param post_treatment A vector of numeric time index for post treatment periods.
-#' @param id_time A vector of time index variable.
-#' @param Xcov A matrix of covariates.
-#' @return A list. Each element corresponds to each post-treatment period.
+#' @param outcome a vector of outcome variable.
+#' @param treatment a vector of treatment indicator variable.
+#' @param post_treatment a vector of numeric time index for post treatment periods.
+#' @param id_time a vector of time index variable.
+#' @param Xcov a matrix of covariates.
+#' @return \code{\link{did_data_rcs}} returns a list. Each element corresponds to each post-treatment period.
 #'  Each element of the returned list is also a list consists of the following:
 #' \itemize{
 #'  \item \code{Y}: outcome vector.
@@ -90,7 +91,7 @@ did_data <- function(
 #' @importFrom dplyr %>% filter summarise group_by pull mutate tbl_df
 #' @importFrom utils getFromNamespace
 #' @keywords internal
-did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
+did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov, x_formula = NULL) {
 
   diff.zoo <- getFromNamespace("diff.zoo", "zoo")
   out <- list()
@@ -138,9 +139,12 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
 
     if (is.null(Xcov)) {
       fm[[1]] <- as.formula(paste("yd",0, " ~ treatment + post + treatment * post", sep = ''))
-    } else {
+    } else if (is.null(x_formula)){
       fm[[1]] <- as.formula(paste("yd",0, " ~ treatment + post + treatment * post + ",
                             paste(x_colname, collapse = "+"), sep = ''))
+    } else {
+      fm[[1]] <- as.formula(paste("yd",0, " ~ treatment + post + treatment * post + ",
+                            paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ''))      
     }
 
 
@@ -166,10 +170,17 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
 
       if (is.null(Xcov)) {
         fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post", sep = ''))
-      } else {
+      } else if (is.null(x_formula)){
         fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post + ",
                               paste(x_colname, collapse = "+"), sep = ''))
+      } else {
+        fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post + ",
+                              paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ''))
+        
       }
+      
+      
+      
     }
 
     ## output
@@ -207,7 +218,7 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov) {
 #' @importFrom utils getFromNamespace
 #' @importFrom dplyr %>% select filter tbl_df
 #' @keywords internal
-did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_time, Xcov) {
+did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_time, Xcov, x_formula = NULL) {
 
   ## na omit
   outcome <- na.omit(outcome); treatment <- na.omit(treatment)
@@ -253,7 +264,8 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
       rename_idx <- which(colnames(Xcov) %in% c('', "", " ", ' '))
       colnames(Xcov)[rename_idx] <- paste('XR', length(rename_idx), sep = '')
     }
-    x_colname <- colnames(Xcov)
+
+    x_colname <- colnames(Xcov)      
   }
 
   ### ==== transform data ==== ###
@@ -298,8 +310,12 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
     for (i in 0:max_diff) {
       if (is.null(Xcov)) {
         fm[[i+1]] <- as.formula(paste("yd",i, "~ treatment", sep = ''))
+      } else if (is.null(x_formula)){
+        fm[[i+1]] <- as.formula(paste("yd",i, " ~ treatment + ", 
+                        paste(x_colname, collapse = "+"), sep = ""))
       } else {
-        fm[[i+1]] <- as.formula(paste("yd",i, " ~ treatment + ", paste(x_colname, collapse = "+"), sep = ""))
+        fm[[i+1]] <- as.formula(paste("yd",i, " ~ treatment + ", 
+                        paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ""))        
       }
       if (i > 0) {
         dat_plm[paste("yd", i, sep = '')] <- diff.pseries(dat_plm$outcome, lag = i)
