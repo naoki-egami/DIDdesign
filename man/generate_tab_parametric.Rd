@@ -4,7 +4,7 @@
 \alias{generate_tab_parametric}
 \title{Generate Table for Parametric Method}
 \usage{
-generate_tab_parametric(obj, full = TRUE)
+generate_tab_parametric(obj, full = FALSE)
 }
 \arguments{
 \item{obj}{an object of \code{diddesign} class.}

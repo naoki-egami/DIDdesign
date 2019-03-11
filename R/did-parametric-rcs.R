@@ -4,7 +4,7 @@
 #' @param data A \code{diddesign_data} object.
 #' @family estimation functions
 #' @export
-did_parametric_rcs <- function(data) {
+did_parametric_rcs <- function(data, verbose = TRUE) {
   ## input checks
   if (!('diddesign_data' %in% class(data))) {
     stop("diddesign_data class object should be provided as data.")

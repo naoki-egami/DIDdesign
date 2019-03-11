@@ -42,7 +42,7 @@
 did_nonparametric <- function(
   data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
   alpha = 0.05, select = "GMM",
-  est_did = TRUE
+  est_did = TRUE, verbose = TRUE
 ) {
   ## input checks
   if (!('diddesign_data' %in% class(data))) {
@@ -78,7 +78,10 @@ did_nonparametric <- function(
   #                                                           #
   # ********************************************************* #
   for (j in 1:length(data)) {
-    cat("\n... estimating treatment effect for ", attr(data[[j]], 'post_treat'), " ...\n")
+    if(isTRUE(verbose)) {
+      cat("\n... estimating treatment effect for ", attr(data[[j]], 'post_treat'), " ...\n")      
+    }
+
 
 
     ## ==== point estimate ==== ##
@@ -91,7 +94,7 @@ did_nonparametric <- function(
     ## ==== variance calulations ==== ##
     if (isTRUE(se_boot) & isTRUE(boot_min)) {
       ## do bootstrap if necessary for the selected model
-      cat("... bootstraping to compute standard errors ...\n")
+      if(isTRUE(verbose)) cat("... bootstraping to compute standard errors ...\n")
       tmp_min <- didgmmT.boot(
         Y = data[[j]]$Y, D = data[[j]]$D, M = min_model, n_boot = n_boot)
 
@@ -99,7 +102,7 @@ did_nonparametric <- function(
       se90 <- quantile(tmp_min, prob = c(0.05, 0.95))
     } else if (isTRUE(se_boot)) {
       ## do bootstrap for all models
-      cat("... bootstraping to compute standard errors ...\n")
+      if(isTRUE(verbose)) cat("... bootstraping to compute standard errors ...\n")
       tmp_min <- list()
       for (m in m_vec) {
         tmp_est <- didgmmT.boot(Y = data[[j]]$Y, D = data[[j]]$D, M = m, n_boot = n_boot)
@@ -112,7 +115,7 @@ did_nonparametric <- function(
       se90 <- tmp_min[[min_model]]$ci90
 
     } else {
-      cat("... computing asymptotic variance ...\n")
+      if(isTRUE(verbose)) cat("... computing asymptotic variance ...\n")
       tmp_min <- list()
       for (m in m_vec) {
         var_est <- didgmmT.variance(tmp[[m]], Y = data[[j]]$Y, D = data[[j]]$D, M = m)
@@ -130,7 +133,7 @@ did_nonparametric <- function(
 
     ## ==== standard DiD estimate ==== ##
     if (isTRUE(est_did)) {
-      cat("... computing the standard DiD estimate ...\n")
+      if(isTRUE(verbose)) cat("... computing the standard DiD estimate ...\n")
 
       ## point estimate
       did_est <- std_did(Y = data[[j]]$Y, D = data[[j]]$D)

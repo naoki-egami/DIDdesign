@@ -5,7 +5,8 @@
 \title{Parametric Double Difference-in-Differences Estimator}
 \usage{
 did_parametric(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-  select = "parametric", est_did = FALSE, is_covariates)
+  select = "parametric", est_did = FALSE, is_covariates,
+  verbose = TRUE)
 }
 \arguments{
 \item{data}{data}

@@ -5,7 +5,8 @@
 \title{Nonparametric Double Difference-in-Differences Estimator}
 \usage{
 did_nonparametric(data, se_boot = FALSE, n_boot = 1000,
-  boot_min = TRUE, alpha = 0.05, select = "GMM", est_did = TRUE)
+  boot_min = TRUE, alpha = 0.05, select = "GMM", est_did = TRUE,
+  verbose = TRUE)
 }
 \arguments{
 \item{data}{did_double.data object. See \code{\link{did_double_data}}.}

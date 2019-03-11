@@ -22,5 +22,6 @@ Installation
 Example Usage
 -------------
 
+-   Getting started
 -   [Example of analyzing panel data](./docs/articles/articles/diddesign.html)
 -   Example of analyzing repeated cross-section data

@@ -134,7 +134,7 @@ summary.diddesign <- function(obj, full = TRUE) {
 #' @param obj an object of \code{diddesign} class.
 #' @param full a boolean; if \code{TRUE} all results are attached.
 #' @keywords internal
-generate_tab_parametric <- function(obj, full = TRUE) {
+generate_tab_parametric <- function(obj, full = FALSE) {
   res_tab <- list()
 
   ## formula
@@ -198,7 +198,7 @@ generate_tab_parametric <- function(obj, full = TRUE) {
 
       ## selected model
       check_mark <- rep("", length(obj[[1]]$results_estimates)+1)
-      check_mark[attr(obj, 'selection')$min_model+1] <- "✔"
+      check_mark[attr(obj, 'selection')$min_model+1] <- "*"
 
       ## save
       results[-1, 1] <- ATT

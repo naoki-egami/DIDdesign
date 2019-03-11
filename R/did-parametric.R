@@ -14,7 +14,8 @@
 #' @family estimation functions
 #' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-                           select = 'parametric', est_did = FALSE, is_covariates
+                           select = 'parametric', est_did = FALSE, is_covariates,
+                           verbose = TRUE
 ) {
 
   ## input checks
@@ -78,7 +79,10 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     ## for each methods
     ##  - M1: D0y ~ DTy
     ##  - M2: D1y ~ DTy
-    cat("\n... estimating treatment effect for ", attr(data[[tt]], 'post_treat'), " ...\n")
+    if(isTRUE(verbose)) {
+      cat("\n... estimating treatment effect for ", attr(data[[tt]], 'post_treat'), " ...\n")      
+    }
+
 
     tmp <- tmp_min <- list()
     for (m in m_vec) {
@@ -133,7 +137,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     #                                                           #
     # ********************************************************* #
     if (isTRUE(est_did)) {
-      cat("... computing the standard DiD estimate ...\n")
+      if(isTRUE(verbose)) cat("... computing the standard DiD estimate ...\n")
 
       ## point estimate
       did_est <- std_did(Y = data[[tt]]$Y, D = data[[tt]]$D)
