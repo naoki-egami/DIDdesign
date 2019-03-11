@@ -5,8 +5,8 @@
 \title{DiD plot}
 \usage{
 did_plot(formula, data, post_treatment, id_subject = NULL, id_time,
-  diff_order = 0, xlim = NULL, ylim = NULL, col = NULL,
-  loc = NULL, lwd = NULL, ...)
+  diff_order = 0, alpha = 0.05, ci = TRUE, xlim = NULL,
+  ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...)
 }
 \arguments{
 \item{formula}{\code{outcome ~ treatment}.}
@@ -48,7 +48,6 @@ did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
   post_treatment = c(2007, 2008, 2009),
   id_subject = "district",
   id_time = "year",
-  ylim = c(10.55, 10.8),
   diff_order = 0,
   main = 'Original Series'
 )
