@@ -10,6 +10,9 @@
 #' @param id_time a variable name of time index.
 #' @param diff_order Order of differences. \code{diff_order = 0} generates a plot based on the original outcome.
 #'  \code{diff_order = 1} generates a plot based on differenced outcomes.
+#' @param ci a boolean. If \code{TRUE} confidence intervals are shown in addition to mean outcomes.
+#'    The level of CIs is controlled by \code{alpha} argument.
+#' @param alpha level of confidence intervals. Default is \code{alpha = 0.05}, which shows 95% CIs.
 #' @param xlim xlim
 #' @param ylim ylim
 #' @param col col
@@ -28,7 +31,6 @@
 #'   post_treatment = c(2007, 2008, 2009),
 #'   id_subject = "district",
 #'   id_time = "year",
-#'   ylim = c(10.55, 10.8),
 #'   diff_order = 0,
 #'   main = 'Original Series'
 #' )
@@ -38,7 +40,6 @@
 #'   post_treatment = c(2007, 2008, 2009),
 #'   id_subject = "district",
 #'   id_time = "year",
-#'   ylim = c(-0.05, 0.05),
 #'   diff_order = 1,
 #'   main = 'Differenced Series'
 #' )
@@ -48,7 +49,8 @@
 #' @family main functions
 #' @export
 did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
-  diff_order = 0, xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...
+  diff_order = 0, ci = TRUE, alpha = 0.05,
+  xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...
 ) {
 
   ## import function
@@ -70,16 +72,21 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
     dat_use <- data %>% select_(outcome, treatment, id_time) %>% tbl_df()
     colnames(dat_use) <- c("outcome", "treatment", "id_time")
     dat_use %>% group_by(treatment, id_time) %>%
-      summarise(ymean = mean(outcome, na.rm = TRUE)) -> y_summary
+      summarise(ymean = mean(outcome, na.rm = TRUE), yvar = var(outcome, na.rm = TRUE)) -> y_summary
     y1mean <- y_summary %>% filter(treatment == 1) %>% pull(ymean)
     y0mean <- y_summary %>% filter(treatment == 0) %>% pull(ymean)
+    y1var <- y_summary %>% filter(treatment == 1) %>% pull(yvar)
+    y0var <- y_summary %>% filter(treatment == 0) %>% pull(yvar)
+
     dat_use <- list("y1mean" = y1mean, 'y0mean' = y0mean,
+                    'y1var' = y1var, 'y0var' = y0var,
                     'id_time' = sort(unique(y_summary$id_time)))
     attr(dat_use, 'post_treat') <- min(post_treatment)
     # if (is.null(xlim))
     # if (is.null(xlim))
     # plot(1, 1, type = 'n', xlim = xlim, ylim = ylim, col = col, ...)
     plot_diddesign_data(dat_use, panel = FALSE, diff_order = diff_order,
+      alpha = alpha, ci = ci,
       xlim = xlim, ylim = ylim, col = col, loc = loc, lwd = lwd, ...)
 
   } else {
@@ -96,6 +103,7 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
     ## CALL plot.diddesign
     # par(mfrow = c(1, 3))
     plot_diddesign_data(dat_use, panel = TRUE, diff_order = diff_order,
+      alpha = alpha, ci = ci,
       xlim = xlim, ylim = ylim, col = col, loc = loc, lwd = lwd, ...)
 
   }
@@ -109,17 +117,20 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
 #' @param diff_order Either \code{0} (original series) or \code{1} (differenced series).
 #' @keywords internal
 plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
+  alpha = 0.05, ci = TRUE,
   xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...) {
 
   if(isTRUE(panel)) {
     summary_dat <- summarize.diddesign(data)
-    ymean <- summary_dat$ymean
-    id_time <- summary_dat$id_time
+    ymean    <- summary_dat$ymean
+    id_time  <- summary_dat$id_time
+    yvar     <- summary_dat$yvar
     time_use <- which(attr(data[[1]], 'post_treat') == id_time)
 
   } else {
     ## data
     ymean <- rbind(data$y1mean, data$y0mean)
+    yvar  <- rbind(data$y1var, data$y0var)
     id_time <- data$id_time
     time_use <- which(attr(data, 'post_treat') == id_time)
 
@@ -128,10 +139,23 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
   ## plot
   if (diff_order == 0) {
     if (is.null(xlim)) xlim <- c(min(id_time), max(id_time))
-    if (is.null(ylim)) ylim <- c(min(ymean), max(ymean))
+    if (is.null(ylim) & isFALSE(ci)) ylim <- c(min(ymean), max(ymean))
     if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray40')
     if (is.null(lwd)) lwd <- 1.5
     if (is.null(loc)) loc <- 'topleft'
+
+    if (isTRUE(ci)) {
+      ## compute sd
+      ysd <- sqrt(yvar)
+
+      ## compute CI
+      CI1 <- rbind(ymean[1,] + qnorm(alpha/2) * ysd[1,], ymean[1,] + qnorm(1 - alpha/2) * ysd[1,])
+      CI0 <- rbind(ymean[2,] + qnorm(alpha/2) * ysd[2,], ymean[2,] + qnorm(1 - alpha/2) * ysd[2,])
+
+      ## overwrite ylim
+      if (is.null(ylim)) ylim <- c(min(c(CI1, CI0)), max(c(CI1, CI0)) * 1.0055)
+
+    }
 
     ## background color setup
     bg_col <- rgb(215, 196, 187, maxColorValue = 255, alpha = 80)
@@ -143,6 +167,16 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
     rect(mean(id_time[(time_use-1):time_use]), min(ylim) * lb_inc,
           max(xlim) * 1.04, max(ylim) * ub_inc, border = NA, col = bg_col)
     abline(v = mean(id_time[(time_use-1):time_use]), col = '#B9887D', lty = 3, lwd = 1.3)
+
+    if (isTRUE(ci)) {
+      ## plot region by polygon
+      lines(id_time, CI1[1,], col = col[1], pch = 21, type = 'b', lwd = lwd, lty = 3)
+      lines(id_time, CI1[2,], col = col[1], pch = 21, type = 'b', lwd = lwd, lty = 3)
+
+      lines(id_time, CI0[1,], col = col[2], pch = 24, type = 'b', lwd = lwd, lty = 3)
+      lines(id_time, CI0[2,], col = col[2], pch = 24, type = 'b', lwd = lwd, lty = 3)
+    }
+
     lines(id_time, ymean[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
     lines(id_time, ymean[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
     legend(loc, legend = c("treated", 'control'), col = col[1:2],
@@ -153,12 +187,28 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
 
     ## prepare data
     ymean_diff <- t(apply(ymean, 1, diff))
+    yvar_diff  <- t(apply(yvar, 1, function(x) na.omit(c(NA, x) + c(x, NA))))
 
     if (is.null(xlim)) xlim <- c(1, length(id_time)-1) # min(id_time), max(id_time))
-    if (is.null(ylim)) ylim <- c(min(ymean_diff), max(ymean_diff))
+    if (is.null(ylim) & isFALSE(ci)) ylim <- c(min(ymean_diff), max(ymean_diff))
     if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray40')
     if (is.null(lwd)) lwd <- 1.5
     if (is.null(loc)) loc <- 'topleft'
+
+    if (isTRUE(ci)) {
+      ## compute sd
+      ysd_diff <- sqrt(yvar_diff)
+
+      ## compute CI
+      CI1 <- rbind(ymean_diff[1,] + qnorm(alpha/2) * ysd_diff[1,],
+                   ymean_diff[1,] + qnorm(1 - alpha/2) * ysd_diff[1,])
+      CI0 <- rbind(ymean_diff[2,] + qnorm(alpha/2) * ysd_diff[2,],
+                   ymean_diff[2,] + qnorm(1 - alpha/2) * ysd_diff[2,])
+
+      ## overwrite ylim
+      if (is.null(ylim)) ylim <- c(min(c(CI1, CI0)), max(c(CI1, CI0)) * 1.0055)
+    }
+
 
     time_use <- which(attr(data[[1]], 'post_treat') == id_time)
     time_lab <- sapply(1:(length(id_time)-1), function(i) {
@@ -177,6 +227,17 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
     rect(time_use - 1.5, min(ylim) * lb_inc, max(xlim) * 1.04, max(ylim) * ub_inc,
         border = NA, col = bg_col)
     abline(v = time_use - 1.5, col = '#B9887D', lty = 3, lwd = 1.3)
+
+    if (isTRUE(ci)) {
+      ## plot region by polygon
+      lines(CI1[1,], col = col[1], pch = 21, type = 'b', lwd = lwd, lty = 3)
+      lines(CI1[2,], col = col[1], pch = 21, type = 'b', lwd = lwd, lty = 3)
+
+      lines(CI0[1,], col = col[2], pch = 24, type = 'b', lwd = lwd, lty = 3)
+      lines(CI0[2,], col = col[2], pch = 24, type = 'b', lwd = lwd, lty = 3)
+    }
+
+
     lines(ymean_diff[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
     lines(ymean_diff[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
     legend(loc, legend = c("treated", 'control'), col = col[1:2],
@@ -198,32 +259,6 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
 #' @family main functions
 #' @export
 plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NULL, full = FALSE, ...) {
-  # if('diddesign_data' %in% class(data)) {
-  #   ##
-  #   ## plot for raw data
-  #   ##
-  #
-  #   summary_dat <- summarize.diddesign(data)
-  #   ymean <- summary_dat$ymean
-  #   id_time <- summary_dat$id_time
-  #
-  #   ## plot
-  #   if (is.null(xlim)) xlim <- c(min(id_time), max(id_time))
-  #   if (is.null(ylim)) ylim <- c(min(ymean), max(ymean))
-  #   if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray60')
-  #   if (is.null(lwd)) lwd <- 1.5
-  #
-  #   time_use <- which(attr(data[[1]], 'post_treat') == id_time)
-  #
-  #   ## plot
-  #   plot(1, 1, type = 'n', ylim = ylim, xlim = xlim, xlab = "", ylab = "Mean Outcome", ...)
-  #   abline(v = mean(id_time[(time_use-1):time_use]), col = 'red', lty = 3, lwd = 1.3)
-  #   lines(id_time, ymean[1,], col = col[1], pch = 16, type = 'b', lwd = lwd)
-  #   lines(id_time, ymean[2,], col = col[2],  pch = 17, type = 'b', lwd = lwd)
-  #   legend('topleft', legend = c("treated", 'control'), col = col[1:2],
-  #     lty = 1, pch = c(16, 17), bty = 'n')
-  #
-  # } else
 
   if ('diddesign' %in% class(data)) {
     ##
