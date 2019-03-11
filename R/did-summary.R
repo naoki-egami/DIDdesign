@@ -8,22 +8,22 @@
 #' @param obj an object of \code{summary.diddesign} class, typically an ouput from \code{\link{summary.diddesign}}.
 #' @export
 print.summary.diddesign <- function(obj) {
-  cat("\nMethod:\n", obj$method, "\n\n", sep = "")
-  cat("\nCall:\n", paste(deparse(obj$call), sep="\n", collapse = "\n"), "\n\n", sep = "")
+  cat("\nMethod: ", obj$method, "\n", sep = "")
+  cat("\nCall: ", paste(deparse(obj$call), sep="\n", collapse = "\n"), "\n", sep = "")
 
   cat("\nMain:\n")
   print.default(obj$main, quote = FALSE, right = TRUE)
-  cat("\n\n")
+  cat("\n")
 
   if (!is.null(obj$results)) {
     cat("\nResults:\n\n")
     for (i in 1:length(obj$results)) {
-      cat(" T = ", obj$results[[i]][["post_treat"]], "\n\n")
+      cat(" T = ", obj$results[[i]][["post_treat"]], "\n")
       print.default(obj$results[[i]][['results']], quote = FALSE, right = TRUE)
       cat("\n")
     }
 
-    cat("\nSelection:\n\n")
+    cat("\nSelection:")
     cat(" ", paste("M", obj$selection[['model']], sep = ''), "is selected\n\n")
     print.default(obj$selection[['selection']], quote = FALSE, right = TRUE, digits = 3)
     cat("\n")
@@ -103,7 +103,7 @@ summarize.diddesign <- function(data) {
 #'   \item{selection}{a matrix of statistics used to select the model. Returned only when \code{full = TRUE}.}
 #' @family main functions
 #' @export
-summary.diddesign <- function(obj, full = TRUE) {
+summary.diddesign <- function(obj, full = FALSE) {
   if ('diddesign_data' %in% class(obj)) {
     summary_dat <- summarize.diddesign(obj)
     post_first <- attr(obj[[1]], 'post_treat')

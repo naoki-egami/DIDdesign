@@ -4,7 +4,7 @@
 \alias{summary.diddesign}
 \title{Summarize output from \code{\link{did}} function}
 \usage{
-\method{summary}{diddesign}(obj, full = TRUE)
+\method{summary}{diddesign}(obj, full = FALSE)
 }
 \arguments{
 \item{obj}{an object of \code{diddesign_data} or \code{diddesign} class.
