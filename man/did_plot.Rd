@@ -26,7 +26,7 @@ This should be left as \code{NULL} when repeated cross-section data is used.}
 \item{ci}{a boolean. If \code{TRUE} confidence intervals are shown in addition to mean outcomes.
 The level of CIs is controlled by \code{alpha} argument.}
 
-\item{alpha}{level of confidence intervals. Default is \code{alpha = 0.05}, which shows 95% CIs.}
+\item{alpha}{level of confidence intervals. Default is \code{alpha = 0.05}, which shows 95\% CIs.}
 
 \item{xlim}{xlim}
 

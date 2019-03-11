@@ -12,7 +12,7 @@
 #'  \code{diff_order = 1} generates a plot based on differenced outcomes.
 #' @param ci a boolean. If \code{TRUE} confidence intervals are shown in addition to mean outcomes.
 #'    The level of CIs is controlled by \code{alpha} argument.
-#' @param alpha level of confidence intervals. Default is \code{alpha = 0.05}, which shows 95% CIs.
+#' @param alpha level of confidence intervals. Default is \code{alpha = 0.05}, which shows 95\% CIs.
 #' @param xlim xlim
 #' @param ylim ylim
 #' @param col col
