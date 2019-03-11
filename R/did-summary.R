@@ -86,7 +86,12 @@ summarize.diddesign <- function(data) {
   Y <- cbind(Y_pre, Y_post)
   ymean <- apply(Y, 2, function(x) tapply(x, treat, mean, na.rm = TRUE))
   ymean <- apply(ymean, 2, rev) ## first row is TREATED | second row is CONTROL
-  return(list("ymean" = ymean, 'id_time' = id_time))
+
+  ## compute variance
+  yvar <- apply(Y, 2, function(x) tapply(x, treat, var, na.rm = TRUE))
+  yvar <- apply(yvar, 2, rev) ## first row is TREATED | second row is CONTROL
+
+  return(list("ymean" = ymean, 'yvar' = yvar, 'id_time' = id_time))
 
 }
 
