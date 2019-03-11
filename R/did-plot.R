@@ -10,6 +10,9 @@
 #' @param id_time a variable name of time index.
 #' @param diff_order Order of differences. \code{diff_order = 0} generates a plot based on the original outcome.
 #'  \code{diff_order = 1} generates a plot based on differenced outcomes.
+#' @param ci a boolean. If \code{TRUE} confidence intervals are shown in addition to mean outcomes.
+#'    The level of CIs is controlled by \code{alpha} argument.
+#' @param alpha level of confidence intervals. Default is \code{alpha = 0.05}, which shows 95% CIs.
 #' @param xlim xlim
 #' @param ylim ylim
 #' @param col col
@@ -46,7 +49,7 @@
 #' @family main functions
 #' @export
 did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
-  diff_order = 0, alpha = 0.05, ci = TRUE,
+  diff_order = 0, ci = TRUE, alpha = 0.05,
   xlim = NULL, ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...
 ) {
 
