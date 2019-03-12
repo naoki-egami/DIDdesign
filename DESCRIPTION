@@ -1,6 +1,6 @@
 Package: DIDdesign
 Type: Package
-Title: R package for analyzing and diagnosing difference-in-differences design.
+Title: R package for analyzing and diagnosing difference-in-differences design
 Version: 0.2.3
 Date: 2019-03-07
 Authors@R: c(
