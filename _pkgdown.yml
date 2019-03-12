@@ -9,7 +9,9 @@ navbar:
   left:
     - icon: fa-home fa-lg
       href: index.html
-    - text: Example
+    - text: Getting Started
+      href: articles/articles/introduction.html
+    - text: Example 1
       href: articles/articles/diddesign.html
     - text: Reference
       href: reference/index.html

@@ -37,7 +37,6 @@ did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
   post_treatment = c(2007, 2008, 2009),
   id_subject = "district",
   id_time = "year",
-  ylim = c(10.55, 10.8),
   diff_order = 0,
   main = 'Original Series'
 )
@@ -47,7 +46,6 @@ did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
   post_treatment = c(2007, 2008, 2009),
   id_subject = "district",
   id_time = "year",
-  ylim = c(-0.05, 0.05),
   diff_order = 1,
   main = 'Differenced Series'
 )
@@ -114,4 +112,16 @@ plot(fit_p1, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5), main = "
 abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
 plot(fit_p2, full = TRUE, ylim = c(-0.025, 0.005), xlim = c(-0.5, 3.5), main = 'Without Covariates')
 abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
+```
+
+
+## Selection plot 
+
+
+```{r}
+par(mfrow = c(1,2), mar = c(4, 2.5, 3.5, 1))
+did_plot_selection(fit_p1, equivalence = FALSE)
+did_plot_selection(fit_p2, equivalence = FALSE)
+
+
 ```

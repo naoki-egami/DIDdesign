@@ -76,7 +76,10 @@
   </a>
 </li>
 <li>
-  <a href="../articles/articles/diddesign.html">Example</a>
+  <a href="../articles/articles/introduction.html">Getting Started</a>
+</li>
+<li>
+  <a href="../articles/articles/diddesign.html">Example 1</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -118,7 +121,7 @@
 
     <pre class="usage"><span class='fu'>did</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>id_time</span>, <span class='no'>post_treatment</span>,
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"parametric"</span>, <span class='kw'>se_boot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>n_boot</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='st'>"parametric"</span>)</pre>
+  <span class='kw'>boot_min</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>select</span> <span class='kw'>=</span> <span class='st'>"parametric"</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -217,7 +220,17 @@ A result for one period contains:</p><ul>
 #&gt; ... computing asymptotic variance ...
 #&gt; ... computing the standard DiD estimate ...</div><div class='input'>
  <span class='co'># view summary</span>
- <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in generate_tab_parametric(obj, ATT, se_save, selected, full = full): unused arguments (ATT, se_save, selected)</span></div><div class='input'>
+ <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>fit1</span>)</div><div class='output co'>#&gt; 
+#&gt; Method: nonparametric
+#&gt; 
+#&gt; Call: lnavgsalary_cpi ~ oncycle
+#&gt; 
+#&gt; Main:
+#&gt;         ATT   95% Conf. Int. Selected
+#&gt; 2007 -0.007 [-0.013, -0.001]       M1
+#&gt; 2008 -0.012 [-0.021, -0.004]       M1
+#&gt; 2009 -0.012 [-0.022, -0.001]       M1
+#&gt; </div><div class='input'>
  <span class='co'># view effect plot</span>
  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit1</span>, <span class='kw'>full</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='did-1.png' alt='' width='700' height='433' /></div><div class='input'>
  <span class='co'># view selection plot</span>

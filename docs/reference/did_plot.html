@@ -76,7 +76,10 @@
   </a>
 </li>
 <li>
-  <a href="../articles/articles/diddesign.html">Example</a>
+  <a href="../articles/articles/introduction.html">Getting Started</a>
+</li>
+<li>
+  <a href="../articles/articles/diddesign.html">Example 1</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -117,8 +120,8 @@
     </div>
 
     <pre class="usage"><span class='fu'>did_plot</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='no'>post_treatment</span>, <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>id_time</span>,
-  <span class='kw'>diff_order</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>loc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>diff_order</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>ci</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>loc</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -148,6 +151,15 @@ This should be left as <code>NULL</code> when repeated cross-section data is use
       <th>diff_order</th>
       <td><p>Order of differences. <code>diff_order = 0</code> generates a plot based on the original outcome.
 <code>diff_order = 1</code> generates a plot based on differenced outcomes.</p></td>
+    </tr>
+    <tr>
+      <th>ci</th>
+      <td><p>a boolean. If <code>TRUE</code> confidence intervals are shown in addition to mean outcomes.
+The level of CIs is controlled by <code>alpha</code> argument.</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>level of confidence intervals. Default is <code>alpha = 0.05</code>, which shows 95% CIs.</p></td>
     </tr>
     <tr>
       <th>xlim</th>
@@ -190,7 +202,6 @@ This should be left as <code>NULL</code> when repeated cross-section data is use
   <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
   <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>,
   <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
-  <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>10.55</span>, <span class='fl'>10.8</span>),
   <span class='kw'>diff_order</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Original Series'</span>
 )</div><div class='img'><img src='did_plot-1.png' alt='' width='700' height='433' /></div><div class='input'>
@@ -199,7 +210,6 @@ This should be left as <code>NULL</code> when repeated cross-section data is use
   <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2007</span>, <span class='fl'>2008</span>, <span class='fl'>2009</span>),
   <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>"district"</span>,
   <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>"year"</span>,
-  <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>0.05</span>, <span class='fl'>0.05</span>),
   <span class='kw'>diff_order</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Differenced Series'</span>
 )</div><div class='img'><img src='did_plot-2.png' alt='' width='700' height='433' /></div></pre>
