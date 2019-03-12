@@ -19,7 +19,7 @@ print.summary.diddesign <- function(obj) {
     cat("\nResults:\n\n")
     for (i in 1:length(obj$results)) {
       cat(" T = ", obj$results[[i]][["post_treat"]], "\n")
-      print.default(obj$results[[i]][['results']], quote = FALSE, right = TRUE)
+      print.default(obj$results[[i]][['estimates']], quote = FALSE, right = TRUE)
       cat("\n")
     }
 
@@ -213,7 +213,7 @@ generate_tab_parametric <- function(obj, full = FALSE) {
       ## add labels
       colnames(results) <- c("ATT", "95% Conf. Int.", "")
       rownames(results) <- c("DiD", paste("M", 1:length(ATT), sep = ''))
-      results_list[[i]] <- list('results' = results, 'post_treat' = attr(obj[[i]], 'post_treat'))
+      results_list[[i]] <- list('estimates' = results, 'post_treat' = attr(obj[[i]], 'post_treat'))
     }
 
     res_tab$results <- results_list
