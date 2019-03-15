@@ -43,7 +43,7 @@
 #'   diff_order = 1,
 #'   main = 'Differenced Series'
 #' )
-#' @importFrom dplyr %>% pull select tbl_df
+#' @importFrom dplyr %>% pull select select_ tbl_df
 #' @importFrom Formula as.Formula
 #' @importFrom utils getFromNamespace
 #' @family main functions
@@ -75,12 +75,12 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
       summarise(ymean = mean(outcome, na.rm = TRUE), yvar = var(outcome, na.rm = TRUE)) -> y_summary
     y1mean <- y_summary %>% filter(treatment == 1) %>% pull(ymean)
     y0mean <- y_summary %>% filter(treatment == 0) %>% pull(ymean)
-    y1var <- y_summary %>% filter(treatment == 1) %>% pull(yvar)
-    y0var <- y_summary %>% filter(treatment == 0) %>% pull(yvar)
+    y1var  <- y_summary %>% filter(treatment == 1) %>% pull(yvar)
+    y0var  <- y_summary %>% filter(treatment == 0) %>% pull(yvar)
 
     dat_use <- list("y1mean" = y1mean, 'y0mean' = y0mean,
                     'y1var' = y1var, 'y0var' = y0var,
-                    'id_time' = sort(unique(y_summary$id_time)))
+                    'id_time' = sort(unique(dat_use$id_time)))
     attr(dat_use, 'post_treat') <- min(post_treatment)
     # if (is.null(xlim))
     # if (is.null(xlim))
@@ -183,7 +183,7 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
       lty = 1, pch = c(16, 17), bty = 'n')
     box(lwd = 1.2)
   } else {
-    ## diff_order = 2
+    ## diff_order = 1
 
     ## prepare data
     ymean_diff <- t(apply(ymean, 1, diff))
@@ -210,7 +210,7 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
     }
 
 
-    time_use <- which(attr(data[[1]], 'post_treat') == id_time)
+    # time_use <- which(attr(data[[1]], 'post_treat') == id_time)
     time_lab <- sapply(1:(length(id_time)-1), function(i) {
       paste(id_time[i+1], "-", id_time[i], sep = '')
     })

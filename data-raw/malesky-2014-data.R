@@ -58,5 +58,5 @@ dat_main <- dat_main[dat_main$reg8 !=6, ]
 ##
 ## subset data for saving 
 ##
-malesky2014 <- dat_main %>% select(outcome_list, lnarea, lnpopden, city, reg8, year) %>% tbl_df()
+malesky2014 <- dat_main %>% select(unlist(outcome_list), treatment, lnarea, lnpopden, city, reg8, year) %>% tbl_df()
 usethis::use_data(malesky2014)
