@@ -24,7 +24,8 @@ did_plot(anc_vs_na ~ treatment, data = dekadt2018,
 # fit
 fit <- did(anc_vs_na ~ treatment, data = dekadt2018,
   id_subject = 'ward_id', id_time = 'year',
-  post_treatment = c(2009, 2011, 2014)
+  post_treatment = c(2009, 2011, 2014),
+  method = 'parametric'
 )
 
 # view results

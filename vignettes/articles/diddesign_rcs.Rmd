@@ -39,6 +39,7 @@ For the detail of this dataset, please see the documentation (or `?malesky2014`)
 We begin our analysis first by generating did plot with `did_plot()` function.
 
 ```{r}
+par(mfrow = c(1,2), mar = c(4, 2.5, 3.5, 1))
 # original series 
 did_plot(goodroadv ~ treatment, data = malesky2014,
          post_treatment = c(2010),
@@ -56,4 +57,55 @@ did_plot(goodroadv ~ treatment, data = malesky2014,
          main = 'Differenced Series',
          ylim = c(-1.5, 1.5)
 )
+```
+
+
+## Estimating treatment effects 
+
+
+
+```{r}
+# parametric estimator without covariates
+fit_p0 <- did(goodroadv ~ treatment, data = malesky2014,
+              post_treatment = c(2010),
+              id_time = "year",
+              method = 'parametric')
+
+fit_p1 <- did(goodroadv ~ treatment | lnarea + lnpopden + city + as.factor(reg8), 
+              data = malesky2014,
+              post_treatment = c(2010),
+              id_time = "year",
+              method = 'parametric')
+```
+
+
+
+```{r}
+# plot function
+par(mfrow = c(1,2), mar = c(4, 2.5, 3.5, 1))
+plot(fit_p0, full = TRUE, ylim = c(-0.05, 0.35), main = "Without Covariates")
+abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
+plot(fit_p1, full = TRUE, ylim = c(-0.05, 0.35), main = 'With Covariates')
+abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
+```
+
+
+
+```{r}
+# view summary
+summary(fit_p0, full = TRUE)
+summary(fit_p1, full = TRUE)
+```
+
+
+## Assessing model selection 
+
+
+```{r}
+par(mfrow = c(1,2), mar = c(4, 2.5, 3.5, 1))
+did_plot_selection(fit_p0, equivalence = FALSE, 
+  ylim = c(-0.2, 0.05), main = "Without Covariates")
+did_plot_selection(fit_p1, equivalence = FALSE, 
+  ylim = c(-0.2, 0.05), main = "With Covariates")
+
 ```

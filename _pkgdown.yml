@@ -13,6 +13,8 @@ navbar:
       href: articles/articles/introduction.html
     - text: Example 1
       href: articles/articles/diddesign.html
+    - text: Example 2
+      href: articles/articles/diddesign_rcs.html
     - text: Reference
       href: reference/index.html
     - text: Changelog
