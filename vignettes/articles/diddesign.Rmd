@@ -79,7 +79,8 @@ fit_p1 <- did(lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
 						ami_pc + asian_pc + black_pc + hisp_pc,
   data = anzia2012, id_subject = 'district', id_time = 'year',
   post_treatment = c(2007, 2008, 2009),
-	method = 'parametric')
+	method = 'parametric',
+  verbose = TRUE)
 ```
 ```{r}
 # summary function
@@ -97,8 +98,8 @@ We can compare estimates from a model without covariates.
 fit_p2 <- did(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 	id_subject = "district", id_time = "year",
 	post_treatment = c(2007, 2008, 2009),
-	method = "parametric")
-
+	method = "parametric",
+	verbose = FALSE)
 ```
 
 
@@ -120,8 +121,6 @@ abline(h = 0, col = 'gray', lwd = 1.5, lty = 3)
 
 ```{r}
 par(mfrow = c(1,2), mar = c(4, 2.5, 3.5, 1))
-did_plot_selection(fit_p1, equivalence = FALSE)
-did_plot_selection(fit_p2, equivalence = FALSE)
-
-
+did_plot_selection(fit_p1, ylim = c(-0.015, 0.015), equivalence = FALSE)
+did_plot_selection(fit_p2, ylim = c(-0.015, 0.015), equivalence = FALSE)
 ```

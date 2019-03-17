@@ -148,7 +148,8 @@
 <span class='co'># fit</span>
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='did.html'>did</a></span>(<span class='no'>anc_vs_na</span> ~ <span class='no'>treatment</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dekadt2018</span>,
   <span class='kw'>id_subject</span> <span class='kw'>=</span> <span class='st'>'ward_id'</span>, <span class='kw'>id_time</span> <span class='kw'>=</span> <span class='st'>'year'</span>,
-  <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2009</span>, <span class='fl'>2011</span>, <span class='fl'>2014</span>)
+  <span class='kw'>post_treatment</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2009</span>, <span class='fl'>2011</span>, <span class='fl'>2014</span>),
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>'parametric'</span>
 )</div><div class='output co'>#&gt; 
 #&gt; ... estimating treatment effect for  2009  ...
 #&gt; 
