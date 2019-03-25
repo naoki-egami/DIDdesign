@@ -139,7 +139,7 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
   ## plot
   if (diff_order == 0) {
     if (is.null(xlim)) xlim <- c(min(id_time), max(id_time))
-    if (is.null(ylim) & isFALSE(ci)) ylim <- c(min(ymean), max(ymean))
+    if (is.null(ylim) & !isTRUE(ci)) ylim <- c(min(ymean), max(ymean))
     if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray40')
     if (is.null(lwd)) lwd <- 1.5
     if (is.null(loc)) loc <- 'topleft'
@@ -190,7 +190,7 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
     yvar_diff  <- t(apply(yvar, 1, function(x) na.omit(c(NA, x) + c(x, NA))))
 
     if (is.null(xlim)) xlim <- c(1, length(id_time)-1) # min(id_time), max(id_time))
-    if (is.null(ylim) & isFALSE(ci)) ylim <- c(min(ymean_diff), max(ymean_diff))
+    if (is.null(ylim) & !isTRUE(ci)) ylim <- c(min(ymean_diff), max(ymean_diff))
     if (is.null(col) | length(col) == 1) col <- c(col, '#006284', 'gray40')
     if (is.null(lwd)) lwd <- 1.5
     if (is.null(loc)) loc <- 'topleft'
