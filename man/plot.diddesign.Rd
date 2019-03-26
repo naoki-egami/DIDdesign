@@ -5,7 +5,7 @@
 \title{Plot function}
 \usage{
 \method{plot}{diddesign}(data, xlim = NULL, ylim = NULL, col = NULL,
-  lwd = NULL, full = FALSE, ...)
+  lwd = NULL, full = FALSE, selection = TRUE, ...)
 }
 \arguments{
 \item{data}{Input object. This should be either diddesign object or diddesign_data object.
@@ -18,6 +18,8 @@ If did_double.data objec is provided, mean outcomes for the treated and the cont
 
 \item{full}{A boolean argument, if \code{TRUE} ATT estimates for all models are plotted,
 otherwise only estimates from the selected model will be shown. Default is \code{FALSE}.}
+
+\item{selection}{A boolean. If \code{TRUE} statistics used for model selection is displayed next to the effect plot.}
 
 \item{...}{additional arguments supplied to the plot function.}
 }

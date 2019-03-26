@@ -255,17 +255,36 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
 #'  otherwise only estimates from the selected model will be shown. Default is \code{FALSE}.
 #' @param xlim xlim in plot function. If left \code{NULL}, it's automatically set.
 #' @param ylim ylim in plot function. If left \code{NULL}, it's automatically set.
+#' @param selection A boolean. If \code{TRUE} statistics used for model selection is displayed next to the effect plot.
 #' @param ... additional arguments supplied to the plot function.
 #' @family main functions
 #' @export
-plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NULL, full = FALSE, ...) {
-
+plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NULL, 
+  full = FALSE, selection = TRUE, ...) {
+    
+  args <- list(...)
   if ('diddesign' %in% class(data)) {
     ##
     ## plot for estimation result
     ##
     ATT <- sapply(data, function(x) round(x$ATT, 3))
     xlab <- sapply(data, function(x) attr(x, 'post_treat'))
+    
+    ## setup for selection plot 
+    yl.null <- is.null(ylim)
+    if (isTRUE(selection)) {
+      if (exists('mar', args)) {
+        mar <- args$mar 
+      } else {
+        mar <- c(4, 4, 3, 1.5)
+      }
+
+      par(mfrow = c(1,2), mar = mar)
+    }
+      
+    ##
+    ## main plot for effects 
+    ##
     if (isTRUE(full) & !is.null(data[[1]]$results_standardDiD)) {
       se_list <- ATT_list <- colors <- list()
       for (i in 1:length(data)) {
@@ -297,7 +316,9 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(unlist(se_list)), max(unlist(se_list)))
-      plot (1, 1, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", ylab = "ATT", xlab = "", ...)
+      
+      plot(1, 1, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", ylab = "ATT", xlab = "", ...)
+      abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
         for (j in 1:(length(data[[i]]$results_variance)+1)) {
@@ -335,9 +356,12 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       locs <- seq(-0.3, 0.3, length.out = length(data[[1]]$results_variance))
       points <- points_master[1:length(data[[1]]$results_variance)]
 
+      ## save the original input and overwrite
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(unlist(se_list)), max(unlist(se_list)))
-      plot (1, 1, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", ylab = "ATT", xlab = "", ...)
+      plot(1, 1, type = 'n', pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", 
+            ylab = "ATT", xlab = "", ...)
+      abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)            
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
         for (j in 1:length(data[[i]]$results_variance)) {
@@ -347,7 +371,6 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
           lines(c(i+locs[j],i+locs[j]), c(se_list[[i]][j,1], se_list[[i]][j,2]), lwd = 2.2)
           # 95%
           arrows(i+locs[j], se_list[[i]][j,3], i+locs[j], se_list[[i]][j,4], length=0.05, angle=90, code=3)
-
         }
       }
       legend("topleft", legend = paste("M", 1:length(data[[1]]$results_variance)),
@@ -363,7 +386,8 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       ## plot
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(se_mat), max(se_mat))
-      plot (ATT, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", xlab = "", ...)
+      plot(ATT, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", xlab = "", ...)
+      abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
         # 90%
@@ -372,6 +396,17 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
         arrows(i, se_mat[i,3], i, se_mat[i,4], length=0.05, angle=90, code=3)
       }
 
+    }
+    
+    if (isTRUE(selection)) {
+      if (exists("equivalence", args)) {
+        eq_true <- args$equivalence
+      } else {
+        eq_true <- FALSE
+      }
+      ylim2 <- ylim; if(isTRUE(yl.null)) ylim2 <-  NULL
+      did_plot_selection(data, equivalence = eq_true, eL = -0.005, eU = 0.005,
+                         ylim = ylim2, main = "Selection Statistics")    
     }
   }
 }
