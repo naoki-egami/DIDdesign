@@ -15,7 +15,7 @@
 #' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
                            select = 'parametric', est_did = FALSE, is_covariates,
-                           verbose = TRUE
+                           verbose = TRUE, only_last = FALSE
 ) {
 
   ## input checks
@@ -66,7 +66,14 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     ## fit individual twoway fixed effect model
     ## get demeand matrix and response
     fit <- dat_trans <- list()
+    max_time2 <- max(as.numeric(dat_use$id_time2))
     for (ff in 1:length(fm_list)) {
+      if (isTRUE(only_last)) {
+        outcome_var_name <- all.vars(fm_list[[ff]])[1]
+        dat_use[outcome_var_name] <- ifelse(dat_use$id_time2 %in% c(max_time2, max_time2-1),
+                                            dat_use$outcome_var_name, NA)
+      }
+
       fit[[ff]]       <- plm(fm_list[[ff]], data = dat_use, model = 'within', effect = 'twoways')
       dat_trans[[ff]] <- getX(fm_list[[ff]], fit[[ff]], dat_use)
     }
@@ -80,7 +87,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     ##  - M1: D0y ~ DTy
     ##  - M2: D1y ~ DTy
     if(isTRUE(verbose)) {
-      cat("\n... estimating treatment effect for ", attr(data[[tt]], 'post_treat'), " ...\n")      
+      cat("\n... estimating treatment effect for ", attr(data[[tt]], 'post_treat'), " ...\n")
     }
 
 

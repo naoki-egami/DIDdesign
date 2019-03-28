@@ -218,8 +218,7 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov, x_fo
 #' @importFrom utils getFromNamespace
 #' @importFrom dplyr %>% select filter tbl_df
 #' @keywords internal
-did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_time, Xcov, x_formula = NULL,
-  only_last = TRUE
+did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_time, Xcov, x_formula = NULL
 ) {
 
   ## na omit
@@ -322,20 +321,9 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
                         paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ""))
       }
       if (i > 0) {
-        if(isTRUE(only_last)) {
-          ## keep outcome at the last & (last - 1) time period
-          dat_plm[paste("yd", i, sep = '')] <- ifelse(dat_plm$id_time2 %in% c(max_time2, max_time2-1),
-                                                      diff.pseries(dat_plm$outcome, lag = i), NA)
-        } else {
-          dat_plm[paste("yd", i, sep = '')] <- diff.pseries(dat_plm$outcome, lag = i)
-        }
+        dat_plm[paste("yd", i, sep = '')] <- diff.pseries(dat_plm$outcome, lag = i)
       } else {
-        if(isTRUE(only_last)) {
-          dat_plm[paste("yd", i, sep = '')] <- ifelse(dat_plm$id_time2 %in% c(max_time2, max_time2-1), dat_plm$outcome, NA)
-        } else {
-          dat_plm[paste("yd", i, sep = '')] <- dat_plm$outcome
-        }
-
+        dat_plm[paste("yd", i, sep = '')] <- dat_plm$outcome
       }
 
     }

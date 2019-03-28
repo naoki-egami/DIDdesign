@@ -5,7 +5,7 @@
 \title{Data processing function for panel data (long format)}
 \usage{
 did_data_panelL(outcome, treatment, post_treatment, id_subject, id_time,
-  Xcov, x_formula = NULL, only_last = TRUE)
+  Xcov, x_formula = NULL)
 }
 \arguments{
 \item{outcome}{A vector of outcome variable.}
