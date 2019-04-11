@@ -144,7 +144,7 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov, x_fo
                             paste(x_colname, collapse = "+"), sep = ''))
     } else {
       fm[[1]] <- as.formula(paste("yd",0, " ~ treatment + post + treatment * post + ",
-                            paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ''))      
+                            paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ''))
     }
 
 
@@ -171,16 +171,16 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov, x_fo
       if (is.null(Xcov)) {
         fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post", sep = ''))
       } else if (is.null(x_formula)){
-        fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post + ",
+        fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post +",
                               paste(x_colname, collapse = "+"), sep = ''))
       } else {
         fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post + ",
                               paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ''))
-        
+
       }
-      
-      
-      
+
+
+
     }
 
     ## output
@@ -218,7 +218,9 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov, x_fo
 #' @importFrom utils getFromNamespace
 #' @importFrom dplyr %>% select filter tbl_df
 #' @keywords internal
-did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_time, Xcov, x_formula = NULL) {
+did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_time,
+  Xcov, x_formula = NULL
+) {
 
   ## na omit
   outcome <- na.omit(outcome); treatment <- na.omit(treatment)
@@ -265,7 +267,7 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
       colnames(Xcov)[rename_idx] <- paste('XR', length(rename_idx), sep = '')
     }
 
-    x_colname <- colnames(Xcov)      
+    x_colname <- colnames(Xcov)
   }
 
   ### ==== transform data ==== ###
@@ -300,6 +302,8 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
         mutate(id_time2 = as.numeric(as.factor(id_time))) %>%
         na.omit()
     }
+    max_time2 <- max(dat2$id_time2)
+
     dat_plm <- pdata.frame(dat2, index = c("id_subject", "id_time2"))
 
     # make formula
@@ -311,14 +315,14 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
       if (is.null(Xcov)) {
         fm[[i+1]] <- as.formula(paste("yd",i, "~ treatment", sep = ''))
       } else if (is.null(x_formula)){
-        fm[[i+1]] <- as.formula(paste("yd",i, " ~ treatment + ", 
+        fm[[i+1]] <- as.formula(paste("yd",i, " ~ treatment + ",
                         paste(x_colname, collapse = "+"), sep = ""))
       } else {
-        fm[[i+1]] <- as.formula(paste("yd",i, " ~ treatment + ", 
-                        paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ""))        
+        fm[[i+1]] <- as.formula(paste("yd",i, " ~ treatment + ",
+                        paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ""))
       }
       if (i > 0) {
-        dat_plm[paste("yd", i, sep = '')] <- diff.pseries(dat_plm$outcome, lag = i)
+        dat_plm[paste("yd", i, sep = '')] <- diff.pseries(dat_plm[,paste("yd", i-1, sep = '')])
       } else {
         dat_plm[paste("yd", i, sep = '')] <- dat_plm$outcome
       }

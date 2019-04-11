@@ -79,7 +79,7 @@ did_nonparametric <- function(
   # ********************************************************* #
   for (j in 1:length(data)) {
     if(isTRUE(verbose)) {
-      cat("\n... estimating treatment effect for ", attr(data[[j]], 'post_treat'), " ...\n")      
+      cat("\n... estimating treatment effect for ", attr(data[[j]], 'post_treat'), " ...\n")
     }
 
 
@@ -105,7 +105,7 @@ did_nonparametric <- function(
       if(isTRUE(verbose)) cat("... bootstraping to compute standard errors ...\n")
       tmp_min <- list()
       for (m in m_vec) {
-        tmp_est <- didgmmT.boot(Y = data[[j]]$Y, D = data[[j]]$D, M = m, n_boot = n_boot)
+        tmp_est  <- didgmmT.boot(Y = data[[j]]$Y, D = data[[j]]$D, M = m, n_boot = n_boot)
         tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
         tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
         tmp_min[[m]] <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
@@ -118,7 +118,7 @@ did_nonparametric <- function(
       if(isTRUE(verbose)) cat("... computing asymptotic variance ...\n")
       tmp_min <- list()
       for (m in m_vec) {
-        var_est <- didgmmT.variance(tmp[[m]], Y = data[[j]]$Y, D = data[[j]]$D, M = m)
+        var_est  <- didgmmT.variance(tmp[[m]], Y = data[[j]]$Y, D = data[[j]]$D, M = m)
         tmp_se95 <- c(tmp[[m]]$ATT + qnorm(0.05/2) * sqrt(var_est),
                       tmp[[m]]$ATT + qnorm(1 - 0.05/2) * sqrt(var_est))
         tmp_se90 <- c(tmp[[m]]$ATT + qnorm(0.05) * sqrt(var_est),
@@ -140,7 +140,7 @@ did_nonparametric <- function(
 
       ## bootstrap
       # if (isTRUE(se_boot)) {
-        tmp_est <- std_did_boot(Y = data[[j]]$Y, D = data[[j]]$D, n_boot = n_boot)
+        tmp_est  <- std_did_boot(Y = data[[j]]$Y, D = data[[j]]$D, n_boot = n_boot)
         tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
         tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
         did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)

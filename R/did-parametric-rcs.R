@@ -4,7 +4,7 @@
 #' @param data A \code{diddesign_data} object.
 #' @family estimation functions
 #' @export
-did_parametric_rcs <- function(data, verbose = TRUE) {
+did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE) {
   ## input checks
   if (!('diddesign_data' %in% class(data))) {
     stop("diddesign_data class object should be provided as data.")
@@ -32,8 +32,19 @@ did_parametric_rcs <- function(data, verbose = TRUE) {
 
   for (tt in 1:n_post) {
 
-    dat_use    <- data[[tt]]$pdata
+    dat_use    <- data.frame(data[[tt]]$pdata)
     fm_list    <- data[[tt]]$formula
+
+    id_time2 <- as.numeric(as.factor(dat_use$id_time))
+    max_time2 <- max(id_time2)
+
+    if (isTRUE(only_last)) {
+      for (i in 0:(t_pre-2)) {
+        dat_use[,paste("yd", i, sep = '')] <- ifelse(id_time2 >= (max_time2-1),
+          dat_use[,paste("yd", i, sep = '')], NA)
+      }
+    }
+
 
     # ********************************************************* #
     #                                                           #
@@ -98,7 +109,7 @@ did_parametric_rcs <- function(data, verbose = TRUE) {
       'results_variance' = tmp_min,
       'results_standardDiD' = did_save,
       'min_model' = min_model,
-      'ATT' = tmp[[1]]$ATT,
+      'ATT' = tmp[[min_model]]$ATT,
       'ci95' = ci95,
       'ci90' = ci90
     )
@@ -118,7 +129,7 @@ did_parametric_rcs <- function(data, verbose = TRUE) {
 getX_rcs <- function(lm_fit, response_orginal) {
   is_na <- is.na(response_orginal)
   x_tmp <- model.matrix(lm_fit)
-  covariates <- x_tmp[, !(colnames(x_tmp) %in% c("treatment:post"))]
+  covariates <- x_tmp[, !(colnames(x_tmp) %in% c("treatment:post", "(Intercept)"))]
   treatment  <- x_tmp[, "treatment:post"]
   outcome    <- as.vector(model.frame(lm_fit)[,1])
 
@@ -140,8 +151,8 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL) {
     treatment  <- dat[[d]]$D
     covariates <- dat[[d]]$X ## this includes intercept term
 
-    dat[[d]]$y_resid <- lm(outcome ~ covariates - 1)$residuals
-    dat[[d]]$d_resid <- lm(treatment ~ covariates - 1)$residuals
+    dat[[d]]$y_resid <- lm(outcome ~ covariates -1)$residuals
+    dat[[d]]$d_resid <- lm(treatment ~ covariates -1)$residuals
   }
 
 

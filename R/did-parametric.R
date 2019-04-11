@@ -15,7 +15,7 @@
 #' @export
 did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
                            select = 'parametric', est_did = FALSE, is_covariates,
-                           verbose = TRUE
+                           verbose = TRUE, only_last = TRUE
 ) {
 
   ## input checks
@@ -53,9 +53,18 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
 
   for (tt in 1:n_post) {
 
-    m_vec <- 1:t_pre
-    dat_use    <- data[[tt]]$pdata
-    fm_list    <- data[[tt]]$formula
+    m_vec     <- 1:t_pre
+    dat_use   <- data[[tt]]$pdata
+    fm_list   <- data[[tt]]$formula
+    id_time2  <- as.numeric(dat_use$id_time2)
+    max_time2 <- max(id_time2)
+
+    if (isTRUE(only_last)) {
+      for (i in 0:(t_pre-2)) {
+        dat_use[,paste("yd", i, sep = '')] <- ifelse(id_time2 >= (max_time2-1),
+          dat_use[,paste("yd", i, sep = '')], NA)
+      }
+    }
 
     # ********************************************************* #
     #                                                           #
@@ -80,7 +89,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
     ##  - M1: D0y ~ DTy
     ##  - M2: D1y ~ DTy
     if(isTRUE(verbose)) {
-      cat("\n... estimating treatment effect for ", attr(data[[tt]], 'post_treat'), " ...\n")      
+      cat("\n... estimating treatment effect for ", attr(data[[tt]], 'post_treat'), " ...\n")
     }
 
 
