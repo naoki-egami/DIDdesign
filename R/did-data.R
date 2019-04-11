@@ -218,7 +218,8 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov, x_fo
 #' @importFrom utils getFromNamespace
 #' @importFrom dplyr %>% select filter tbl_df
 #' @keywords internal
-did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_time, Xcov, x_formula = NULL
+did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_time,
+  Xcov, x_formula = NULL
 ) {
 
   ## na omit

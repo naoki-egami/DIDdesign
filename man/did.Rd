@@ -49,30 +49,30 @@ A result for one period contains:
 Estimate average treatment effect on the treated using double difference-in-difference estimator.
 }
 \examples{
- # load package
- require(DIDdesign)
+# load package
+require(DIDdesign)
 
- # load  data
- data(anzia2012)
+# load  data
+data(anzia2012)
 
- # nonparametric estimator without covariates
- fit1 <- did(
-   formula = lnavgsalary_cpi ~ oncycle,
-   data = anzia2012,
-   id_subject = "district", id_time = "year",
-   post_treatment = c(2007, 2008, 2009),
-   method = "nonparametric",
-   se_boot = FALSE
- )
+# nonparametric estimator without covariates
+fit1 <- did(
+  formula = lnavgsalary_cpi ~ oncycle,
+  data = anzia2012,
+  id_subject = "district", id_time = "year",
+  post_treatment = c(2007, 2008, 2009),
+  method = "nonparametric",
+  se_boot = FALSE
+)
 
- # view summary
- summary(fit1)
+# view summary
+summary(fit1)
 
- # view effect plot
- plot(fit1, full = TRUE)
+# view effect plot
+plot(fit1, full = TRUE)
 
- # view selection plot
- did_plot_selection(fit1)
+# view selection plot
+did_plot_selection(fit1)
 }
 \seealso{
 summary.diddesign
