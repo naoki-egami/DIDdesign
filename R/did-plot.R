@@ -259,9 +259,9 @@ plot_diddesign_data <- function(data, panel = TRUE, diff_order = 0,
 #' @param ... additional arguments supplied to the plot function.
 #' @family main functions
 #' @export
-plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NULL, 
+plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NULL,
   full = FALSE, selection = TRUE, ...) {
-    
+
   args <- list(...)
   if ('diddesign' %in% class(data)) {
     ##
@@ -269,21 +269,21 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
     ##
     ATT <- sapply(data, function(x) round(x$ATT, 3))
     xlab <- sapply(data, function(x) attr(x, 'post_treat'))
-    
-    ## setup for selection plot 
+
+    ## setup for selection plot
     yl.null <- is.null(ylim)
     if (isTRUE(selection)) {
       if (exists('mar', args)) {
-        mar <- args$mar 
+        mar <- args$mar
       } else {
         mar <- c(4, 4, 3, 1.5)
       }
 
       par(mfrow = c(1,2), mar = mar)
     }
-      
+
     ##
-    ## main plot for effects 
+    ## main plot for effects
     ##
     if (isTRUE(full) & !is.null(data[[1]]$results_standardDiD)) {
       se_list <- ATT_list <- colors <- list()
@@ -316,8 +316,9 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
 
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(unlist(se_list)), max(unlist(se_list)))
-      
-      plot(1, 1, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", ylab = "ATT", xlab = "", ...)
+
+      plot(1, 1, type = 'n', pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", ylab = "ATT", xlab = "",
+           main = "Estimated Effects", ...)
       abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
@@ -359,9 +360,9 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       ## save the original input and overwrite
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(unlist(se_list)), max(unlist(se_list)))
-      plot(1, 1, type = 'n', pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", 
-            ylab = "ATT", xlab = "", ...)
-      abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)            
+      plot(1, 1, type = 'n', pch = 16, ylim = ylim, xlim = xlim, xaxt = "n",
+            ylab = "ATT", xlab = "", main = "Estimated Effects", ...)
+      abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
         for (j in 1:length(data[[i]]$results_variance)) {
@@ -386,7 +387,8 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       ## plot
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(se_mat), max(se_mat))
-      plot(ATT, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", xlab = "", ...)
+      plot(ATT, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", xlab = "",
+           main = "Estimated Effects", ...)
       abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
@@ -397,7 +399,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       }
 
     }
-    
+
     if (isTRUE(selection)) {
       if (exists("equivalence", args)) {
         eq_true <- args$equivalence
@@ -406,7 +408,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       }
       ylim2 <- ylim; if(isTRUE(yl.null)) ylim2 <-  NULL
       did_plot_selection(data, equivalence = eq_true, eL = -0.005, eU = 0.005,
-                         ylim = ylim2, main = "Selection Statistics")    
+                         ylim = ylim2, main = "Selection Statistics")
     }
   }
 }

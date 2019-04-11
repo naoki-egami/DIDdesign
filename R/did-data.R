@@ -322,7 +322,7 @@ did_data_panelL <- function(outcome, treatment, post_treatment, id_subject, id_t
                         paste(attr(terms(x_formula), 'term.labels'), collapse = "+"), sep = ""))
       }
       if (i > 0) {
-        dat_plm[paste("yd", i, sep = '')] <- diff.pseries(dat_plm$outcome, lag = i)
+        dat_plm[paste("yd", i, sep = '')] <- diff.pseries(dat_plm[,paste("yd", i-1, sep = '')])
       } else {
         dat_plm[paste("yd", i, sep = '')] <- dat_plm$outcome
       }
