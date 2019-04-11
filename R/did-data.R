@@ -171,7 +171,7 @@ did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov, x_fo
       if (is.null(Xcov)) {
         fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post", sep = ''))
       } else if (is.null(x_formula)){
-        fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post + ",
+        fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post +",
                               paste(x_colname, collapse = "+"), sep = ''))
       } else {
         fm[[k]] <- as.formula(paste("yd", k-1, " ~ treatment + post + treatment * post + ",

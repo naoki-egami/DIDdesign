@@ -270,6 +270,11 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
     ATT <- sapply(data, function(x) round(x$ATT, 3))
     xlab <- sapply(data, function(x) attr(x, 'post_treat'))
 
+    if (exists("main", args)) {
+      main <- args$main
+    } else {
+      main <- "Estimated Effects"
+    }
     ## setup for selection plot
     yl.null <- is.null(ylim)
     if (isTRUE(selection)) {
@@ -318,7 +323,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       if (is.null(ylim)) ylim <- c(min(unlist(se_list)), max(unlist(se_list)))
 
       plot(1, 1, type = 'n', pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", ylab = "ATT", xlab = "",
-           main = "Estimated Effects", ...)
+           main = main)
       abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
@@ -361,7 +366,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(unlist(se_list)), max(unlist(se_list)))
       plot(1, 1, type = 'n', pch = 16, ylim = ylim, xlim = xlim, xaxt = "n",
-            ylab = "ATT", xlab = "", main = "Estimated Effects", ...)
+            ylab = "ATT", xlab = "", main = main)
       abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
@@ -388,7 +393,7 @@ plot.diddesign <- function(data, xlim = NULL, ylim = NULL, col = NULL, lwd = NUL
       if (is.null(xlim)) xlim <- c(0.5, length(ATT)+0.5)
       if (is.null(ylim)) ylim <- c(min(se_mat), max(se_mat))
       plot(ATT, pch = 16, ylim = ylim, xlim = xlim, xaxt = "n", xlab = "",
-           main = "Estimated Effects", ...)
+           main = main)
       abline(h = 0, col = 'gray60', lwd = 1.3, lty = 3)
       axis(1, at = 1:length(ATT), xlab)
       for (i in 1:length(data)) {
