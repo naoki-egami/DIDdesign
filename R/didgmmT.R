@@ -100,7 +100,8 @@ didgmmT <- function(Y, D, M, ep = 0.01, max_trial = 100, only_beta = FALSE, only
         }
 
         ## run until convergence with different initi values
-        fit <- optim(par = init, fn = hansenT_over_onlyB, method = 'BFGS', Y = Y, D = D, M = M)
+        # fit <- optim(par = init, fn = hansenT_over_onlyB, method = 'BFGS', Y = Y, D = D, M = M)
+        fit <- optim(par = init, fn = hansenT_over_onlyB_ver2, method = 'BFGS', Y = Y, D = D, M = M)
 
         ## convergence
         converge <- ifelse(fit$convergence == 0, 0, 1)
@@ -392,9 +393,10 @@ hansenT_over_onlyB <- function(par, Y, D, M) {
 
   ## combine moments
   psi_out <- t(yTdiff) * pi_weight - beta
-
+  
   ## compute the loss
   x <- colSums(psi_out) / N
+  # W <- crossprod(psi_out, psi_out)
   W <- crossprod(psi_out, psi_out)
 
   ## return gWg
@@ -403,6 +405,41 @@ hansenT_over_onlyB <- function(par, Y, D, M) {
   return(loss)
 }
 
+
+
+
+hansenT_over_onlyB_ver2 <- function(par, Y, D, M) {
+  ## params
+  beta <- par[1]
+
+  ## common quantities
+  T0 <- ncol(Y) - 1; N <- nrow(Y); N1 <- sum(D)
+  pi_i <- N1 / N
+  pi_weight <- 1 / pi_i * (D - pi_i) / (1 - pi_i)
+
+  ## compute moments for beta
+  m_use <- M:T0
+  yTdiff <- matrix(NA, nrow = length(m_use), ncol = N)
+  for (z in 1:length(m_use)) {
+    ## take m-th order diff
+    tmp <- diff(t(Y), lag = m_use[z])
+    ## take T0+1 time period
+    yTdiff[z,] <- tmp[nrow(tmp),]
+  }
+
+  ## combine moments
+  psi_out <- t(yTdiff) * pi_weight - beta
+  
+  ## compute the loss
+  x <- colSums(psi_out) / N
+  # W <- crossprod(psi_out, psi_out)
+  W <- crossprod(psi_out, psi_out)
+
+  ## return gWg
+  loss <- t(x) %*% solve(W / N,  x)
+
+  return(loss)
+}
 
 ##
 ## choose initial value
