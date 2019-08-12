@@ -101,7 +101,7 @@ didgmmT <- function(Y, D, M, ep = 0.01, max_trial = 100, only_beta = FALSE, only
 
         ## run until convergence with different initi values
         # fit <- optim(par = init, fn = hansenT_over_onlyB, method = 'BFGS', Y = Y, D = D, M = M)
-        fit <- optim(par = init, fn = hansenT_over_onlyB_ver2, method = 'BFGS', Y = Y, D = D, M = M)
+        fit <- optim(par = init, fn = hansenT_over_onlyB_ver2, method = 'BFGS', Y = Y, D = D, M = M, init = init)
 
         ## convergence
         converge <- ifelse(fit$convergence == 0, 0, 1)
@@ -372,10 +372,11 @@ hansenT_over_init <- function(par, Y, D, M, ep) {
 
 
 
-hansenT_over_onlyB <- function(par, Y, D, M) {
+hansenT_over_onlyB <- function(par, Y, D, M, init = NULL) {
   ## params
   beta <- par[1]
-
+  if (is.null(init)) init <- beta 
+  
   ## common quantities
   T0 <- ncol(Y) - 1; N <- nrow(Y); N1 <- sum(D)
   pi_i <- N1 / N
@@ -393,11 +394,11 @@ hansenT_over_onlyB <- function(par, Y, D, M) {
 
   ## combine moments
   psi_out <- t(yTdiff) * pi_weight - beta
+  psi_init <- t(yTdiff) * pi_weight - beta
   
   ## compute the loss
   x <- colSums(psi_out) / N
-  # W <- crossprod(psi_out, psi_out)
-  W <- crossprod(psi_out, psi_out)
+  W <- crossprod(psi_init, psi_init)
 
   ## return gWg
   loss <- t(x) %*% solve(W / N,  x)
@@ -408,9 +409,10 @@ hansenT_over_onlyB <- function(par, Y, D, M) {
 
 
 
-hansenT_over_onlyB_ver2 <- function(par, Y, D, M) {
+hansenT_over_onlyB_ver2 <- function(par, Y, D, M, init = NULL) {
   ## params
   beta <- par[1]
+  if (is.null(init)) init <- beta
 
   ## common quantities
   T0 <- ncol(Y) - 1; N <- nrow(Y); N1 <- sum(D)
@@ -429,11 +431,12 @@ hansenT_over_onlyB_ver2 <- function(par, Y, D, M) {
 
   ## combine moments
   psi_out <- t(yTdiff) * pi_weight - beta
+  psi_init <- t(yTdiff) * pi_weight - init
   
   ## compute the loss
   x <- colSums(psi_out) / N
+  W <- crossprod(psi_init, psi_init)
   # W <- crossprod(psi_out, psi_out)
-  W <- crossprod(psi_out, psi_out)
 
   ## return gWg
   loss <- t(x) %*% solve(W / N,  x)
