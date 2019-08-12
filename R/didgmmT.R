@@ -408,7 +408,7 @@ hansenT_over_onlyB <- function(par, Y, D, M, init = NULL) {
 
 
 
-
+#' Main loss function for Case 3 (only beta) 
 hansenT_over_onlyB_ver2 <- function(par, Y, D, M, init = NULL) {
   ## params
   beta <- par[1]

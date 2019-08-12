@@ -75,7 +75,7 @@ did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE) {
       ## compute Ci
       tmp_ci95     <- c(est$ATT - 1.96 * sqrt(att_var), est$ATT + 1.96 * sqrt(att_var))
       tmp_ci90     <- c(est$ATT - 1.64 * sqrt(att_var), est$ATT + 1.64 * sqrt(att_var))
-      tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90)
+      tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90, 'se' = sqrt(att_var))
 
     }
 
@@ -95,7 +95,7 @@ did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE) {
     tmp_se95 <- c(did_est + qnorm(0.025) * sqrt(did_var), did_est + qnorm(1 - 0.025) * sqrt(did_var))
     tmp_se90 <- c(did_est + qnorm(0.050) * sqrt(did_var), did_est + qnorm(1 - 0.050) * sqrt(did_var))
 
-    did_boot_list <- list('boot_est' = NULL, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+    did_boot_list <- list('boot_est' = NULL, 'ci95' = tmp_se95, 'ci90' = tmp_se90, 'se' = sqrt(did_var))
     did_save <- list("ATT" = did_est, 'results_variance' = did_boot_list)
 
     # ********************************************************* #
@@ -160,9 +160,14 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL) {
   ## initialize parameter (ATT) if not given
   if(is.null(par_init)) par_init <- runif(1)
   ##   - moment conditions: E[D(Y- Db)] = 0
-  est <- optim(par = par_init, fn = cugmm_loss_rcs, method = "BFGS", dat = dat)
+  ## two-step GMM
+  # cat("1st stage\n")
+  est1st <- optim(par = par_init, fn = cugmm_loss_rcs_init, method = "BFGS", dat = dat)
 
-  return(list('est' = est, 'ATT' = est$par, 'data' = dat))
+  # cat("2nd stage\n")
+  est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat, init = est1st$par)
+
+  return(list('est' = est2nd, 'ATT' = est2nd$par, 'data' = dat))
 }
 
 
@@ -170,24 +175,50 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL) {
 #' @param par parameter.
 #' @param dat a list of data consists of y_resid and d_reisd.
 #' @keywords internal
-cugmm_loss_rcs <- function(par, dat) {
+cugmm_loss_rcs <- function(par, dat, init = NULL) {
+  if (is.null(init)) init <- par 
+  
+  n_moment_condition <- length(dat)
+
+  XXe <- XXe0 <- matrix(NA, nrow = length(dat[[1]]$is_na), ncol = n_moment_condition)
+  for (j in 1:n_moment_condition) {
+    is_na <- dat[[j]]$is_na
+    loss  <- dat[[j]]$d_resid * (dat[[j]]$y_resid - dat[[j]]$d_resid * par)
+    loss0  <- dat[[j]]$d_resid * (dat[[j]]$y_resid - dat[[j]]$d_resid * init)
+    XXe[!is_na, j] <- as.vector(loss)
+    XXe0[!is_na, j] <- as.vector(loss0)
+  }
+
+  gbar  <- colMeans(XXe, na.rm = TRUE)
+  XXe   <- na.omit(XXe); XXe0 <- na.omit(XXe0)
+  # Omega <- (t(XXe) %*% XXe)
+  Omega <- (t(XXe0) %*% XXe0)
+  loss  <- as.vector(t(gbar) %*% solve(Omega / nrow(XXe), gbar))
+  return(loss)
+}
+
+
+#' CU-GMM loss function for RCS data
+#' @param par parameter.
+#' @param dat a list of data consists of y_resid and d_reisd.
+#' @keywords internal
+cugmm_loss_rcs_init <- function(par, dat) {
   n_moment_condition <- length(dat)
 
   XXe <- matrix(NA, nrow = length(dat[[1]]$is_na), ncol = n_moment_condition)
   for (j in 1:n_moment_condition) {
     is_na <- dat[[j]]$is_na
-    loss  <- dat[[j]]$d_resid * (dat[[j]]$y_resid - dat[[j]]$d_resid* par)
+    loss  <- dat[[j]]$d_resid * (dat[[j]]$y_resid - dat[[j]]$d_resid * par)
     XXe[!is_na, j] <- as.vector(loss)
   }
 
   gbar  <- colMeans(XXe, na.rm = TRUE)
   XXe   <- na.omit(XXe)
-  Omega <- (t(XXe) %*% XXe)
-  loss  <- as.vector(t(gbar) %*% solve(Omega / nrow(XXe), gbar))
+  Omega <- diag(ncol(XXe)) # (t(XXe) %*% XXe)
+  loss  <- as.vector(t(gbar) %*% gbar) ## as.vector(t(gbar) %*% solve(Omega / nrow(XXe), gbar))
   # cat("loss = ", loss, '\n')
   return(loss)
 }
-
 
 #' CU-GMM variance function for RCS data
 #' @param par parameter.
