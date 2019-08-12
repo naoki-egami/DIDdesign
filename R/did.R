@@ -209,6 +209,7 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
 
     if (isTRUE(is_rcs)) {
       fit <- did_parametric_rcs(data = dat_use, verbose = verbose)
+      res_sign <- attr(fit, "sign")
     } else {
       fit <- did_parametric(data = dat_use,
         se_boot = se_boot, n_boot = n_boot, boot_min = boot_min,

@@ -29,7 +29,8 @@ did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE) {
   select_tmp <- rcs_selection(data[[1]]$pdata, data[[1]]$formula, attr(data[[1]], 'post_treat'))
   min_model  <- select_tmp$min_model
   attr(result, 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
-
+  attr(result, 'sign')       <- select_tmp[c('sign')]
+  
   for (tt in 1:n_post) {
 
     dat_use    <- data.frame(data[[tt]]$pdata)

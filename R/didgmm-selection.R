@@ -144,9 +144,23 @@ rcs_selection <- function(data, fm_list, post_time, alpha = 0.05) {
         (test_theta[ff] + qnorm(1 - alpha/2) * test_se[ff]) >= 0) {
       min_model <- ff
     }
+    
+    
+    ##
+    ## conduct sign test here 
+    ## 
+    if (ff == (length(fm_list)-1)) {
+      res_sign <- sign_test_parametric_rcs(
+        coefs = tmp$coef[c("post", "treatment:post")], 
+        vcov = vcov(tmp)[c("post", "treatment:post"), c("post", "treatment:post")],
+        level = alpha
+      )
+    }
   }
 
-  out_list <- list("min_model" = min_model, 'test_theta' = rev(test_theta), 'test_se' = rev(test_se))
+  out_list <- list("min_model" = min_model, 'test_theta' = rev(test_theta), 'test_se' = rev(test_se),
+                   "sign" = res_sign
+                  )
   attr(out_list, 'method') <- 'rcs_selection'
   return(out_list)
 

@@ -126,6 +126,20 @@ sign_test_rcs <- function(dat, level = 0.1) {
 
 
 
+sign_test_parametric_rcs <- function(coefs, vcov, level = 0.1) {
+  ## trends 
+  trend0 <- coefs[1]; trend1 <- trend0 + coefs[2]
+  T0 <- trend0 / sqrt(vcov[1,1])
+  T1 <- trend1 / sqrt(vcov[1,1] + vcov[1,2] + 2 * vcov[2,2])
+  
+  sign_true <- trend0
+  h1 <- ifelse(sign_true > 0, 1, 2)
+  pval0 <- c(pnorm(T0), 1 - pnorm(T0))
+  pval1 <- c(pnorm(T1), 1 - pnorm(T1))
+  pvalue <- min(pval0[h1], pval1[h1])
+  res  <- ifelse(pvalue > level, 'pass', 'fail to pass')
+  return(list(res = res, pvalue = pvalue, pval0 = pval0[h1], pval1 = pval1[h1], T0 = T0, T1 = T1, bias = coefs[2]))  
+}
 
 
 #' equivalence check 
