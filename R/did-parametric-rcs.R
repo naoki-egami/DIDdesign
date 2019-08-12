@@ -81,7 +81,8 @@ did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE) {
 
     ci95 <- tmp_min[[min_model]]$ci95
     ci90 <- tmp_min[[min_model]]$ci90
-
+    se   <- tmp_min[[min_model]]$se
+    
     # ********************************************************* #
     # standard did
     # ********************************************************* #
@@ -111,7 +112,8 @@ did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE) {
       'min_model' = min_model,
       'ATT' = tmp[[min_model]]$ATT,
       'ci95' = ci95,
-      'ci90' = ci90
+      'ci90' = ci90,
+      'se'   = se
     )
     attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
     attr(result[[tt]], 'method') <- 'parametric'

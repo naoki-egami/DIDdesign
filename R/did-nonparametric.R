@@ -100,6 +100,7 @@ did_nonparametric <- function(
 
       se95 <- quantile(tmp_min, prob = c(0.025, 0.975))
       se90 <- quantile(tmp_min, prob = c(0.05, 0.95))
+      se   <- sd(tmp_min)
     } else if (isTRUE(se_boot)) {
       ## do bootstrap for all models
       if(isTRUE(verbose)) cat("... bootstraping to compute standard errors ...\n")
@@ -108,7 +109,7 @@ did_nonparametric <- function(
         tmp_est  <- didgmmT.boot(Y = data[[j]]$Y, D = data[[j]]$D, M = m, n_boot = n_boot)
         tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
         tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
-        tmp_min[[m]] <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+        tmp_min[[m]] <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90, 'se' = sd(tmp_est))
       }
 
       se95 <- tmp_min[[min_model]]$ci95
@@ -123,11 +124,12 @@ did_nonparametric <- function(
                       tmp[[m]]$ATT + qnorm(1 - 0.05/2) * sqrt(var_est))
         tmp_se90 <- c(tmp[[m]]$ATT + qnorm(0.05) * sqrt(var_est),
                       tmp[[m]]$ATT + qnorm(1 - 0.05) * sqrt(var_est))
-        tmp_min[[m]] <- list('boot_est' = var_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+        tmp_min[[m]] <- list('boot_est' = var_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90, 'se' = sqrt(var_est))
       }
 
       se95 <- tmp_min[[min_model]]$ci95
       se90 <- tmp_min[[min_model]]$ci90
+      se   <- tmp_min[[min_model]]$se
 
     }
 
@@ -143,7 +145,7 @@ did_nonparametric <- function(
         tmp_est  <- std_did_boot(Y = data[[j]]$Y, D = data[[j]]$D, n_boot = n_boot)
         tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
         tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
-        did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+        did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90, 'se' = sd(tmp_est))
       # } else {
       #   did_boot_list <- NULL
       # }
@@ -163,7 +165,8 @@ did_nonparametric <- function(
       'select' = select,
       'ATT' = tmp[[min_model]]$ATT,
       'ci95' = se95,
-      'ci90' = se90
+      'ci90' = se90,
+      'se'   = sd
     )
 
     attr(result[[j]], 'post_treat') <- attr(data[[j]], 'post_treat')

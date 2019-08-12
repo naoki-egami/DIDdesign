@@ -6,24 +6,30 @@
 
 #' Print output from summary function
 #' @param obj an object of \code{summary.diddesign} class, typically an ouput from \code{\link{summary.diddesign}}.
+#' @importFrom cli cat_rule
 #' @export
 print.summary.diddesign <- function(obj) {
-  cat("\nMethod: ", obj$method, "\n", sep = "")
+  cat_rule(left = crayon::bold("Methods"))
+  cat("Method: ", obj$method, "\n", sep = "")
   cat("\nCall: ", paste(deparse(obj$call), sep="\n", collapse = "\n"), "\n", sep = "")
 
-  cat("\nMain:\n")
-  print.default(obj$main, quote = FALSE, right = TRUE)
+  # cat("\nMain:\n")
   cat("\n")
+  cat_rule(left = crayon::bold("Main Result"))
+  print.default(obj$main, quote = FALSE, right = TRUE, digits = 3)
 
   if (!is.null(obj$results)) {
-    cat("\nResults:\n\n")
+    cat("\n")
+    cat_rule(left = crayon::bold("Full Results"), line = 2)
     for (i in 1:length(obj$results)) {
       cat(" T = ", obj$results[[i]][["post_treat"]], "\n")
-      print.default(obj$results[[i]][['estimates']], quote = FALSE, right = TRUE)
+      tab_print  <- round(obj$results[[i]][['estimates']], 3)
+      tab_print[,5] <- ifelse(tab_print[,5] == 1, cli::symbol$tick, "")
+      print.default(tab_print, quote = FALSE, right = TRUE, digits = 3)
       cat("\n")
     }
 
-    cat("\nSelection:")
+    cat_rule(left = crayon::bold("Selection"))
     cat(" ", paste("M", obj$selection[['model']], sep = ''), "is selected\n\n")
     print.default(obj$selection[['selection']], quote = FALSE, right = TRUE, digits = 3)
     cat("\n")
@@ -150,21 +156,27 @@ generate_tab_parametric <- function(obj, full = FALSE) {
   ##
 
   ## get estimated ATT
-  ATT <- sapply(obj, function(x) round(x$ATT, 3))
+  # ATT <- sapply(obj, function(x) round(x$ATT, 3))
+  ATT <- sapply(obj, function(x) x$ATT)
 
   ## obtain estiamted se for all years (for selected models )
-  se_save <- sapply(1:length(ATT), function(i) {
-    tmp <- paste(formatC(round(obj[[i]]$ci95, 3), format = 'f', digits = 3), collapse = ', ')
-    paste("[", tmp, "]", sep = '')
-  })
+  ci_save <- t(sapply(1:length(ATT), function(i) {
+    # tmp <- paste(formatC(round(obj[[i]]$ci95, 3), format = 'f', digits = 3), collapse = ', ')
+    # paste("[", tmp, "]", sep = '')
+    tmp <- obj[[i]]$ci95
+    tmp
+  }))
 
+  se_save <- sapply(1:length(ATT), function(i) { obj[[i]]$se } )
+  
   ## get selected models
-  selected <- paste("M", sapply(obj, function(x) as.character(x$min_model)), sep = '')
+  # selected <- paste("M", sapply(obj, function(x) as.character(x$min_model)), sep = '')
+  selected <- sapply(obj, function(x) x$min_model)
 
   ## make a table and add col labels
-  main_tab <- cbind(ATT, se_save, selected)
+  main_tab <- cbind(ATT, se_save, ci_save[,1], ci_save[,2], selected)
   rownames(main_tab) <- sapply(obj, function(x) as.character(attr(x, 'post_treat')))
-  colnames(main_tab) <- c("ATT", "95% Conf. Int.", "Selected")
+  colnames(main_tab) <- c("ATT", "SE", "95% CI (LB)", "95% CI (UB)", "Selected")
 
   ## add to return table
   res_tab$main <- main_tab
@@ -177,41 +189,52 @@ generate_tab_parametric <- function(obj, full = FALSE) {
 
     ## get DID estimates
     DiD <- sapply(obj, function(x) round(x$results_standardDiD$ATT, 3))
-    DiD_se_save <- sapply(1:length(ATT), function(i) {
-      paste("[",
-        paste(round(obj[[i]]$results_standardDiD$results_variance$ci95, 3), collapse = ', '), "]", sep = '')
-    })
+    DiD_ci_save <- t(sapply(1:length(ATT), function(i) {
+      # paste("[",
+      #   paste(round(obj[[i]]$results_standardDiD$results_variance$ci95, 3), collapse = ', '), "]", sep = '')
+      obj[[i]]$results_standardDiD$results_variance$ci95
+    }))
+    
+    DiD_se_save <- sapply(1:length(ATT), function(i) obj[[i]]$results_standardDiD$results_variance$se)
 
     for (i in 1:length(obj)) {
       ## save obj
-      results <- matrix(NA, nrow = length(obj[[1]]$results_estimates)+1, ncol = 3)
+      results <- matrix(0, nrow = length(obj[[1]]$results_estimates)+1, ncol = 5)
 
       ## save DID
       results[1, 1] <- DiD[i]
       results[1, 2] <- DiD_se_save[i]
+      results[1, 3:4] <- DiD_ci_save[i,]
 
 
       ## se
-      ci_tmp <- sapply(1:length(obj[[i]]$results_variance), function(j) {
-        tmp <- paste(formatC(round(obj[[i]]$results_variance[[j]]$ci95, 3), format = 'f', digits = 3),
-                    collapse = ', ')
-        paste("[", tmp , "]", sep = '')
-      })
+      ci_tmp <- t(sapply(1:length(obj[[i]]$results_variance), function(j) {
+        obj[[i]]$results_variance[[j]]$ci95
+        # tmp <- paste(formatC(round(obj[[i]]$results_variance[[j]]$ci95, 3), format = 'f', digits = 3),
+        #             collapse = ', ')
+        # paste("[", tmp , "]", sep = '')
+      }))
 
+      se_tmp <- sapply(1:length(obj[[i]]$results_variance), function(j) {
+        obj[[i]]$results_variance[[j]]$se
+      })
+      
       ## ATT
       ATT <- sapply(obj[[i]]$results_estimates, function(x) round(x$ATT, 3))
 
       ## selected model
-      check_mark <- rep("", length(obj[[1]]$results_estimates)+1)
-      check_mark[attr(obj, 'selection')$min_model+1] <- "*"
+      # check_mark <- rep("", length(obj[[1]]$results_estimates)+1)
+      check_mark <- rep(0, length(obj[[1]]$results_estimates)+1)
+      check_mark[attr(obj, 'selection')$min_model+1] <- 1 # cli::symbol$tick
 
       ## save
       results[-1, 1] <- ATT
-      results[-1, 2] <- ci_tmp
-      results[,3]    <- check_mark
+      results[-1, 2] <- se_tmp
+      results[-1, 3:4] <- ci_tmp
+      results[,5]    <- check_mark
 
       ## add labels
-      colnames(results) <- c("ATT", "95% Conf. Int.", "")
+      colnames(results) <- c("ATT", "SE", "95% CI (LB)", "95% CI (UB)", "")
       rownames(results) <- c("DiD", paste("M", 1:length(ATT), sep = ''))
       results_list[[i]] <- list('estimates' = results, 'post_treat' = attr(obj[[i]], 'post_treat'))
     }

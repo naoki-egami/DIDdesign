@@ -132,13 +132,14 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
         ## compute Ci
         tmp_ci95     <- c(est$ATT - 1.96 * sqrt(att_var), est$ATT + 1.96 * sqrt(att_var))
         tmp_ci90     <- c(est$ATT - 1.64 * sqrt(att_var), est$ATT + 1.64 * sqrt(att_var))
-        tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90)
+        tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90, 'se' = sqrt(att_var))
       }
 
     }
 
     ci95 <- tmp_min[[min_model]]$ci95
     ci90 <- tmp_min[[min_model]]$ci90
+    se   <- tmp_min[[min_model]]$se
 
     # ********************************************************* #
     #                                                           #
@@ -156,7 +157,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       tmp_est <- std_did_boot(Y = data[[tt]]$Y, D = data[[tt]]$D, n_boot = n_boot)
       tmp_se95 <- quantile(tmp_est, prob = c(0.025, 0.975))
       tmp_se90 <- quantile(tmp_est, prob = c(0.05, 0.95))
-      did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+      did_boot_list <- list('boot_est' = tmp_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90, 'se' = sd(tmp_est))
       # } else {
       #   did_boot_list <- NULL
       # }
@@ -175,7 +176,7 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       tmp_se95 <- c(did_est + qnorm(0.025) * sqrt(did_var), did_est + qnorm(1 - 0.025) * sqrt(did_var))
       tmp_se90 <- c(did_est + qnorm(0.050) * sqrt(did_var), did_est + qnorm(1 - 0.050) * sqrt(did_var))
 
-      did_boot_list <- list('boot_est' = NULL, 'ci95' = tmp_se95, 'ci90' = tmp_se90)
+      did_boot_list <- list('boot_est' = NULL, 'ci95' = tmp_se95, 'ci90' = tmp_se90, 'se' = sqrt(did_var))
       did_save <- list("ATT" = did_est, 'results_variance' = did_boot_list)
 
     }
@@ -193,7 +194,8 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
       'min_model' = min_model,
       'ATT' = tmp[[min_model]]$ATT,
       'ci95' = ci95,
-      'ci90' = ci90
+      'ci90' = ci90,
+      'se'   = se
     )
 
     attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')

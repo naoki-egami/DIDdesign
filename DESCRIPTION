@@ -19,6 +19,8 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 Imports:
+    cli,
+    crayon,
     Formula,
     dplyr,
     plm,
