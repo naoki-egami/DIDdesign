@@ -172,6 +172,13 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     is_covariates <- TRUE
   }
 
+
+  # ********************************************************* #
+  # Sign test before estimating the effect                    #
+  # ********************************************************* #
+  res_sign <- sign_test(dat_use, level = 0.1)
+
+
   # ********************************************************* #
   #                                                           #
   #             estimate treatment effect                     #
@@ -223,10 +230,16 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     }
   }
 
+  # ********************************************************* #
+  # equivalence test here 
+  # ********************************************************* #
+  res_eq <- equivalence_test(attr(fit, 'selection')$test_theta, attr(fit, 'selection')$test_se, eq = res_sign$bias)
 
   ## add attributes
-  attr(fit, 'call') <- formula
+  attr(fit, 'call')   <- formula
   attr(fit, 'method') <- method
+  attr(fit, 'sign')   <- res_sign
+  attr(fit, 'equivalence') <- res_eq
 
   return(fit)
 }

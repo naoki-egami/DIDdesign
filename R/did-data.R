@@ -55,10 +55,12 @@ did_data <- function(
 
     ## repeated cross-section + long
     out <- did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov, x_formula)
+    attr(out, 'data_type') <- 'rcs'
   } else if (!isTRUE(is_rcs) & isTRUE(long)) {
 
     ## panel + long
     out <- did_data_panelL(outcome, treatment, post_treatment, id_subject, id_time, Xcov, x_formula)
+    attr(out, 'data_type') <- 'panel'
   } else {
 
     ## panel + wide
@@ -66,6 +68,7 @@ did_data <- function(
       warning("To use covariates, please transform data into the long format.")
     }
     out <- did_data_panelW(outcome, treatment, post_treatment)
+    attr(out, 'data_type') <- 'panel'
   }
 
   class(out) <- c("diddesign", "diddesign_data")

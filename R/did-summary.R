@@ -29,9 +29,20 @@ print.summary.diddesign <- function(obj) {
       cat("\n")
     }
 
-    cat_rule(left = crayon::bold("Selection"))
-    cat(" ", paste("M", obj$selection[['model']], sep = ''), "is selected\n\n")
+    cat_rule(left = crayon::bold("Selection"), line = 2)
+    cat(crayon::bold('Bias Test: '), "")
+    cat("  ", paste("M", obj$selection[['model']], sep = ''), "is selected\n\n")
     print.default(obj$selection[['selection']], quote = FALSE, right = TRUE, digits = 3)
+    cat("\n")
+    cat(crayon::bold("Bias test (equivalence based): "), "\n\n")
+    
+    names(obj$selection[['equivalence']]) <- rev(rownames(obj$selection[['selection']]))
+    
+    print.default(obj$selection[['equivalence']], quote = FALSE, right = TRUE)
+    bias <- round(abs(obj$selection[['bias']]), 3)
+    cat("\nEquivalence region is ", "[", -bias, ",", bias, "]\n")
+    cat("\n")
+    cat(crayon::bold("Sign test for PTT: "), obj$selection[['sign']], "( p-value =", round(obj$selection[['pval']], 3), ")\n")
     cat("\n")
 
   }
@@ -244,12 +255,17 @@ generate_tab_parametric <- function(obj, full = FALSE) {
     ##
     ## save selection
     ##
+    
+    ## equivalence result 
     selection <- matrix(NA, nrow = length(attr(obj, "selection")$test_theta), ncol = 2)
     selection[,1] <- attr(obj, "selection")$test_theta
     selection[,2] <- attr(obj, "selection")$test_se
-    colnames(selection) <- c("Theta", 'Std. Error')
+    colnames(selection) <- c("Theta", 'SE')
     rownames(selection) <- paste("M", length(attr(obj, "selection")$test_theta):1, sep = "")
-    res_tab$selection <- list("selection" = selection, "model" = attr(obj, "selection")$min_model)
+    res_tab$selection <- list("selection" = selection, "model" = attr(obj, "selection")$min_model, 
+                             'sign' = attr(obj, 'sign')$res, 'pval' = attr(obj, 'sign')$pvalue,
+                             'equivalence' = attr(obj, 'equivalence'), 'bias' = attr(obj, 'sign')$bias
+                           )
   }
 
   return(res_tab)
