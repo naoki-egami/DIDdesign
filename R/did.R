@@ -236,7 +236,8 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   # equivalence test here 
   # ********************************************************* #
   res_eq <- equivalence_test(attr(fit, 'selection')$test_theta, attr(fit, 'selection')$test_se, 
-    eq = res_sign$bias, n = res_sign$N, n01 = res_sign$n01, level = test_level)
+    eq = res_sign$bias, n = res_sign$N, n01 = res_sign$n01, n1 = res_sign$n1, n0 = res_sign$n0, 
+    level = test_level)
 
   ## add attributes
   attr(fit, 'call')   <- formula

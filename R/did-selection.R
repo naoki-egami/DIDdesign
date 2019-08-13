@@ -181,26 +181,30 @@ sign_test_parametric_rcs <- function(coefs, vcov, n1, n0, level = 0.1) {
   res  <- ifelse(reject0 && reject1, 'pass', 'fail to pass')
   
   return(list(res = res, pvalue = pvalue, pval0 = pval0, pval1 = pval1, T0 = T0, T1 = T1, 
-    bias = coefs[2], N = n0 + n1, n01 = n1 * n0))  
+    bias = coefs[2], N = n0 + n1, n01 = n1 * n0, n1 = n1, n0 = n0))  
 }
 
 
 #' equivalence check 
-equivalence_test <- function(theta, se, eq, n, n01, level = 0.05) {
-  res <- pval <- rep(NA, length(theta)); 
+equivalence_test <- function(theta, se, eq, n, n1, n0, n01, level = 0.05) {
+  res <- pval <- cv <- rep(NA, length(theta)); 
   for (i in 1:length(theta)) {
-    TT <- abs(theta[i] / se[i])
-    res[i] <- ifelse(TT < sqrt(qf(level, df1 = 1, df2 = n-2, ncp = n01 * abs(eq)^2 / n)), 'pass', 'fail to pass')
-    pval[i] <- pf(TT^2, df1 = 1, df2 = n-2, ncp = n01 * abs(eq)^2 / n)
-#     UB <- theta[i] - qnorm(level) * se[i] 
-#     LB <- theta[i] + qnorm(level) * se[i] 
-#     pval[i] <- max(
-#       1 - pnorm(theta[i], mean = -abs(eq), sd = se[i]),
-#       pnorm(theta[i], mean = abs(eq), sd = se[i])
-#     )
-#     res[i] <- ifelse((UB <= abs(eq)) && (LB >= -abs(eq)), "pass", "fail to pass")    
+    # eq_scale <- eq / se[i]
+    # TT      <- abs(theta[i] / se[i])
+    # cv[i]   <- sqrt(qf(level, df1 = 1, df2 = n-2, ncp = n01 * abs(eq_scale)^2 / n))
+    # res[i]  <- ifelse(TT < cv[i], 'pass', 'fail to pass')
+    # pval[i] <- pf(TT^2, df1 = 1, df2 = n-2, ncp = n01 * abs(eq_scale)^2 / n)
+    UB <- theta[i] - qnorm(level) * se[i] 
+    LB <- theta[i] + qnorm(level) * se[i] 
+    pval[i] <- max(
+      1 - pnorm(theta[i], mean = -abs(eq), sd = se[i]),
+      pnorm(theta[i], mean = abs(eq), sd = se[i])
+    )
+    res[i] <- ifelse((UB <= abs(eq)) && (LB >= -abs(eq)), "pass", "fail to pass")    
   }
   
   attr(res, 'pvalue') <- pval
+  # attr(res, 'cv') <- cv
+  # attr(res, "TT") <- TT
   return(res)
 }

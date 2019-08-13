@@ -4,7 +4,7 @@
 \alias{equivalence_test}
 \title{equivalence check}
 \usage{
-equivalence_test(theta, se, eq, n, n01, level = 0.05)
+equivalence_test(theta, se, eq, n, n1, n0, n01, level = 0.05)
 }
 \description{
 equivalence check
