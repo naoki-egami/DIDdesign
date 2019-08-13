@@ -192,9 +192,13 @@ equivalence_test <- function(theta, se, eq, n, n01, level = 0.05) {
     TT <- abs(theta[i] / se[i])
     res[i] <- ifelse(TT < sqrt(qf(level, df1 = 1, df2 = n-2, ncp = n01 * abs(eq)^2 / n)), 'pass', 'fail to pass')
     pval[i] <- pf(TT^2, df1 = 1, df2 = n-2, ncp = n01 * abs(eq)^2 / n)
-    # UB <- theta[i] - qnorm(level) * se[i] 
-    # LB <- theta[i] + qnorm(level) * se[i] 
-    # res[i] <- ifelse((UB <= abs(eq)) && (LB >= -abs(eq)), "pass", "fail to pass")    
+#     UB <- theta[i] - qnorm(level) * se[i] 
+#     LB <- theta[i] + qnorm(level) * se[i] 
+#     pval[i] <- max(
+#       1 - pnorm(theta[i], mean = -abs(eq), sd = se[i]),
+#       pnorm(theta[i], mean = abs(eq), sd = se[i])
+#     )
+#     res[i] <- ifelse((UB <= abs(eq)) && (LB >= -abs(eq)), "pass", "fail to pass")    
   }
   
   attr(res, 'pvalue') <- pval

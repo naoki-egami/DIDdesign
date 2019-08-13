@@ -154,7 +154,7 @@ rcs_selection <- function(data, fm_list, post_time, alpha = 0.05) {
       data_pre %>%   group_by(id_time, treatment) %>% 
         summarise(n = n()) %>% 
         ungroup() -> stat 
-      n0 <- max(stat$n[3], stat$n[1]); n1 <- max(stat$n[4], stat$n[2])
+      n0 <- stat$n[3] + stat$n[1]; n1 <- stat$n[4] + stat$n[2]
 
       
       res_sign <- sign_test_parametric_rcs(
