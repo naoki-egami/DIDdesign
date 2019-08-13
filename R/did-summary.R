@@ -264,7 +264,9 @@ generate_tab_parametric <- function(obj, full = FALSE) {
     rownames(selection) <- paste("M", length(attr(obj, "selection")$test_theta):1, sep = "")
     res_tab$selection <- list("selection" = selection, "model" = attr(obj, "selection")$min_model, 
                              'sign' = attr(obj, 'sign')$res, 'pval' = attr(obj, 'sign')$pvalue,
-                             'equivalence' = attr(obj, 'equivalence'), 'bias' = attr(obj, 'sign')$bias
+                             'equivalence' = attr(obj, 'equivalence'), 
+                             'pvals_equivalence' = attr(attr(obj, 'equivalence'), 'pvalue'),
+                             'bias' = attr(obj, 'sign')$bias
                            )
   }
 
