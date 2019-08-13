@@ -60,7 +60,7 @@
 #' @export
 did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-  select = 'parametric', verbose = TRUE
+  select = 'parametric', verbose = TRUE, test_level = 0.05
 ) {
 
   ## import function
@@ -208,7 +208,7 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     }
 
     if (isTRUE(is_rcs)) {
-      fit <- did_parametric_rcs(data = dat_use, verbose = verbose)
+      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level)
       res_sign <- attr(fit, "sign")
     } else {
       fit <- did_parametric(data = dat_use,
@@ -223,7 +223,7 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     }
 
     if (isTRUE(is_rcs)) {
-      fit <- did_parametric_rcs(data = dat_use, verbose = verbose)
+      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level)
       res_sign <- attr(fit, "sign")
     } else {
       fit <- did_parametric( data = dat_use,
@@ -235,7 +235,8 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   # ********************************************************* #
   # equivalence test here 
   # ********************************************************* #
-  res_eq <- equivalence_test(attr(fit, 'selection')$test_theta, attr(fit, 'selection')$test_se, eq = res_sign$bias)
+  res_eq <- equivalence_test(attr(fit, 'selection')$test_theta, attr(fit, 'selection')$test_se, 
+    eq = res_sign$bias, n = res_sign$N, n01 = res_sign$n01, level = test_level)
 
   ## add attributes
   attr(fit, 'call')   <- formula

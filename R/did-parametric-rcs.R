@@ -4,7 +4,7 @@
 #' @param data A \code{diddesign_data} object.
 #' @family estimation functions
 #' @export
-did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE) {
+did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE, alpha = alpha) {
   ## input checks
   if (!('diddesign_data' %in% class(data))) {
     stop("diddesign_data class object should be provided as data.")
@@ -26,7 +26,7 @@ did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE) {
   #         - use only pre-treatment data                     #
   #                                                           #
   # ********************************************************* #
-  select_tmp <- rcs_selection(data[[1]]$pdata, data[[1]]$formula, attr(data[[1]], 'post_treat'))
+  select_tmp <- rcs_selection(data[[1]]$pdata, data[[1]]$formula, attr(data[[1]], 'post_treat'), alpha = alpha)
   min_model  <- select_tmp$min_model
   attr(result, 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
   attr(result, 'sign')       <- select_tmp$sign

@@ -150,13 +150,21 @@ rcs_selection <- function(data, fm_list, post_time, alpha = 0.05) {
     ## conduct sign test here 
     ## 
     if (ff == (length(fm_list)-1)) {
+      ## compute other quantities 
+      data_pre %>%   group_by(id_time, treatment) %>% 
+        summarise(n = n()) %>% 
+        ungroup() -> stat 
+      n0 <- max(stat$n[3], stat$n[1]); n1 <- max(stat$n[4], stat$n[2])
+
+      
       res_sign <- sign_test_parametric_rcs(
         coefs = tmp$coef[c("post", "treatment:post")], 
         vcov = vcov(tmp)[c("post", "treatment:post"), c("post", "treatment:post")],
-        level = alpha
+        n1 = n1, n0 = n0, level = alpha
       )
     }
   }
+
 
   out_list <- list("min_model" = min_model, 'test_theta' = rev(test_theta), 'test_se' = rev(test_se),
                    "sign" = res_sign

@@ -78,7 +78,8 @@ sign_test_panel <- function(dat, level = 0.1) {
   
   ## output
   return(list(res = res, pvalue = pval, pval0 = D0_res$p.value, 
-              pval1 = D1_res$p.value, T0 = D0_res, T1 = D1_res, bias = bias))
+              pval1 = D1_res$p.value, T0 = D0_res, T1 = D1_res, 
+              bias = bias, N = sum(n01), n01 = prod(n01)))
   
 }
 
@@ -86,7 +87,7 @@ sign_test_panel <- function(dat, level = 0.1) {
 #' Function to test direction of trends for RCS 
 #' @importFrom dplyr %>% ungroup select summarise group_by filter 
 #' @keywords internal
-sign_test_rcs <- function(dat, level = 0.1) {
+sign_test_rcs <- function(dat, level = 0.05) {
   post_time <- attr(dat[[1]], 'post_treat')
   full_time <- attr(dat[[1]], 'id_time')
   pre_time  <- full_time[full_time != post_time]
@@ -114,41 +115,85 @@ sign_test_rcs <- function(dat, level = 0.1) {
   T0 <- trend[1] / sqrt(tmp$Ysd[3]^2+tmp$Ysd[1]^2)
   T1 <- trend[2] / sqrt(tmp$Ysd[4]^2+tmp$Ysd[2]^2)
   
-  pval0 <- c(pnorm(T0), 1 - pnorm(T0))
-  pval1 <- c(pnorm(T1), 1 - pnorm(T1))
-  pvalue <- min(pval0[h1], pval1[h1])
-  res  <- ifelse(pvalue > level, 'pass', 'fail to pass')
+  n0 <- max(tmp$n[3], tmp$n[1]); n1 <- max(tmp$n[4], tmp$n[2])
+  
+  if (h1 == 1) {
+    ## sgn(trend1) = sgn(trend0) = positive 
+    ## H0: sign is negative vs H1: sign is positive 
+    # reject0 <- T0 > sqrt(qf(level, df1 = 1, df2 = (tmp$n[3] + tmp$n[1])))
+    reject0 <- (trend[1] + qnorm(level) * sqrt(tmp$Ysd[3]^2+tmp$Ysd[1]^2)) >= 0
+    # reject1 <- T1 > sqrt(qf(level, df1 = 1, df2 = (tmp$n[4] + tmp$n[2])))
+    reject1 <- (trend[2] + qnorm(level) * sqrt(tmp$Ysd[4]^2+tmp$Ysd[2]^2)) >= 0
+    pval0   <- 1 - pnorm(T0); pval1   <- 1 - pnorm(T1)
+    pvalue  <- max(pval0, pval1)
+  } else {
+    ## h1 == 2
+    ## sign(trend11) = sign(trend0) = negative 
+    ## H0: trends are positive 
+    reject0 <- (trend[1] + qnorm(1 - level) * sqrt(tmp$Ysd[3]^2+tmp$Ysd[1]^2)) <= 0
+    reject1 <- (trend[2] + qnorm(1 - level) * sqrt(tmp$Ysd[4]^2+tmp$Ysd[2]^2)) <= 0
+    pval0   <- pnorm(T0); pval1   <- pnorm(T1)
+    pvalue  <- max(pval0, pval1)
 
-  return(list(res = res, pvalue = pvalue, pval0 = pval0[h1], pval1 = pval1[h1], T0 = T0, T1 = T1, bias = bias))
+  }
+
+  res  <- ifelse(reject0 && reject1, 'pass', 'fail to pass')
+
+  return(list(res = res, pvalue = pvalue, pval0 = pval0, pval1 = pval1, T0 = T0, T1 = T1, 
+              bias = bias, N = n0 + n1, n01 = n1 * n0))
 
   
 }
 
 
 
-sign_test_parametric_rcs <- function(coefs, vcov, level = 0.1) {
+sign_test_parametric_rcs <- function(coefs, vcov, n1, n0, level = 0.1) {
   ## trends 
   trend0 <- coefs[1]; trend1 <- trend0 + coefs[2]
   T0 <- trend0 / sqrt(vcov[1,1])
   T1 <- trend1 / sqrt(vcov[1,1] + vcov[1,2] + 2 * vcov[2,2])
-  
   sign_true <- trend0
   h1 <- ifelse(sign_true > 0, 1, 2)
-  pval0 <- c(pnorm(T0), 1 - pnorm(T0))
-  pval1 <- c(pnorm(T1), 1 - pnorm(T1))
-  pvalue <- min(pval0[h1], pval1[h1])
-  res  <- ifelse(pvalue > level, 'pass', 'fail to pass')
-  return(list(res = res, pvalue = pvalue, pval0 = pval0[h1], pval1 = pval1[h1], T0 = T0, T1 = T1, bias = coefs[2]))  
+
+  
+  if (h1 == 1) {
+    ## sgn(trend1) = sgn(trend0) = positive 
+    ## H0: sign is negative vs H1: sign is positive 
+    # reject0 <- T0 > sqrt(qf(level, df1 = 1, df2 = (tmp$n[3] + tmp$n[1])))
+    reject0 <- TRUE # (trend0 + qnorm(level) * sqrt(vcov[1,1])) >= 0
+    # reject1 <- T1 > sqrt(qf(level, df1 = 1, df2 = (tmp$n[4] + tmp$n[2])))
+    reject1 <- (trend1 + qnorm(level) * sqrt(vcov[1,1] + vcov[1,2] + 2 * vcov[2,2])) >= 0
+    pval0   <- 0 # 1 - pnorm(T0); 
+    pval1   <- 1 - pnorm(T1)
+    pvalue  <- max(pval0, pval1)
+  } else {
+    ## h1 == 2
+    ## sign(trend11) = sign(trend0) = negative 
+    ## H0: trends are positive 
+    reject0 <- TRUE # (trend0 + qnorm(1 - level) * sqrt(vcov[1,1])) <= 0
+    reject1 <- (trend1 + qnorm(1 - level) * sqrt(vcov[1,1] + vcov[1,2] + 2 * vcov[2,2])) <= 0
+    pval0   <- 0 # pnorm(T0); 
+    pval1   <- pnorm(T1)
+    pvalue  <- max(pval0, pval1)
+
+  }
+
+  res  <- ifelse(reject0 && reject1, 'pass', 'fail to pass')
+  
+  return(list(res = res, pvalue = pvalue, pval0 = pval0, pval1 = pval1, T0 = T0, T1 = T1, 
+    bias = coefs[2], N = n0 + n1, n01 = n1 * n0))  
 }
 
 
 #' equivalence check 
-equivalence_test <- function(theta, se, eq, level = 0.1) {
+equivalence_test <- function(theta, se, eq, n, n01, level = 0.05) {
   res <- rep(NA, length(theta))
   for (i in 1:length(theta)) {
-    UB <- theta[i] - qnorm(level) * se[i] 
-    LB <- theta[i] + qnorm(level) * se[i] 
-    res[i] <- ifelse((UB <= abs(eq)) && (LB >= -abs(eq)), "pass", "fail to pass")    
+    TT <- abs(theta[i] / se[i])
+    res[i] <- ifelse(TT < sqrt(qf(level, df1 = 1, df2 = n-2, ncp = n01 * abs(eq)^2 / n)), 'pass', 'fail to pass')
+    # UB <- theta[i] - qnorm(level) * se[i] 
+    # LB <- theta[i] + qnorm(level) * se[i] 
+    # res[i] <- ifelse((UB <= abs(eq)) && (LB >= -abs(eq)), "pass", "fail to pass")    
   }
   return(res)
 }

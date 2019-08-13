@@ -4,7 +4,7 @@
 \alias{sign_test_rcs}
 \title{Function to test direction of trends for RCS}
 \usage{
-sign_test_rcs(dat, level = 0.1)
+sign_test_rcs(dat, level = 0.05)
 }
 \description{
 Function to test direction of trends for RCS
