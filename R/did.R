@@ -175,8 +175,10 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
 
   # ********************************************************* #
   # Sign test before estimating the effect                    #
+  # -- this object will be overwritten if                     #
+  #     parametric specification is used                      #
   # ********************************************************* #
-  res_sign <- sign_test(dat_use, level = 0.1)
+  res_sign <- sign_test(dat_use, level = test_level)
 
 
   # ********************************************************* #
@@ -235,7 +237,8 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   # ********************************************************* #
   # equivalence test here 
   # ********************************************************* #
-  res_eq <- equivalence_test(attr(fit, 'selection')$test_theta, attr(fit, 'selection')$test_se, 
+  res_eq <- equivalence_test(
+    attr(fit, 'selection')$test_theta, attr(fit, 'selection')$test_se, 
     eq = res_sign$bias, n = res_sign$N, n01 = res_sign$n01, n1 = res_sign$n1, n0 = res_sign$n0, 
     level = test_level)
 

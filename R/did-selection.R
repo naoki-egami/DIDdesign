@@ -58,27 +58,52 @@ sign_test_panel <- function(dat, level = 0.1) {
   
   ## get the "true" sign 
   Ymean <- apply(Ypre, 2, function(x) tapply(x, Dvec, mean, na.rm = TRUE))
+  Yvars <- apply(Ypre, 2, function(x) tapply(x, Dvec, var, na.rm = TRUE))
   trend <- apply(Ymean, 1, diff)
-  sign_true <- trend[which.max(n01)]
+  nmax  <- which.max(n01)
+  sign_true <- trend[nmax]
   
   ## compute the bias 
   bias <- diff(Ymean[,2])
   
   ## test 
   # we pick the opposite of "true" sign as H1 (so that two failture to reject H0 is supportive to sign_true)
-  h1 <- ifelse(sign_true > 0, 'less', 'greater')
-  # 1. control group 
-  D0_res <- t.test(apply(Ypre[Dvec==0,], 1, diff), alternative = h1)
-  # 2. treatment group 
-  D1_res <- t.test(apply(Ypre[Dvec==1,], 1, diff), alternative = h1)
+  h1 <- ifelse(sign_true > 0, 1, 0)
   
-  # 3. combine the two tests 
-  pval <- min(D0_res$p.value, D1_res$p.value)
-  res  <- ifelse(pval > level, 'pass', 'fail to pass')
+  
+  ## compute statistics 
+  var_trend <- apply(Yvars, 1, sum)
+  T0 <- trend[1] / sqrt(var_trend[1]) 
+  T1 <- trend[2] / sqrt(var_trend[2])
+  
+  if (h1 == 1) {
+    reject0 <- trend[1] + qnorm(level) * sqrt(var_trend[1]) >= 0
+    reject1 <- trend[2] + qnorm(level) * sqrt(var_trend[2]) >= 0  
+    pval0   <- ifelse(nmax == 1, 0, 1 - pnorm(T0))
+    pval1   <- ifelse(nmax == 2, 0, 1 - pnorm(T1))
+    pvalue  <- max(pval0, pval1)    
+  } else {
+    # reject <- (CI < 0)
+    reject0 <- trend[1] - qnorm(level) * sqrt(var_trend[1]) >= 0
+    reject1 <- trend[2] - qnorm(level) * sqrt(var_trend[2]) >= 0  
+    pval0   <- ifelse(nmax == 1, 0, pnorm(T0))
+    pval1   <- ifelse(nmax == 2, 0, pnorm(T1))
+    pvalue  <- max(pval0, pval1)    
+
+  }
+  # 1. control group 
+  # D0_res <- t.test(apply(Ypre[Dvec==0,], 1, diff), alternative = h1)
+  # # 2. treatment group 
+  # D1_res <- t.test(apply(Ypre[Dvec==1,], 1, diff), alternative = h1)
+  # 
+  # # 3. combine the two tests 
+  # pval <- min(D0_res$p.value, D1_res$p.value)
+  # res  <- ifelse(pval > level, 'pass', 'fail to pass')
+  res  <- ifelse(reject0 && reject1, 'pass', 'fail to pass')
   
   ## output
-  return(list(res = res, pvalue = pval, pval0 = D0_res$p.value, 
-              pval1 = D1_res$p.value, T0 = D0_res, T1 = D1_res, 
+  return(list(res = res, pvalue = pvalue, pval0 = pval0, 
+              pval1 = pval1, T0 = T0, T1 = T1, 
               bias = bias, N = sum(n01), n01 = prod(n01)))
   
 }
