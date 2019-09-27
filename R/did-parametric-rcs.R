@@ -16,7 +16,6 @@ did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE, alpha = a
   }
 
   m_vec <- 1:t_pre
-
   n_post <- length(data)
   result <- list()
 

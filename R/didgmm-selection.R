@@ -158,7 +158,7 @@ rcs_selection <- function(data, fm_list, post_time, alpha = 0.05) {
 
       
       res_sign <- sign_test_parametric_rcs(
-        coefs = tmp$coef[c("post", "treatment:post")], 
+        coefs = tmp$coef[c("post", "treatment:post", "treatment")], 
         vcov = vcov(tmp)[c("post", "treatment:post"), c("post", "treatment:post")],
         n1 = n1, n0 = n0, level = alpha
       )

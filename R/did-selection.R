@@ -206,7 +206,7 @@ sign_test_parametric_rcs <- function(coefs, vcov, n1, n0, level = 0.1) {
   res  <- ifelse(reject0 && reject1, 'pass', 'fail to pass')
   
   return(list(res = res, pvalue = pvalue, pval0 = pval0, pval1 = pval1, T0 = T0, T1 = T1, 
-    bias = coefs[2], N = n0 + n1, n01 = n1 * n0, n1 = n1, n0 = n0))  
+    bias = sum(coefs[-1]), N = n0 + n1, n01 = n1 * n0, n1 = n1, n0 = n0))  
 }
 
 
