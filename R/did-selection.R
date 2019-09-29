@@ -205,8 +205,21 @@ sign_test_parametric_rcs <- function(coefs, vcov, n1, n0, level = 0.1) {
 
   res  <- ifelse(reject0 && reject1, 'pass', 'fail to pass')
   
+  
+  ## compute "bias" (i.e., equivalence threshold for PT testing)
+  # w1 <- n1 / (n1 + n0); w0 <- n0 / (n1 + n0)
+  # w1 <- 1; w0 <- 1
+  # const <- 0.36 
+  # var_post <- vcov[1,1] 
+  # var_post_treat <- vcov[2,2]
+  # sigma <- sqrt(var_post + w1^2 * var_post_treat + 2 * w1 * vcov[2,1])
+  # bias  <- const * sigma 
+  # cat("sigma = ", sigma, " eq = ", bias, " bias = ", sum(coefs[-1]), "\n")
+  se_theta <- sqrt(vcov[2,2])
+  se_bias <- sqrt(vcov[2,2] + vcov[3,3] + 2 * vcov[2,3])
+  bias <- sum(coefs[-1]) * se_theta / se_bias
   return(list(res = res, pvalue = pvalue, pval0 = pval0, pval1 = pval1, T0 = T0, T1 = T1, 
-    bias = sum(coefs[-1]), N = n0 + n1, n01 = n1 * n0, n1 = n1, n0 = n0))  
+    bias = bias, N = n0 + n1, n01 = n1 * n0, n1 = n1, n0 = n0))  
 }
 
 
@@ -222,8 +235,8 @@ equivalence_test <- function(theta, se, eq, n, n1, n0, n01, level = 0.05) {
     UB <- theta[i] - qnorm(level) * se[i] 
     LB <- theta[i] + qnorm(level) * se[i] 
     pval[i] <- max(
-      1 - pnorm(theta[i], mean = -abs(eq), sd = se[i]),
-      pnorm(theta[i], mean = abs(eq), sd = se[i])
+      1 - pnorm((abs(eq) - theta[i]) / se[i]),
+      1 - pnorm((abs(eq) + theta[i]) / se[i])
     )
     res[i] <- ifelse((UB <= abs(eq)) && (LB >= -abs(eq)), "pass", "fail to pass")    
   }
