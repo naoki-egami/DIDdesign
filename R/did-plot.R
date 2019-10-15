@@ -66,6 +66,15 @@ did_plot <- function(formula, data, post_treatment, id_subject = NULL, id_time,
   outcome    <- all.vars(f1)[1]
   treatment  <- all.vars(f1)[2]
 
+  ## check if there's any covariates 
+  if (length(formula)[2] > 1) {
+    ## replace the outcome with residuals 
+        ## extract covariates names
+        f2 <- getFormula(formula, lhs = 0, rhs = 2)
+        x_colnames <- all.vars(f2)
+        dat_pre <- data %>% filter_(!(id_time %in% post_treatment))
+  }
+
   ## gether data
   if (is.null(id_subject)) {
     message("treat data as repeated cross-section data")

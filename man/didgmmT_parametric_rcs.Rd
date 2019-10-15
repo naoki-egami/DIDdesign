@@ -4,7 +4,7 @@
 \alias{didgmmT_parametric_rcs}
 \title{CU-GMM function for RCS data}
 \usage{
-didgmmT_parametric_rcs(dat, par_init = NULL)
+didgmmT_parametric_rcs(dat, par_init = NULL, optim = FALSE)
 }
 \arguments{
 \item{A}{list of dataset. Output of \code{link{getX_rcs}}.}

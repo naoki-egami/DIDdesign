@@ -31,12 +31,10 @@ did_parametric_rcs <- function(data, only_last = TRUE, verbose = TRUE, alpha = a
   attr(result, 'sign')       <- select_tmp$sign
   
   for (tt in 1:n_post) {
-
     dat_use    <- data.frame(data[[tt]]$pdata)
     fm_list    <- data[[tt]]$formula
-
-    id_time2 <- as.numeric(as.factor(dat_use$id_time))
-    max_time2 <- max(id_time2)
+    id_time2   <- as.numeric(as.factor(dat_use$id_time))
+    max_time2  <- max(id_time2)
 
     if (isTRUE(only_last)) {
       for (i in 0:(t_pre-2)) {
@@ -142,7 +140,7 @@ getX_rcs <- function(lm_fit, response_orginal) {
 #' @param A list of dataset. Output of \code{link{getX_rcs}}.
 #' @param Xdesign a list of design matrix. The variable of interest is named 'treatment:post'
 #' @keywords internal
-didgmmT_parametric_rcs <- function(dat, par_init = NULL) {
+didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = FALSE) {
 
 
   ## 1. residualize outcome and treatment
@@ -151,10 +149,10 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL) {
   for (d in 1:length(dat)) {
     outcome    <- dat[[d]]$y
     treatment  <- dat[[d]]$D
-    covariates <- dat[[d]]$X ## this includes intercept term
-
-    dat[[d]]$y_resid <- lm(outcome ~ covariates -1)$residuals
-    dat[[d]]$d_resid <- lm(treatment ~ covariates -1)$residuals
+    covariates <- dat[[d]]$X
+    # residualize the outcome and the treatment 
+    dat[[d]]$y_resid <- lm(outcome ~ covariates)$residuals
+    dat[[d]]$d_resid <- lm(treatment ~ covariates)$residuals
   }
 
 
@@ -163,15 +161,59 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL) {
   if(is.null(par_init)) par_init <- runif(1)
   ##   - moment conditions: E[D(Y- Db)] = 0
   ## two-step GMM
-  # cat("1st stage\n")
-  est1st <- optim(par = par_init, fn = cugmm_loss_rcs_init, method = "BFGS", dat = dat)
+  if(isTRUE(optim)) {
+    # estimate by optim 
+    # cat("1st stage\n")
+    est1st <- optim(par = par_init, fn = cugmm_loss_rcs_init, method = "BFGS", dat = dat)
 
-  # cat("2nd stage\n")
-  est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat, init = est1st$par)
+    # cat("2nd stage\n")
+    est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat, init = est1st$par)    
+  } else {
+    # analytical solution 
+    # cat("1st stage") W = I 
+    b_bar <- mean(dat[[1]]$d_resid^2) 
+    a_bar <- rep(NA, length(dat))
+    for (d in 1:length(dat)) {
+      a_bar[d] <- mean((dat[[d]]$y_resid * dat[[d]]$d_resid)^2)
+    }
+    
+    I      <- diag(length(dat))
+    est1st <- solve_att_rcs(a_bar = a_bar, b_bar = b_bar, W = I)
+    
+    ## compute  the new weighting matrix 
+    g <- matrix(NA, nrow = length(dat), ncol = length(dat[[1]]$d_resid))
+    for (d in 1:length(dat)) {
+      g[d, ] <- (dat[[d]]$y_resid - dat[[d]]$d_resid * est1st) * dat[[d]]$d_resid
+    }
+    
+    W <- solve(g %*% t(g) / length(dat[[1]]$d_resid))
+    est2nd <- list(par = solve_att_rcs(a_bar = a_bar, b_bar = b_bar, W = W))
+  }
+
+
+
 
   return(list('est' = est2nd, 'ATT' = est2nd$par, 'data' = dat))
 }
 
+
+#' Residualize 
+# residualize <- function(y, X) {
+#   X1 <- cbind(rep(1, nrow(X)), X)
+#   I  <- diag(nrow(X))
+#   resid  <- y - X1 %*% solve(t(X1) %*% X1, t(X1) %*% y) 
+#   return(as.vector(resid))
+# }
+
+#' Analytical solution to ATT 
+solve_att_rcs <- function(a_bar, b_bar, W) {
+  a_bar <- matrix(a_bar)
+  num   <- sum(t(a_bar) %*% W)
+  dem   <- b_bar * sum(W)
+  
+  ## solve 
+  return(num / dem)
+}
 
 #' CU-GMM loss function for RCS data
 #' @param par parameter.
