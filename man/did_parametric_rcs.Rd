@@ -4,8 +4,9 @@
 \alias{did_parametric_rcs}
 \title{Parametric Double Difference-in-Differences Estimator with Repeated Cross-Section Data}
 \usage{
-did_parametric_rcs(data, only_last = TRUE, verbose = TRUE,
-  alpha = alpha)
+did_parametric_rcs(data, se_boot = TRUE, n_boot = 500,
+  boot_min = TRUE, id_cluster = NULL, only_last = TRUE,
+  verbose = TRUE, alpha = alpha)
 }
 \arguments{
 \item{data}{A \code{diddesign_data} object.}

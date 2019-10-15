@@ -60,7 +60,8 @@
 #' @export
 did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-  select = 'parametric', verbose = TRUE, test_level = 0.05
+  select = 'parametric', verbose = TRUE, test_level = 0.05,
+  id_cluster = NULL
 ) {
 
   ## import function
@@ -204,13 +205,14 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     warning("Nonparametric option is not available with covariates.
              Parametiric method is used instead\n")
 
-    if (isTRUE(se_boot)) {
-      warning("Currently, we do not support bootstrap for parametric model.\n")
-      se_boot <- FALSE
-    }
+    # if (isTRUE(se_boot)) {
+    #   warning("Currently, we do not support bootstrap for parametric model.\n")
+    #   se_boot <- FALSE
+    # }
 
     if (isTRUE(is_rcs)) {
-      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level)
+      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level, se_boot, n_boot)
+      
       res_sign <- attr(fit, "sign")
     } else {
       fit <- did_parametric(data = dat_use,
@@ -219,13 +221,13 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
         is_covariates = is_covariates, verbose = verbose)
     }
   } else {
-    if (isTRUE(se_boot)) {
-      warning("Currently, we do not support bootstrap for parametric model.\n")
-      se_boot <- FALSE
-    }
+    # if (isTRUE(se_boot)) {
+    #   warning("Currently, we do not support bootstrap for parametric model.\n")
+    #   se_boot <- FALSE
+    # }
 
     if (isTRUE(is_rcs)) {
-      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level)
+      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level, se_boot, n_boot)
       res_sign <- attr(fit, "sign")
     } else {
       fit <- did_parametric( data = dat_use,
