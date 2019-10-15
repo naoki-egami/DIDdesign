@@ -72,9 +72,9 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
       ## compute variance
       if (isTRUE(se_boot)) {
         boot_est <- var_boot_parametric_rcs(dat_trans[use_moments], n_boot, id_cluster, verbose)
-        att_var <- var(boot_est)
+        att_var  <- var(boot_est)
       } else {
-        att_var <- cugmm_var_rcs(par = est$ATT, dat = est$data)
+        att_var  <- cugmm_var_rcs(par = est$ATT, dat = est$data)
         boot_est <- NULL        
       }
 
@@ -82,7 +82,7 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
       ## compute Ci
       tmp_ci95     <- c(est$ATT - 1.96 * sqrt(att_var), est$ATT + 1.96 * sqrt(att_var))
       tmp_ci90     <- c(est$ATT - 1.64 * sqrt(att_var), est$ATT + 1.64 * sqrt(att_var))
-      tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90, 'se' = sqrt(att_var))
+      tmp_min[[m]] <- list("boot_est" = boot_est, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90, 'se' = sqrt(att_var))
 
     }
 
@@ -103,7 +103,7 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
     tmp_se95 <- c(did_est + qnorm(0.025) * sqrt(did_var), did_est + qnorm(1 - 0.025) * sqrt(did_var))
     tmp_se90 <- c(did_est + qnorm(0.050) * sqrt(did_var), did_est + qnorm(1 - 0.050) * sqrt(did_var))
 
-    did_boot_list <- list('boot_est' = boot_est, 'ci95' = tmp_se95, 'ci90' = tmp_se90, 'se' = sqrt(did_var))
+    did_boot_list <- list('boot_est' = NULL, 'ci95' = tmp_se95, 'ci90' = tmp_se90, 'se' = sqrt(did_var))
     did_save <- list("ATT" = did_est, 'results_variance' = did_boot_list)
 
     # ********************************************************* #
