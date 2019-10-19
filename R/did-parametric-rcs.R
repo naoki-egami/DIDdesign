@@ -4,7 +4,7 @@
 #' @param data A \code{diddesign_data} object.
 #' @family estimation functions
 #' @export
-did_parametric_rcs <- function(data, se_boot = TRUE, 
+did_parametric_rcs <- function(data, se_boot = FALSE, 
   n_boot = 500, boot_min = TRUE, id_cluster = NULL, 
   only_last = TRUE, verbose = TRUE, alpha = alpha) {
   ## input checks
@@ -15,6 +15,10 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
   t_pre <- length(data[[1]]$formula)
   if (t_pre <= 1) {
     stop("We reuqire more than two pre-treatment periods.\n")
+  }
+  
+  if (!is.null(id_cluster)) {
+    
   }
 
   m_vec <- 1:t_pre
@@ -113,14 +117,15 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
     # ********************************************************* #
 
     result[[tt]] <- list(
-      'results_estimates' = tmp,
-      'results_variance' = tmp_min,
+      'results_estimates'   = tmp,
+      'results_variance'    = tmp_min,
       'results_standardDiD' = did_save,
-      'min_model' = min_model,
-      'ATT' = tmp[[min_model]]$ATT,
-      'ci95' = ci95,
-      'ci90' = ci90,
-      'se'   = se
+      'min_model'           = min_model,
+      'ATT'                 = tmp[[min_model]]$ATT,
+      'ci95'                = ci95,
+      'ci90'                = ci90,
+      'se'                  = se,
+      'W'                   = attr(att_var, "W")
     )
     attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
     attr(result[[tt]], 'method') <- 'parametric'
@@ -149,7 +154,7 @@ getX_rcs <- function(lm_fit, response_orginal) {
 #' @param A list of dataset. Output of \code{link{getX_rcs}}.
 #' @param Xdesign a list of design matrix. The variable of interest is named 'treatment:post'
 #' @keywords internal
-didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = FALSE) {
+didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = TRUE, gmm = "CU") {
 
 
   ## 1. residualize outcome and treatment
@@ -174,9 +179,12 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = FALSE) {
     # estimate by optim 
     # cat("1st stage\n")
     est1st <- optim(par = par_init, fn = cugmm_loss_rcs_init, method = "BFGS", dat = dat)
-
-    # cat("2nd stage\n")
-    est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat, init = est1st$par)    
+    if (gmm == "TS") {
+      # cat("2nd stage\n")
+      est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat, init = est1st$par)          
+    } else if (gmm == "CU") {
+      est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat)                
+    }
   } else {
     # analytical solution 
     # cat("1st stage") W = I 

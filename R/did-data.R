@@ -42,7 +42,7 @@
 did_data <- function(
   outcome, treatment,
   post_treatment = NULL, id_subject = NULL, id_time = NULL, long = TRUE,
-  Xcov = NULL, x_formula = NULL
+  Xcov = NULL, x_formula = NULL, id_cluster = NULL
 ) {
 
   is_rcs <- FALSE
