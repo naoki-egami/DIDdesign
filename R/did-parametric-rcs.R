@@ -6,7 +6,7 @@
 #' @export
 did_parametric_rcs <- function(data, se_boot = FALSE, 
   n_boot = 500, boot_min = TRUE, 
-  only_last = TRUE, verbose = TRUE, alpha = alpha, gmm = NULL) {
+  only_last = TRUE, verbose = TRUE, alpha = alpha, gmm) {
   ## input checks
   if (!('diddesign_data' %in% class(data))) {
     stop("diddesign_data class object should be provided as data.")
@@ -68,7 +68,7 @@ did_parametric_rcs <- function(data, se_boot = FALSE,
       use_moments <- m_vec[m:length(m_vec)]
 
       ## point estimate
-      est <- didgmmT_parametric_rcs(dat_trans[use_moments])
+      est <- didgmmT_parametric_rcs(dat = dat_trans[use_moments], gmm = gmm)
       tmp[[m]] <- est
 
       ## compute variance

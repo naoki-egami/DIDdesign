@@ -14,6 +14,8 @@
 #' @param n_boot Number of bootstrap iterations.
 #' @param boot_min If \code{TRUE} bootstrap is carried out only for the selected model.
 #' @param select Selection criteria.
+#' @param gmm Option for GMM estimation. Default is \code{gmm = "CU"} (continuous updating GMM). 
+#'          \code{gmm = "TS"} (two-step GMM) is also available.
 #' @return It is recommended to use \code{\link{summary}} function to extract estimates. Please see \code{\link{summary.diddesign}}.
 #'
 #' \code{\link{did}} returns an object of \code{diddesign} class, which is a list of results for each post treatment period.
@@ -60,7 +62,7 @@
 #' @export
 did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-  select = 'parametric', verbose = TRUE, test_level = 0.05
+  select = 'parametric', verbose = TRUE, test_level = 0.05, gmm = "CU"
 ) {
 
   ## import function
@@ -210,7 +212,8 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     # }
 
     if (isTRUE(is_rcs)) {
-      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level, se_boot, n_boot)
+      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level, 
+        se_boot, n_boot, gmm = gmm)
       
       res_sign <- attr(fit, "sign")
     } else {
@@ -226,7 +229,8 @@ did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
     # }
 
     if (isTRUE(is_rcs)) {
-      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level, se_boot, n_boot)
+      fit <- did_parametric_rcs(data = dat_use, verbose = verbose, alpha = test_level, 
+        se_boot, n_boot, gmm = gmm)
       res_sign <- attr(fit, "sign")
     } else {
       fit <- did_parametric( data = dat_use,
