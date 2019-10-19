@@ -60,8 +60,7 @@
 #' @export
 did <- function(formula, data, id_subject = NULL, id_time, post_treatment,
   method = 'parametric', se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-  select = 'parametric', verbose = TRUE, test_level = 0.05,
-  id_cluster = NULL
+  select = 'parametric', verbose = TRUE, test_level = 0.05
 ) {
 
   ## import function

@@ -5,8 +5,8 @@
 #' @family estimation functions
 #' @export
 did_parametric_rcs <- function(data, se_boot = FALSE, 
-  n_boot = 500, boot_min = TRUE, id_cluster = NULL, 
-  only_last = TRUE, verbose = TRUE, alpha = alpha) {
+  n_boot = 500, boot_min = TRUE, 
+  only_last = TRUE, verbose = TRUE, alpha = alpha, gmm = NULL) {
   ## input checks
   if (!('diddesign_data' %in% class(data))) {
     stop("diddesign_data class object should be provided as data.")
@@ -16,10 +16,8 @@ did_parametric_rcs <- function(data, se_boot = FALSE,
   if (t_pre <= 1) {
     stop("We reuqire more than two pre-treatment periods.\n")
   }
-  
-  if (!is.null(id_cluster)) {
     
-  }
+  
 
   m_vec <- 1:t_pre
   n_post <- length(data)
