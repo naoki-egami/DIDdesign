@@ -86,7 +86,8 @@ did_parametric_rcs <- function(data, se_boot = FALSE,
       ## compute Ci
       tmp_ci95     <- c(est$ATT - 1.96 * sqrt(att_var), est$ATT + 1.96 * sqrt(att_var))
       tmp_ci90     <- c(est$ATT - 1.64 * sqrt(att_var), est$ATT + 1.64 * sqrt(att_var))
-      tmp_min[[m]] <- list("boot_est" = boot_est, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90, 'se' = sqrt(att_var))
+      tmp_min[[m]] <- list("boot_est" = boot_est, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90, 
+                           'se' = sqrt(att_var), "W" = attr(att_var, "W"))
 
     }
 
@@ -124,8 +125,7 @@ did_parametric_rcs <- function(data, se_boot = FALSE,
       'ATT'                 = tmp[[min_model]]$ATT,
       'ci95'                = ci95,
       'ci90'                = ci90,
-      'se'                  = se,
-      'W'                   = attr(att_var, "W")
+      'se'                  = se
     )
     attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
     attr(result[[tt]], 'method') <- 'parametric'
