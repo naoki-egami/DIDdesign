@@ -244,7 +244,7 @@ getX <- function(fm, fit, dat) {
 ## use full X
 ##
 
-#' Estimate GMM
+#' Estimate parameter by CU-GMM
 #' @keywords internal
 didgmmT_parametric <- function(dat, id_subject, par_init = NULL) {
 
