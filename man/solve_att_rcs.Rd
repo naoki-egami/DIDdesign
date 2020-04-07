@@ -2,12 +2,12 @@
 % Please edit documentation in R/did-parametric-rcs.R
 \name{solve_att_rcs}
 \alias{solve_att_rcs}
-\title{Residualize 
+\title{Residualize
 Analytical solution to ATT}
 \usage{
 solve_att_rcs(a_bar, b_bar, W)
 }
 \description{
-Residualize 
+Residualize
 Analytical solution to ATT
 }

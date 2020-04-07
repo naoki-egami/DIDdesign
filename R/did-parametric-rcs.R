@@ -4,8 +4,8 @@
 #' @param data A \code{diddesign_data} object.
 #' @family estimation functions
 #' @export
-did_parametric_rcs <- function(data, se_boot = TRUE, 
-  n_boot = 500, boot_min = TRUE, id_cluster = NULL, 
+did_parametric_rcs <- function(data, se_boot = TRUE,
+  n_boot = 500, boot_min = TRUE, id_cluster = NULL,
   only_last = TRUE, verbose = TRUE, alpha = alpha) {
   ## input checks
   if (!('diddesign_data' %in% class(data))) {
@@ -31,7 +31,7 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
   min_model  <- select_tmp$min_model
   attr(result, 'selection')  <- select_tmp[c('test_theta', 'test_se', 'min_model')]
   attr(result, 'sign')       <- select_tmp$sign
-  
+
   for (tt in 1:n_post) {
     dat_use    <- data.frame(data[[tt]]$pdata)
     fm_list    <- data[[tt]]$formula
@@ -75,7 +75,7 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
         att_var  <- var(boot_est)
       } else {
         att_var  <- cugmm_var_rcs(par = est$ATT, dat = est$data)
-        boot_est <- NULL        
+        boot_est <- NULL
       }
 
 
@@ -89,7 +89,7 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
     ci95 <- tmp_min[[min_model]]$ci95
     ci90 <- tmp_min[[min_model]]$ci90
     se   <- tmp_min[[min_model]]$se
-    
+
     # ********************************************************* #
     # standard did
     # ********************************************************* #
@@ -159,9 +159,10 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = FALSE) {
     outcome    <- dat[[d]]$y
     treatment  <- dat[[d]]$D
     covariates <- dat[[d]]$X
-    # residualize the outcome and the treatment 
+    # residualize the outcome and the treatment
     dat[[d]]$y_resid <- lm(outcome ~ covariates)$residuals
     dat[[d]]$d_resid <- lm(treatment ~ covariates)$residuals
+
   }
 
 
@@ -171,25 +172,25 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = FALSE) {
   ##   - moment conditions: E[D(Y- Db)] = 0
   ## two-step GMM
   if(isTRUE(optim)) {
-    # estimate by optim 
+    # estimate by optim
     # cat("1st stage\n")
     est1st <- optim(par = par_init, fn = cugmm_loss_rcs_init, method = "BFGS", dat = dat)
 
     # cat("2nd stage\n")
-    est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat, init = est1st$par)    
+    est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat, init = est1st$par)
   } else {
-    # analytical solution 
-    # cat("1st stage") W = I 
-    b_bar <- mean(dat[[1]]$d_resid^2) 
+    # analytical solution
+    # cat("1st stage") W = I
+    b_bar <- mean(dat[[1]]$d_resid^2)
     a_bar <- rep(NA, length(dat))
     for (d in 1:length(dat)) {
       a_bar[d] <- mean((dat[[d]]$y_resid * dat[[d]]$d_resid)^2)
     }
-    
+
     I      <- diag(length(dat))
     est1st <- solve_att_rcs(a_bar = a_bar, b_bar = b_bar, W = I)
-    
-    ## compute  the new weighting matrix 
+
+    ## compute  the new weighting matrix
     g <- matrix(NA, nrow = length(dat), ncol = length(dat[[1]]$d_resid))
     for (d in 1:length(dat)) {
       g[d, ] <- (dat[[d]]$y_resid - dat[[d]]$d_resid * est1st) * dat[[d]]$d_resid
@@ -205,21 +206,21 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = FALSE) {
 }
 
 
-#' Residualize 
+#' Residualize
 # residualize <- function(y, X) {
 #   X1 <- cbind(rep(1, nrow(X)), X)
 #   I  <- diag(nrow(X))
-#   resid  <- y - X1 %*% solve(t(X1) %*% X1, t(X1) %*% y) 
+#   resid  <- y - X1 %*% solve(t(X1) %*% X1, t(X1) %*% y)
 #   return(as.vector(resid))
 # }
 
-#' Analytical solution to ATT 
+#' Analytical solution to ATT
 solve_att_rcs <- function(a_bar, b_bar, W) {
   a_bar <- matrix(a_bar)
   num   <- sum(t(a_bar) %*% W)
   dem   <- b_bar * sum(W)
-  
-  ## solve 
+
+  ## solve
   beta_est <- num / dem
   return(beta_est)
 }
@@ -229,8 +230,8 @@ solve_att_rcs <- function(a_bar, b_bar, W) {
 #' @param dat a list of data consists of y_resid and d_reisd.
 #' @keywords internal
 cugmm_loss_rcs <- function(par, dat, init = NULL) {
-  if (is.null(init)) init <- par 
-  
+  if (is.null(init)) init <- par
+
   n_moment_condition <- length(dat)
 
   XXe <- XXe0 <- matrix(NA, nrow = length(dat[[1]]$is_na), ncol = n_moment_condition)
@@ -300,28 +301,28 @@ cugmm_var_rcs <- function(par, dat) {
 }
 
 
-#' Varinace for Repated Cross-Section with Block-Bootstrap 
-#' @param data a list of data 
-#' @param n_boot number of bootstrap iterations 
-#' @param id_cluster cluster index at the level of blocking 
-#' @keywords internal 
+#' Varinace for Repated Cross-Section with Block-Bootstrap
+#' @param data a list of data
+#' @param n_boot number of bootstrap iterations
+#' @param id_cluster cluster index at the level of blocking
+#' @keywords internal
 var_boot_parametric_rcs <- function(dat, n_boot, id_cluster, verbose) {
-  iter     <- 1 
+  iter     <- 1
   is_na    <- is.na(dat[[1]]$y)
   n_obs    <- length(na.omit(dat[[1]]$y))
   id_full  <- 1:n_obs
   boot_out <- rep(NA, n_boot)
   if (!is.null(id_cluster)) id_cluster <- id_cluster[!is_na]
-  
+
   iter_show <- round(n_boot * 0.1)
   while(iter <= n_boot) {
     tryCatch({
-      ## sample bootstrap 
+      ## sample bootstrap
       if (is.null(id_cluster)) {
         id_boot <- sample(id_full, size = n_obs, replace = TRUE)
       } else {
         id_cluster_boot <- sample(unique(id_cluster), size = length(unique(id_cluster)), replace = TRUE)
-        id_boot <- NULL 
+        id_boot <- NULL
         for (i in 1:length(id_cluster_boot)) {
           id_boot <- c(id_boot, id_full[id_cluster == id_cluster_boot[i]])
         }
@@ -331,52 +332,52 @@ var_boot_parametric_rcs <- function(dat, n_boot, id_cluster, verbose) {
       ##   - Regress D on X
       dat_boot <- list()
       for (d in 1:length(dat)) {
-        ## extract info 
+        ## extract info
         outcome    <- dat[[d]]$y[!is_na]; outcome     <- outcome[id_boot]
         treatment  <- dat[[d]]$D[!is_na]; treatment   <- treatment[id_boot]
         covariates <- dat[[d]]$X[!is_na,]; covariates <- covariates[id_boot,]
-        # residualize the outcome and the treatment 
+        # residualize the outcome and the treatment
         dat_boot[[d]] <- list()
         dat_boot[[d]]$y_resid <- lm(outcome ~ covariates)$residuals
         dat_boot[[d]]$d_resid <- lm(treatment ~ covariates)$residuals
       }
-      
-      b_bar <- mean(dat_boot[[1]]$d_resid^2) 
+
+      b_bar <- mean(dat_boot[[1]]$d_resid^2)
       a_bar <- rep(NA, length(dat))
       for (d in 1:length(dat)) {
         a_bar[d] <- mean((dat_boot[[d]]$y_resid * dat_boot[[d]]$d_resid)^2)
       }
-      
+
       I      <- diag(length(dat))
       est1st <- solve_att_rcs(a_bar = a_bar, b_bar = b_bar, W = I)
-      
-      ## compute  the new weighting matrix 
+
+      ## compute  the new weighting matrix
       g <- matrix(NA, nrow = length(dat), ncol = length(dat_boot[[1]]$d_resid))
       for (d in 1:length(dat)) {
         g[d, ] <- (dat_boot[[d]]$y_resid - dat_boot[[d]]$d_resid * est1st) * dat_boot[[d]]$d_resid
       }
       W <- solve(g %*% t(g) / length(dat_boot[[1]]$d_resid))
       boot_out[iter] <- solve_att_rcs(a_bar = a_bar, b_bar = b_bar, W = W)
-      
-      ## update iter 
+
+      ## update iter
       iter <- iter + 1
-        
+
     }, error = function(e) {
       NULL
     })
-    
-    
+
+
     if (isTRUE(verbose)) {
       if ((iter %% iter_show) == 0) {
           cat('\r', iter, "out of", n_boot, "bootstrap iterations")
-          flush.console() 
+          flush.console()
       }
     }
-      
+
   }
-  
+
   cat("\n")
-  
+
   return(boot_out)
 }
 
