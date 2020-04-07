@@ -7,7 +7,7 @@
 did(formula, data, id_subject = NULL, id_time, post_treatment,
   method = "parametric", se_boot = FALSE, n_boot = 1000,
   boot_min = TRUE, select = "parametric", verbose = TRUE,
-  test_level = 0.05, id_cluster = NULL)
+  test_level = 0.05, gmm = "CU")
 }
 \arguments{
 \item{formula}{A formula. \code{y ~ d} where \code{y} is the outcome and \code{d} is the (time-varying) treatment indicator.
@@ -30,6 +30,9 @@ Covariates can be added by \code{y ~ d | x1 + x2} where \code{x1} and \code{x2} 
 \item{boot_min}{If \code{TRUE} bootstrap is carried out only for the selected model.}
 
 \item{select}{Selection criteria.}
+
+\item{gmm}{Option for GMM estimation. Default is \code{gmm = "CU"} (continuous updating GMM). 
+\code{gmm = "TS"} (two-step GMM) is also available.}
 }
 \value{
 It is recommended to use \code{\link{summary}} function to extract estimates. Please see \code{\link{summary.diddesign}}.

@@ -4,9 +4,9 @@
 #' @param data A \code{diddesign_data} object.
 #' @family estimation functions
 #' @export
-did_parametric_rcs <- function(data, se_boot = TRUE,
-  n_boot = 500, boot_min = TRUE, id_cluster = NULL,
-  only_last = TRUE, verbose = TRUE, alpha = alpha) {
+did_parametric_rcs <- function(data, se_boot = FALSE,
+  n_boot = 500, boot_min = TRUE,
+  only_last = TRUE, verbose = TRUE, alpha = alpha, gmm) {
   ## input checks
   if (!('diddesign_data' %in% class(data))) {
     stop("diddesign_data class object should be provided as data.")
@@ -16,6 +16,8 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
   if (t_pre <= 1) {
     stop("We reuqire more than two pre-treatment periods.\n")
   }
+
+
 
   m_vec <- 1:t_pre
   n_post <- length(data)
@@ -66,7 +68,7 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
       use_moments <- m_vec[m:length(m_vec)]
 
       ## point estimate
-      est <- didgmmT_parametric_rcs(dat_trans[use_moments])
+      est <- didgmmT_parametric_rcs(dat = dat_trans[use_moments], gmm = gmm)
       tmp[[m]] <- est
 
       ## compute variance
@@ -82,7 +84,8 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
       ## compute Ci
       tmp_ci95     <- c(est$ATT - 1.96 * sqrt(att_var), est$ATT + 1.96 * sqrt(att_var))
       tmp_ci90     <- c(est$ATT - 1.64 * sqrt(att_var), est$ATT + 1.64 * sqrt(att_var))
-      tmp_min[[m]] <- list("boot_est" = boot_est, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90, 'se' = sqrt(att_var))
+      tmp_min[[m]] <- list("boot_est" = boot_est, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90,
+                           'se' = sqrt(att_var), "W" = attr(att_var, "W"))
 
     }
 
@@ -113,14 +116,14 @@ did_parametric_rcs <- function(data, se_boot = TRUE,
     # ********************************************************* #
 
     result[[tt]] <- list(
-      'results_estimates' = tmp,
-      'results_variance' = tmp_min,
+      'results_estimates'   = tmp,
+      'results_variance'    = tmp_min,
       'results_standardDiD' = did_save,
-      'min_model' = min_model,
-      'ATT' = tmp[[min_model]]$ATT,
-      'ci95' = ci95,
-      'ci90' = ci90,
-      'se'   = se
+      'min_model'           = min_model,
+      'ATT'                 = tmp[[min_model]]$ATT,
+      'ci95'                = ci95,
+      'ci90'                = ci90,
+      'se'                  = se
     )
     attr(result[[tt]], 'post_treat') <- attr(data[[tt]], 'post_treat')
     attr(result[[tt]], 'method') <- 'parametric'
@@ -149,7 +152,7 @@ getX_rcs <- function(lm_fit, response_orginal) {
 #' @param A list of dataset. Output of \code{link{getX_rcs}}.
 #' @param Xdesign a list of design matrix. The variable of interest is named 'treatment:post'
 #' @keywords internal
-didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = FALSE) {
+didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = TRUE, gmm = "CU") {
 
 
   ## 1. residualize outcome and treatment
@@ -175,9 +178,12 @@ didgmmT_parametric_rcs <- function(dat, par_init = NULL, optim = FALSE) {
     # estimate by optim
     # cat("1st stage\n")
     est1st <- optim(par = par_init, fn = cugmm_loss_rcs_init, method = "BFGS", dat = dat)
-
-    # cat("2nd stage\n")
-    est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat, init = est1st$par)
+    if (gmm == "TS") {
+      # cat("2nd stage\n")
+      est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat, init = est1st$par)
+    } else if (gmm == "CU") {
+      est2nd <- optim(par = est1st$par, fn = cugmm_loss_rcs, method = "BFGS", dat = dat)
+    }
   } else {
     # analytical solution
     # cat("1st stage") W = I

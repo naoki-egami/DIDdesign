@@ -132,7 +132,8 @@ did_parametric <- function(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE
         ## compute Ci
         tmp_ci95     <- c(est$ATT - 1.96 * sqrt(att_var), est$ATT + 1.96 * sqrt(att_var))
         tmp_ci90     <- c(est$ATT - 1.64 * sqrt(att_var), est$ATT + 1.64 * sqrt(att_var))
-        tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90, 'se' = sqrt(att_var))
+        tmp_min[[m]] <- list("boot_est" = NULL, 'ci95' = tmp_ci95, 'ci90' = tmp_ci90, 
+                             'se' = sqrt(att_var), "W" = attr(att_var, "W"))
       }
 
     }
@@ -243,7 +244,7 @@ getX <- function(fm, fit, dat) {
 ## use full X
 ##
 
-#' Estimate GMM
+#' Estimate parameter by CU-GMM
 #' @keywords internal
 didgmmT_parametric <- function(dat, id_subject, par_init = NULL) {
 
@@ -333,6 +334,7 @@ cugmm_var_parametric <- function(par, dat, id_subject) {
 
   gmm_var <- as.vector(solve(t(G) %*%  solve(Omega, G)))
   att_var <- gmm_var / nobs
+  attr(att_var, "W") <- solve(Omega)
   return(att_var)
 }
 
@@ -441,6 +443,7 @@ cugmm_var_parametric_resid <- function(par, dat, id_subject, p = 1) {
 
   gmm_var <- as.vector(solve(t(G) %*%  solve(Omega, G)))
   att_var <- gmm_var / nobs
+  attr(att_var, "W") <- solve(Omega)
   return(att_var)
 }
 
