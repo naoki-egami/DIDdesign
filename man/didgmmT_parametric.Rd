@@ -2,11 +2,11 @@
 % Please edit documentation in R/did-parametric.R
 \name{didgmmT_parametric}
 \alias{didgmmT_parametric}
-\title{Estimate GMM}
+\title{Estimate parameter by CU-GMM}
 \usage{
 didgmmT_parametric(dat, id_subject, par_init = NULL)
 }
 \description{
-Estimate GMM
+Estimate parameter by CU-GMM
 }
 \keyword{internal}
