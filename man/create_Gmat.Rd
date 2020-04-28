@@ -12,3 +12,4 @@ create_Gmat(dat_panel, treatment)
 \description{
 Create a G matrix
 }
+\keyword{internal}

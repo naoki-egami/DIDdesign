@@ -2,6 +2,11 @@
 #' Generate staggered adoption design
 #' @param n_obs Number of units.
 #' @param n_time Number of time periods.
+#' @return \code{simulate_sad()} returns a list containing the following elements:
+#' \itemize{
+#'   \item{dat} A long format dataset generated under the staggered adoption.
+#'   \item{Amat} A matrix of treatment patterns.
+#' }
 #' @keywords internal
 simulate_sad <- function(n_obs, n_times) {
 
@@ -20,7 +25,7 @@ simulate_sad <- function(n_obs, n_times) {
   ## create unit and time index
   id_subject <- rep(1:n_obs, n_times)
   id_time    <- rep(1:n_times, each = n_obs)
-  Avec       <- as.matrix(Amat)
+  Avec       <- as.vector(Amat)
 
   ## generate the outcome
   ## 1. time fixed effect
@@ -38,9 +43,9 @@ simulate_sad <- function(n_obs, n_times) {
 
   ## form a panel data
   dat_panel <- data.frame(
-    cbind(outcome = Yvec, treatment = Avec,
-          id_subject = id_subject, id_time = id_time
-  ))
+      outcome = Yvec, treatment = Avec,
+      id_subject = id_subject, id_time = id_time
+  )
 
   # dat_panel <- panelr::panel_data(dat_panel, id = id_subject, wave = id_time)
   return(list(dat = dat_panel, Amat = Amat))
