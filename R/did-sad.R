@@ -16,16 +16,34 @@
 #'   id_subject = "id_subject", id_time = 'id_time'
 #' )
 #' @export
-sa_did_est <- function(formula, data, id_subject, id_time) {
+sa_did_est <- function(formula, data, id_subject, id_time, n_boot = 100) {
 
   ## keep track of long-form data with panel class from \code{panelr} package
   dat_panel <- panel_data(data, id = id_subject, wave = id_time)
 
   ## extract variable informations
+  if (!("formula" %in% class(formula))) {
+    formula <- as.formula(formula)
+  }
   all_vars  <- all.vars(formula)
   outcome   <- all_vars[1]
   treatment <- all_vars[2]
 
+  ## estimate DID and sDID
+  est <- sa_double_did(dat_panel, treatment, outcome)
+
+  ## bootstrap
+  est_boot <- matrix(NA, nrow = n_boot, ncol = 2)
+  for (b in 1:n_boot) {
+    dat_boot <- sample_panel(dat_panel)
+    est_boot[b,] <- sa_double_did(dat_boot, treatment, outcome)
+  }
+
+  return(list(est, est_boot))
+}
+
+
+sa_double_did <- function(dat_panel, treatment, outcome) {
   ## create Gmat and index for each design
   Gmat <- create_Gmat(dat_panel, treatment = treatment)
   id_time_use <- get_periods(Gmat)
@@ -38,10 +56,9 @@ sa_did_est <- function(formula, data, id_subject, id_time) {
   sdid <- compute_sdid(dat_panel, outcome, treatment,
                      id_time_use, id_subj_use, time_weight)
   out <- c(did, sdid); names(out) <- c('DID', "sDID")
+
   return(out)
 }
-
-
 
 
 
@@ -184,4 +201,35 @@ compute_sdid <- function(dat_panel, outcome, treatment,
   sdid_vec <- as.vector(unlist(est) %*% (time_weight_new / sum(time_weight_new)))
 
   return(sdid_vec)
+}
+
+
+
+#' Block Bootstrap
+#' @import panelr
+#' @importFrom tibble as_tibble
+#' @keywords internal
+sample_panel <- function(panel_dat) {
+
+
+  ## get subject id for bootstrap
+  id_subject <- get_id(panel_dat)
+  id_vec     <- unique(pull(panel_dat, !!sym(id_subject)))
+  id_boot    <- sample(id_vec, size = length(id_vec), replace = TRUE)
+
+  ## constrcut a panel data for bootstrap
+  tmp <- as.data.frame(panel_dat)
+  dat_list <- list()
+  for (i in 1:length(id_boot)) {
+    dat_list[[i]] <- filter(tmp, !!sym(id_subject) == id_boot[i]) %>%
+      mutate(id_new = i, id_old = id_boot[i])
+  }
+
+  boot_dat <- do.call("rbind", dat_list) %>%
+    as_tibble() %>%
+    select(-id_subject) %>%
+    mutate(id_subject = id_new) %>%
+    panel_data(id = id_subject, wave = !!sym(get_wave(panel_dat)))
+
+  return(boot_dat)
 }

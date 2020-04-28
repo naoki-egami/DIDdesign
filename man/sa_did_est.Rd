@@ -4,7 +4,7 @@
 \alias{sa_did_est}
 \title{Function to implement the Staggered Adption Design}
 \usage{
-sa_did_est(formula, data, id_subject, id_time)
+sa_did_est(formula, data, id_subject, id_time, n_boot = 100)
 }
 \arguments{
 \item{formula}{A formula indicating outcome and treatment.}
