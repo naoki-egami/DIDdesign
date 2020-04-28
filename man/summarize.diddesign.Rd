@@ -4,7 +4,7 @@
 \alias{summarize.diddesign}
 \title{helper function to summarize data}
 \usage{
-\method{summarize}{diddesign}(data)
+summarize.diddesign(data)
 }
 \arguments{
 \item{data}{an object of \code{diddesign_data} class, typically an output from \code{\link{did_data}}.}

@@ -23,6 +23,7 @@ Imports:
     crayon,
     Formula,
     dplyr,
+    panelr,
     plm,
     tidyr,
     Rcpp,
