@@ -39,7 +39,16 @@ sa_did_est <- function(formula, data, id_subject, id_time, n_boot = 100) {
     est_boot[b,] <- sa_double_did(dat_boot, treatment, outcome)
   }
 
-  return(list(est, est_boot))
+  ## estimate GMM weighting matrix
+  W <- cov(est_boot)
+  w_did  <- (W[1,1] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
+  w_sdid <- (W[2,2] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
+  w_vec  <- c(w_did, w_sdid)
+
+  ## double did estimate
+  double_did <- as.vector(t(w_vec) %*% est)
+
+  return(list(est, est_boot, double_did))
 }
 
 
@@ -88,7 +97,7 @@ create_Gmat <- function(dat_panel, treatment) {
 #' @param Gmat G matrix produced in \code{create_Gmat()}.
 #' @param thres A minimum number of treatd units for the period included in the analysis. Default is 2.
 #' @keywords internal
-get_periods <- function(Gmat, thres = 2) {
+get_periods <- function(Gmat, thres = 1) {
   ## check which periods to use
   ## only use periods that are more than "thres" observations treated
   use_id <- which(apply(Gmat, 2, function(x) sum(x == 1) >= thres))
@@ -130,7 +139,7 @@ get_time_weight <- function(Gmat, id_time_use) {
 #' Estimate DID
 #' @keywords internal
 compute_did <- function(dat_panel, outcome, treatment,
-  id_time_use, id_subj_use, time_weight) {
+  id_time_use, id_subj_use, time_weight, min_time = 3) {
   est <- list(); iter <- 1
 
   ## we need to renormalize weights if past periods is not avaialbe
@@ -138,7 +147,7 @@ compute_did <- function(dat_panel, outcome, treatment,
 
   ## compute individual time specific DID
   for (i in 1:length(id_time_use)) {
-    if (id_time_use[i] >= 2) {
+    if (id_time_use[i] >= min_time) {
       ## subset the data
       dat_use <- dat_panel %>%
         filter(!!sym(get_id(dat_panel)) %in% id_subj_use[[i]]) %>%
@@ -168,7 +177,7 @@ compute_did <- function(dat_panel, outcome, treatment,
 #' Estimate sDID
 #' @keywords internal
 compute_sdid <- function(dat_panel, outcome, treatment,
-  id_time_use, id_subj_use, time_weight) {
+  id_time_use, id_subj_use, time_weight, min_time = 3) {
   est <- list(); iter <- 1
 
   ## we need to renormalize weights if past periods is not avaialbe
@@ -176,7 +185,7 @@ compute_sdid <- function(dat_panel, outcome, treatment,
 
   ## compute individual time specific DID
   for (i in 1:length(id_time_use)) {
-    if (id_time_use[i] >= 3) {
+    if (id_time_use[i] >= min_time) {
       ## subset the data
       dat_use <- dat_panel %>%
         filter(!!sym(get_id(dat_panel)) %in% id_subj_use[[i]]) %>%
