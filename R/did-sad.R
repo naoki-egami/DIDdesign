@@ -110,7 +110,11 @@ get_time_weight <- function(Gmat, id_time_use) {
 }
 
 
-#' Estimate DID 
+#' Estimate DID
+#' @importFrom dplyr %>% filter 
+#' @importFrom rlang !! sym 
+#' @import panelr
+#' @import plm 
 #' @keywords internal
 compute_did <- function(dat_panel, outcome, treatment, 
   id_time_use, id_subj_use, time_weight) {
@@ -149,6 +153,10 @@ compute_did <- function(dat_panel, outcome, treatment,
 
 
 #' Estimate sDID 
+#' @importFrom dplyr %>% filter 
+#' @importFrom rlang !! sym 
+#' @import panelr
+#' @import plm 
 #' @keywords internal
 compute_sdid <- function(dat_panel, outcome, treatment, 
   id_time_use, id_subj_use, time_weight) {
