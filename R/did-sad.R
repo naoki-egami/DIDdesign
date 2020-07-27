@@ -16,7 +16,7 @@
 #'   id_subject = "id_subject", id_time = 'id_time'
 #' )
 #' @export
-sa_did_est <- function(formula, data, id_subject, id_time, n_boot = 100) {
+sa_did_est <- function(formula, data, id_subject, id_time, n_boot = 100, lead = 0) {
 
   ## keep track of long-form data with panel class from \code{panelr} package
   dat_panel <- panel_data(data, id = id_subject, wave = id_time)
@@ -30,13 +30,13 @@ sa_did_est <- function(formula, data, id_subject, id_time, n_boot = 100) {
   treatment <- all_vars[2]
 
   ## estimate DID and sDID
-  est <- sa_double_did(dat_panel, treatment, outcome)
+  est <- sa_double_did(dat_panel, treatment, outcome, lead)
 
   ## bootstrap
   est_boot <- matrix(NA, nrow = n_boot, ncol = 2)
   for (b in 1:n_boot) {
     dat_boot <- sample_panel(dat_panel)
-    est_boot[b,] <- sa_double_did(dat_boot, treatment, outcome)
+    est_boot[b,] <- sa_double_did(dat_boot, treatment, outcome, lead)
   }
 
   ## estimate GMM weighting matrix
@@ -48,11 +48,15 @@ sa_did_est <- function(formula, data, id_subject, id_time, n_boot = 100) {
   ## double did estimate
   double_did <- as.vector(t(w_vec) %*% est)
 
-  return(list(est, est_boot, double_did))
+  ## compute the variance of double did
+  var_ddid <- as.vector(t(w_vec^2) %*% apply(est_boot, 2, var))
+
+  return(list(est = est, res_boot = est_boot,
+    ddid = double_did, ddid_var = var_ddid, weights = w_vec))
 }
 
 
-sa_double_did <- function(dat_panel, treatment, outcome) {
+sa_double_did <- function(dat_panel, treatment, outcome, lead) {
   ## create Gmat and index for each design
   Gmat <- create_Gmat(dat_panel, treatment = treatment)
   id_time_use <- get_periods(Gmat)
@@ -61,11 +65,12 @@ sa_double_did <- function(dat_panel, treatment, outcome) {
 
   ## estimate DID and sDID for each periods
   did <- compute_did(dat_panel, outcome, treatment,
-                     id_time_use, id_subj_use, time_weight)
+                     id_time_use, id_subj_use, time_weight, lead = lead )
   sdid <- compute_sdid(dat_panel, outcome, treatment,
-                     id_time_use, id_subj_use, time_weight)
+                     id_time_use, id_subj_use, time_weight, lead = lead)
   out <- c(did, sdid); names(out) <- c('DID', "sDID")
 
+  attr(out, "did_all") <- attr(did, "all_est")
   return(out)
 }
 
@@ -97,7 +102,7 @@ create_Gmat <- function(dat_panel, treatment) {
 #' @param Gmat G matrix produced in \code{create_Gmat()}.
 #' @param thres A minimum number of treatd units for the period included in the analysis. Default is 2.
 #' @keywords internal
-get_periods <- function(Gmat, thres = 1) {
+get_periods <- function(Gmat, thres = 3) {
   ## check which periods to use
   ## only use periods that are more than "thres" observations treated
   use_id <- which(apply(Gmat, 2, function(x) sum(x == 1) >= thres))
@@ -139,20 +144,21 @@ get_time_weight <- function(Gmat, id_time_use) {
 #' Estimate DID
 #' @keywords internal
 compute_did <- function(dat_panel, outcome, treatment,
-  id_time_use, id_subj_use, time_weight, min_time = 3) {
+  id_time_use, id_subj_use, time_weight, min_time = 3, lead) {
   est <- list(); iter <- 1
 
   ## we need to renormalize weights if past periods is not avaialbe
   time_weight_new <- list()
+  max_time <- max(dat_panel %>% pull(get_wave(dat_panel)))
 
   ## compute individual time specific DID
   for (i in 1:length(id_time_use)) {
-    if (id_time_use[i] >= min_time) {
+    if ((id_time_use[i] >= min_time) && ((id_time_use[i] + lead) <= max_time)) {
       ## subset the data
       dat_use <- dat_panel %>%
         filter(!!sym(get_id(dat_panel)) %in% id_subj_use[[i]]) %>%
-        filter(!!sym(get_wave(dat_panel)) <= id_time_use[i]) %>%
-        filter(!!sym(get_wave(dat_panel)) >= id_time_use[i]-1) %>%
+        filter(!!sym(get_wave(dat_panel)) == (id_time_use[i] + lead) |
+               !!sym(get_wave(dat_panel)) == id_time_use[i]-1) %>%
         as_pdata.frame()
 
       ## estimate DID using plm
@@ -170,6 +176,7 @@ compute_did <- function(dat_panel, outcome, treatment,
   time_weight_new <- unlist(time_weight_new)
   did_vec <- as.vector(unlist(est) %*% (time_weight_new / sum(time_weight_new)))
 
+  attr(did_vec, "all_est") <- unlist(est)
   return(did_vec)
 }
 
@@ -177,21 +184,23 @@ compute_did <- function(dat_panel, outcome, treatment,
 #' Estimate sDID
 #' @keywords internal
 compute_sdid <- function(dat_panel, outcome, treatment,
-  id_time_use, id_subj_use, time_weight, min_time = 3) {
+  id_time_use, id_subj_use, time_weight, min_time = 3, lead) {
   est <- list(); iter <- 1
 
   ## we need to renormalize weights if past periods is not avaialbe
   time_weight_new <- list()
 
+  max_time <- max(dat_panel %>% pull(get_wave(dat_panel)))
+
   ## compute individual time specific DID
   for (i in 1:length(id_time_use)) {
-    if (id_time_use[i] >= min_time) {
+    if ((id_time_use[i] >= min_time) && ((id_time_use[i] + lead) <= max_time)) {
       ## subset the data
       dat_use <- dat_panel %>%
-        filter(!!sym(get_id(dat_panel)) %in% id_subj_use[[i]]) %>%
-        filter(!!sym(get_wave(dat_panel)) <= id_time_use[i]) %>%
-        filter(!!sym(get_wave(dat_panel)) >= id_time_use[i]-2) %>%
         mutate(outcome_diff = c(NA, diff(!!sym(outcome)))) %>%
+        filter(!!sym(get_id(dat_panel)) %in% id_subj_use[[i]]) %>%
+        filter(!!sym(get_wave(dat_panel)) == (id_time_use[i] + lead) |
+               !!sym(get_wave(dat_panel)) == id_time_use[i]-1) %>%
         as_pdata.frame()
 
       ## estimate DID using plm
