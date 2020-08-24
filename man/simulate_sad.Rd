@@ -15,7 +15,7 @@ simulate_sad(n_obs, n_times)
 \code{simulate_sad()} returns a list containing the following elements:
 \itemize{
   \item{dat} A long format dataset generated under the staggered adoption.
-  \item{Amat} A matrix of treatment patterns. 
+  \item{Amat} A matrix of treatment patterns.
 }
 }
 \description{

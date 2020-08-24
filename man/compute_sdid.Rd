@@ -5,7 +5,7 @@
 \title{Estimate sDID}
 \usage{
 compute_sdid(dat_panel, outcome, treatment, id_time_use, id_subj_use,
-  time_weight)
+  time_weight, min_time = 3)
 }
 \description{
 Estimate sDID

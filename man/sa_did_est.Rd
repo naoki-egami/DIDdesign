@@ -4,7 +4,7 @@
 \alias{sa_did_est}
 \title{Function to implement the Staggered Adption Design}
 \usage{
-sa_did_est(formula, data, id_subject, id_time)
+sa_did_est(formula, data, id_subject, id_time, n_boot = 100)
 }
 \arguments{
 \item{formula}{A formula indicating outcome and treatment.}
@@ -19,12 +19,12 @@ sa_did_est(formula, data, id_subject, id_time)
 Function to implement the Staggered Adption Design
 }
 \examples{
-# simulate data 
+# simulate data
 set.seed(1234)
 dat <- simulate_sad(30, 10)
 
-# estimate 
-sa_did_est(outcome ~ treatment, data = dat$dat, 
+# estimate
+sa_did_est(outcome ~ treatment, data = dat$dat,
   id_subject = "id_subject", id_time = 'id_time'
 )
 }
