@@ -50,7 +50,7 @@ did_new <- function(
   ##
   ## handle cluster variable
   ## 
-  var_cluster <- NULL
+  var_cluster <- option$id_cluster
   if (is.null(var_cluster) && isTRUE(is_panel)) {
     var_cluster <- "id_unit"
     var_cluster_pre <- id_unit
@@ -234,6 +234,7 @@ set_option <- function(option) {
   if (!exists('n_boot', option)) option$n_boot <- 30
   if (!exists('parallel', option)) option$parallel <- TRUE
   if (!exists('se_boot', option)) option$se_boot <- TRUE
+  if (!exists('id_cluster', option)) option$id_cluster <- NULL
 
   return(option)
 }

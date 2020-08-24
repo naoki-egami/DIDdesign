@@ -28,7 +28,12 @@ Imports:
     tidyr,
     Rcpp,
     RcppArmadillo,
-    rlang
+    rlang,
+    future,
+    future.apply,
+    purrr,
+    zoo, 
+    tibble
 Suggests:
     testthat,
     knitr,
