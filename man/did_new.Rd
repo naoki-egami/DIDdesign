@@ -42,3 +42,37 @@ The default is \code{"did"}.}
 \description{
 Implement the double did estimator and compute the variance via cluster bootstrap.
 }
+\examples{
+
+## The standard DID design 
+### (1) panel data 
+### (2) repeated cross-section data 
+
+## (1) panel data
+data(anzia2012)
+
+set.seed(1234)
+fit_panel <- did_new(
+  formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
+                        ami_pc + asian_pc + black_pc + hisp_pc,
+  data    = anzia2012,
+  id_unit = "district",
+  id_time = "year",
+  option  = list(n_boot = 20)
+)
+
+fit_panel
+
+## (2) repeated cross-section data 
+data(malesky2014)
+
+set.seed(1234)
+ff_rcs <- did_new(
+  formula = transport ~ treatment + post_treat | factor(city),
+  data    = malesky2014,
+  id_time = 'year',
+  is_panel= FALSE,
+  option  = list(n_boot = 20, id_cluster = "tinh")
+)
+
+}

@@ -12,7 +12,7 @@ simulate_sad <- function(n_obs, n_times) {
 
   ## draw treatment timing from t = 2, ..., n_times + 1
   ## t = 1 is left as a baseline year where everyone is under control
-  treatment_timing <- sort(sample.int(n_times, size = n_obs, replace = TRUE) + 1)
+  treatment_timing <- sort(sample.int(n_times-8, size = n_obs, replace = TRUE) + 3)
 
   ## create A matrix (time-varying treatment indicator)
   Amat <- matrix(0, nrow = n_obs, ncol = n_times)

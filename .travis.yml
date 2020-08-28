@@ -1,2 +1,7 @@
-language: r
+language: R
 cache: packages
+warnings_are_errors: false
+latex: false
+env:
+  global:
+    - R_CHECK_ARGS="--no-build-vignettes"
