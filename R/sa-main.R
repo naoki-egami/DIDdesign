@@ -12,7 +12,8 @@ ddid_sa_new <- function() {
 
 #' Double DID Data Format for the Staggered Adoption 
 #' @keywords internal
-ddid_sa_data <- function(var_treat, id_unit, id_time, data) {
+ddid_sa_data <- function(
+  var_treat, id_unit, id_time, data) {
   
   ## rename variables 
   dat_use <- data %>% 

@@ -30,6 +30,39 @@
 #' The default is \code{"did"}.
 #' @param is_panel A boolean argument. This should be \code{TRUE} when the dataset is panel (i.e., the same units are repeately observed over time); This should be \code{FALSE} when the dataset is the repeated cross-section (RCS) where different sets of units are observed at each time point.
 #' @param option A list of option parameters.
+#' @examples
+#' 
+#' ## The standard DID design 
+#' ### (1) panel data 
+#' ### (2) repeated cross-section data 
+#' 
+#' ## (1) panel data
+#' data(anzia2012)
+#' 
+#' set.seed(1234)
+#' fit_panel <- did_new(
+#'   formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
+#'                         ami_pc + asian_pc + black_pc + hisp_pc,
+#'   data    = anzia2012,
+#'   id_unit = "district",
+#'   id_time = "year",
+#'   option  = list(n_boot = 20)
+#' )
+#' 
+#' fit_panel
+#' 
+#' ## (2) repeated cross-section data 
+#' data(malesky2014)
+#' 
+#' set.seed(1234)
+#' ff_rcs <- did_new(
+#'   formula = transport ~ treatment + post_treat | factor(city),
+#'   data    = malesky2014,
+#'   id_time = 'year',
+#'   is_panel= FALSE,
+#'   option  = list(n_boot = 20, id_cluster = "tinh")
+#' )
+#' 
 did_new <- function(
   formula, data, id_unit, id_time,
   design = "did", is_panel = TRUE,
@@ -76,7 +109,7 @@ did_new <- function(
   ## -------------------------------- ##
 
   ## point estimate
-  fit_did  <- ddid_fit(fm_prep$fm_did, dat_did, lead = 1)
+  fit_did  <- ddid_fit(fm_prep$fm_did, dat_did, lead = option$lead)
   weights  <- did_compute_weights(
     fm_prep, dat_did, var_cluster, is_panel, option
   )
@@ -137,7 +170,7 @@ did_compute_weights <- function(
   ## point estimates 
   est_boot <- do.call(rbind, future_lapply(1:option$n_boot, function(i) {
     ddid_boot(
-      fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel
+      fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead
     )
   }, future.seed = TRUE))
   
@@ -154,7 +187,9 @@ did_compute_weights <- function(
 }
 
 
-ddid_boot <- function(fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel) {
+ddid_boot <- function(
+  fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, lead
+) {
   ## sample index
   id_boot <- sample(id_cluster_vec,
     size = length(id_cluster_vec), replace = TRUE
@@ -188,7 +223,7 @@ ddid_boot <- function(fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel) {
   }
   
   ## fit DID and sDID
-  est <- ddid_fit(fm_prep$fm_did, dat_boot, lead = 1)
+  est <- ddid_fit(fm_prep$fm_did, dat_boot, lead)
   return(est)
 }
 
@@ -233,8 +268,9 @@ set_option <- function(option) {
 
   if (!exists('n_boot', option)) option$n_boot <- 30
   if (!exists('parallel', option)) option$parallel <- TRUE
-  if (!exists('se_boot', option)) option$se_boot <- TRUE
+  if (!exists('se_boot', option)) option$se_boot <- FALSE
   if (!exists('id_cluster', option)) option$id_cluster <- NULL
+  if (!exists('lead', option)) option$lead <- 1
 
   return(option)
 }
