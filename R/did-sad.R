@@ -5,7 +5,6 @@
 #' @param data A long form panel data.
 #' @param id_subject A character variable indicating subject index.
 #' @param id_time A character variable indicating time index.
-#' @import panelr
 #' @examples
 #' # simulate data
 #' set.seed(1234)
