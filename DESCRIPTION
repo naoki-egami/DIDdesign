@@ -1,8 +1,8 @@
 Package: DIDdesign
 Type: Package
 Title: R package for analyzing and diagnosing difference-in-differences design
-Version: 0.2.4
-Date: 2019-04-11
+Version: 0.2.6
+Date: 2020-11-28
 Authors@R: c(
   person("Naoki", "Egami", email = "email@gmail.com", role = c("aut"),
     comment = c(ORCID = "0000-0002-5491-2174")
@@ -14,7 +14,7 @@ Description: A package for analyzing and diagnosing difference-in-differences de
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 LinkingTo:
     Rcpp,
     RcppArmadillo
@@ -23,11 +23,16 @@ Imports:
     crayon,
     Formula,
     dplyr,
-    panelr,
     plm,
     tidyr,
     Rcpp,
-    RcppArmadillo
+    RcppArmadillo,
+    rlang,
+    future,
+    future.apply,
+    purrr,
+    zoo,
+    tibble
 Suggests:
     testthat,
     knitr,
@@ -35,3 +40,5 @@ Suggests:
 VignetteBuilder: knitr
 BugReports: https://github.com/naoki-egami/DIDdesign/issues
 URL: https://github.com/naoki-egami/DIDdesign
+Depends:
+    R (>= 2.10)

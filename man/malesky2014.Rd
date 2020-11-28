@@ -4,7 +4,9 @@
 \name{malesky2014}
 \alias{malesky2014}
 \title{Dataset from Malesky et al. (2014)}
-\format{A \code{tbl} format data.}
+\format{
+A \code{tbl} format data.
+}
 \usage{
 data(malesky2014)
 }

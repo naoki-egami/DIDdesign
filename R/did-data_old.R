@@ -45,6 +45,8 @@ did_data <- function(
   Xcov = NULL, x_formula = NULL, id_cluster = NULL
 ) {
 
+  .Deprecated("did_panel_data")
+
   is_rcs <- FALSE
   if (is.null(id_subject)) { is_rcs <- TRUE }
 
@@ -96,6 +98,10 @@ did_data <- function(
 #' @keywords internal
 did_data_rcs <- function(outcome, treatment, post_treatment, id_time, Xcov, x_formula = NULL) {
 
+
+  .Deprecated("did_rcs_data")
+  
+  
   diff.zoo <- getFromNamespace("diff.zoo", "zoo")
   out <- list()
 

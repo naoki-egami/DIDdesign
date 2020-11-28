@@ -4,10 +4,21 @@
 \alias{did}
 \title{Double Difference-in-Differences}
 \usage{
-did(formula, data, id_subject = NULL, id_time, post_treatment,
-  method = "parametric", se_boot = FALSE, n_boot = 1000,
-  boot_min = TRUE, select = "parametric", verbose = TRUE,
-  test_level = 0.05, gmm = "CU")
+did(
+  formula,
+  data,
+  id_subject = NULL,
+  id_time,
+  post_treatment,
+  method = "parametric",
+  se_boot = FALSE,
+  n_boot = 1000,
+  boot_min = TRUE,
+  select = "parametric",
+  verbose = TRUE,
+  test_level = 0.05,
+  gmm = "CU"
+)
 }
 \arguments{
 \item{formula}{A formula. \code{y ~ d} where \code{y} is the outcome and \code{d} is the (time-varying) treatment indicator.
@@ -81,8 +92,10 @@ did_plot_selection(fit1)
 \seealso{
 summary.diddesign
 
-Other main functions: \code{\link{did_plot_selection}},
-  \code{\link{did_plot}}, \code{\link{plot.diddesign}},
-  \code{\link{summary.diddesign}}
+Other main functions: 
+\code{\link{did_plot_selection}()},
+\code{\link{did_plot}()},
+\code{\link{plot.diddesign}()},
+\code{\link{summary.diddesign}()}
 }
 \concept{main functions}

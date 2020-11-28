@@ -4,9 +4,17 @@
 \alias{did_parametric}
 \title{Parametric Double Difference-in-Differences Estimator}
 \usage{
-did_parametric(data, se_boot = FALSE, n_boot = 1000, boot_min = TRUE,
-  select = "parametric", est_did = FALSE, is_covariates,
-  verbose = TRUE, only_last = TRUE)
+did_parametric(
+  data,
+  se_boot = FALSE,
+  n_boot = 1000,
+  boot_min = TRUE,
+  select = "parametric",
+  est_did = FALSE,
+  is_covariates,
+  verbose = TRUE,
+  only_last = TRUE
+)
 }
 \arguments{
 \item{data}{data}
@@ -27,7 +35,8 @@ The selected model is used to estimate bootstrap variance when \code{boot_min = 
 Parametric Double Difference-in-Differences Estimator
 }
 \seealso{
-Other estimation functions: \code{\link{did_nonparametric}},
-  \code{\link{did_parametric_rcs}}
+Other estimation functions: 
+\code{\link{did_nonparametric}()},
+\code{\link{did_parametric_rcs}()}
 }
 \concept{estimation functions}

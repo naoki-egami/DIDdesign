@@ -4,9 +4,16 @@
 \alias{did_nonparametric}
 \title{Nonparametric Double Difference-in-Differences Estimator}
 \usage{
-did_nonparametric(data, se_boot = FALSE, n_boot = 1000,
-  boot_min = TRUE, alpha = 0.05, select = "GMM", est_did = TRUE,
-  verbose = TRUE)
+did_nonparametric(
+  data,
+  se_boot = FALSE,
+  n_boot = 1000,
+  boot_min = TRUE,
+  alpha = 0.05,
+  select = "GMM",
+  est_did = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{data}{did_double.data object. See \code{\link{did_double_data}}.}
@@ -57,7 +64,8 @@ Nonparametric Double Difference-in-Differences Estimator
 }
 }
 \seealso{
-Other estimation functions: \code{\link{did_parametric_rcs}},
-  \code{\link{did_parametric}}
+Other estimation functions: 
+\code{\link{did_parametric_rcs}()},
+\code{\link{did_parametric}()}
 }
 \concept{estimation functions}

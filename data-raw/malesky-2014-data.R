@@ -5,27 +5,31 @@
 rm(list=ls())
 
 ## load other packages
-require(dplyr)
-require(haven)
-require(ggplot2)
+require(tidyverse)
 require(plm)
-require(tidyr)
-require(readstata13)
+require(haven)
 require(estimatr)
 
 
 ##
 ## load data 
 ##
-dat_2006_2008 <- read.dta13("panel_commune_2006_2008.dta")
-dat_2008_2010 <- read.dta13("panel_commune_2008_2010.dta")
 
-dat_2006 <- dat_2006_2008[dat_2006_2008$year == 2006, ]
-dat_2008 <- dat_2006_2008[dat_2006_2008$year == 2008, ]
-dat_2010 <- dat_2008_2010[dat_2008_2010$year == 2010, ]
+dat_2006_2008 <- read_dta("panel_commune_2006_2008.dta")
+dat_2008_2010 <- read_dta("panel_commune_2008_2010.dta")
+
+dat_2006 <- filter(dat_2006_2008, year == 2006)
+dat_2008 <- filter(dat_2006_2008, year == 2008)
+dat_2010 <- filter(dat_2008_2010, year == 2010)
+
 
 share <- intersect(colnames(dat_2008), colnames(dat_2010))
-dat_main <- rbind(dat_2006[,share], dat_2008[,share], dat_2010[,share])
+dat_main <- bind_rows(
+  dat_2006 %>% select(all_of(share)),
+  dat_2008 %>% select(all_of(share)),
+  dat_2010 %>% select(all_of(share))
+)
+
 
 # 30 main outcomes analyzed in their paper
 index1 <- c("goodroadv", "transport", "pro3", "tapwater", "roadv")
@@ -59,6 +63,8 @@ dat_main <- dat_main[dat_main$reg8 !=6, ]
 ## subset data for saving 
 ##
 malesky2014 <- dat_main %>% 
-                  select(unlist(outcome_list), treatment, lnarea, lnpopden, city, reg8, year, tinh) %>% 
-                  tbl_df()
-usethis::use_data(malesky2014)
+  select(all_of(outcome_list), treatment, 
+          lnarea, lnpopden, city, reg8, rnongnghiep, rcongnghiep, rdichvu, 
+          year, tinh) %>% 
+  mutate(post_treat = ifelse(year == 2010, 1, 0))
+usethis::use_data(malesky2014, overwrite = TRUE)

@@ -4,8 +4,16 @@
 \alias{plot.diddesign}
 \title{Plot function}
 \usage{
-\method{plot}{diddesign}(data, xlim = NULL, ylim = NULL, col = NULL,
-  lwd = NULL, full = FALSE, selection = TRUE, ...)
+\method{plot}{diddesign}(
+  data,
+  xlim = NULL,
+  ylim = NULL,
+  col = NULL,
+  lwd = NULL,
+  full = FALSE,
+  selection = TRUE,
+  ...
+)
 }
 \arguments{
 \item{data}{Input object. This should be either diddesign object or diddesign_data object.
@@ -27,8 +35,10 @@ otherwise only estimates from the selected model will be shown. Default is \code
 Plot function
 }
 \seealso{
-Other main functions: \code{\link{did_plot_selection}},
-  \code{\link{did_plot}}, \code{\link{did}},
-  \code{\link{summary.diddesign}}
+Other main functions: 
+\code{\link{did_plot_selection}()},
+\code{\link{did_plot}()},
+\code{\link{did}()},
+\code{\link{summary.diddesign}()}
 }
 \concept{main functions}

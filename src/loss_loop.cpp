@@ -1,5 +1,4 @@
 
-
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 
@@ -33,7 +32,6 @@ arma::mat loss_loop(
   return Xe;
 
 }
-
 
 
 
