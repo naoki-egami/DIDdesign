@@ -1,19 +1,24 @@
 ---
 title: "DIDdesign"
-output: 
+output:
   md_document:
     variant: markdown_github
 ---
 
-# DIDdesign: Double Difference-in-Differences 
+# DIDdesign: Double Difference-in-Differences
 
-Authors: 
+
+<!-- badges: start -->
+[![R build status](https://github.com/naoki-egami/DIDdesign/workflows/R-CMD-check/badge.svg)](https://github.com/naoki-egami/DIDdesign/actions)
+<!-- badges: end -->
+
+Authors:
 
 - [Naoki Egami](https://scholar.princeton.edu/negami/home)
 - Soichiro Yamauchi
 
 
-Reference 
+Reference
 
 ## Installation
 
@@ -30,4 +35,3 @@ Reference
 - Getting started
 - [Example of analyzing panel data](./docs/articles/articles/diddesign.html)
 - Example of analyzing repeated cross-section data
-
