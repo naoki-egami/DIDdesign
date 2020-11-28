@@ -4,8 +4,15 @@
 \alias{did_data_panelL}
 \title{Data processing function for panel data (long format)}
 \usage{
-did_data_panelL(outcome, treatment, post_treatment, id_subject, id_time,
-  Xcov, x_formula = NULL)
+did_data_panelL(
+  outcome,
+  treatment,
+  post_treatment,
+  id_subject,
+  id_time,
+  Xcov,
+  x_formula = NULL
+)
 }
 \arguments{
 \item{outcome}{A vector of outcome variable.}

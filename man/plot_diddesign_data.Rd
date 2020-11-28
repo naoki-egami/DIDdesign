@@ -4,9 +4,19 @@
 \alias{plot_diddesign_data}
 \title{Baseline plot function for did_plot}
 \usage{
-plot_diddesign_data(data, panel = TRUE, diff_order = 0, alpha = 0.05,
-  ci = TRUE, xlim = NULL, ylim = NULL, col = NULL, loc = NULL,
-  lwd = NULL, ...)
+plot_diddesign_data(
+  data,
+  panel = TRUE,
+  diff_order = 0,
+  alpha = 0.05,
+  ci = TRUE,
+  xlim = NULL,
+  ylim = NULL,
+  col = NULL,
+  loc = NULL,
+  lwd = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{Two possible inputs. If \code{panel = TRUE}, input should be a \code{diddesign_data} class object.

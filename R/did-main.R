@@ -29,16 +29,23 @@
 #' @param design The design to be used: either \code{"did"} (the standard difference-in-differences design) or \code{"sa"} (the staggered adoption design).
 #' The default is \code{"did"}.
 #' @param is_panel A boolean argument. This should be \code{TRUE} when the dataset is panel (i.e., the same units are repeately observed over time); This should be \code{FALSE} when the dataset is the repeated cross-section (RCS) where different sets of units are observed at each time point.
-#' @param option A list of option parameters.
+#' @param option A list of the following option parameters:
+#' \describe{
+#'   \item{n_boot}{The number of bootstrap iterations.}
+#'   \item{se_boot}{A boolean argument. If \code{TRUE} bootstrap-based critical value is used to construct the confidence intervals.
+#'                    Default is \code{FALSE}}
+#'   \item{id_cluster}{A variable name of a cluster index used to conduct clustered bootstraps.
+#'                     If left unspecified, the unit level bootstrap will be conducted.}
+#' }
 #' @examples
-#' 
-#' ## The standard DID design 
-#' ### (1) panel data 
-#' ### (2) repeated cross-section data 
-#' 
-#' ## (1) panel data
+#'
+#' ## The standard DID design -----------
+#' ### (1) panel data
+#' ### (2) repeated cross-section data
+#'
+#' ## (1) panel data --------------------
 #' data(anzia2012)
-#' 
+#'
 #' set.seed(1234)
 #' fit_panel <- did_new(
 #'   formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
@@ -48,12 +55,12 @@
 #'   id_time = "year",
 #'   option  = list(n_boot = 20)
 #' )
-#' 
+#'
 #' fit_panel
-#' 
-#' ## (2) repeated cross-section data 
+#'
+#' ## (2) repeated cross-section data ---
 #' data(malesky2014)
-#' 
+#'
 #' set.seed(1234)
 #' ff_rcs <- did_new(
 #'   formula = transport ~ treatment + post_treat | factor(city),
@@ -62,7 +69,7 @@
 #'   is_panel= FALSE,
 #'   option  = list(n_boot = 20, id_cluster = "tinh")
 #' )
-#' 
+#'
 did_new <- function(
   formula, data, id_unit, id_time,
   design = "did", is_panel = TRUE,
@@ -73,33 +80,33 @@ did_new <- function(
   if (isTRUE(is_panel) && is.null(is_panel)) {
     stop("A vaiable name should be provided to id_unit.")
   }
-  
-  ## prepare formulas 
+
+  ## prepare formulas
   fm_prep <- did_formula(formula, is_panel)
 
-  ## set option 
+  ## set option
   option <- set_option(option)
 
   ##
   ## handle cluster variable
-  ## 
+  ##
   var_cluster <- option$id_cluster
   if (is.null(var_cluster) && isTRUE(is_panel)) {
     var_cluster <- "id_unit"
     var_cluster_pre <- id_unit
   }
-  
+
   ##
   ## transform data
   ##
   if (isTRUE(is_panel)) {
     dat_did <- did_panel_data(
-      fm_prep$var_outcome, fm_prep$var_treat, fm_prep$var_covars, 
+      fm_prep$var_outcome, fm_prep$var_treat, fm_prep$var_covars,
       var_cluster_pre, id_unit, id_time, data
     )
   } else {
     dat_did <- did_rcs_data(
-      fm_prep$var_outcome, fm_prep$var_treat, fm_prep$var_post, 
+      fm_prep$var_outcome, fm_prep$var_treat, fm_prep$var_post,
       fm_prep$var_covars, var_cluster,id_time, data
     )
   }
@@ -113,10 +120,10 @@ did_new <- function(
   weights  <- did_compute_weights(
     fm_prep, dat_did, var_cluster, is_panel, option
   )
-  
+
   estimates <- double_did_compute(fit_did, weights, option$se_boot)
 
-  ## compute double did estimate 
+  ## compute double did estimate
   return(list(estimates = estimates, weights = weights))
 }
 
@@ -147,9 +154,9 @@ ddid_fit <- function(formula, data, lead = 1) {
 did_compute_weights <- function(
   fm_prep, dat_did, var_cluster, is_panel, option
 ) {
-  
-  
-  ## setup cluster ID for bootstrap 
+
+
+  ## setup cluster ID for bootstrap
   if (is.null(var_cluster)) {
     id_cluster_vec <- 1:nrow(dat_did)
   } else {
@@ -157,36 +164,38 @@ did_compute_weights <- function(
   }
 
   ##
-  ## bootstrap 
-  ## 
-  
-  ## setup worker 
+  ## bootstrap
+  ##
+
+  ## setup worker
   if (isTRUE(option$parallel)) {
-    plan(multiprocess)    
+    plan(multiprocess)
   } else {
     plan(sequential)
   }
 
-  ## point estimates 
+  ## point estimates
+  ## use future_lapply to implement the bootstrap parallel
   est_boot <- do.call(rbind, future_lapply(1:option$n_boot, function(i) {
     ddid_boot(
       fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead
     )
   }, future.seed = TRUE))
-  
+
   ## compute weights
   W <- cov(est_boot)
   w_did  <- (W[1,1] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
   w_sdid <- (W[2,2] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
-  
+
   return(list(
     W = solve(W), weight_did = w_did, weight_sdid = w_sdid,
     Vcov = W
   ))
-  
+
 }
 
-
+#' Bootstrap
+#' @keywords internal
 ddid_boot <- function(
   fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, lead
 ) {
@@ -195,7 +204,7 @@ ddid_boot <- function(
     size = length(id_cluster_vec), replace = TRUE
   )
 
-  ## create dataset 
+  ## create dataset
   dat_tmp <- list()
   for (j in 1:length(id_boot)) {
     if (is.null(var_cluster)) {
@@ -207,58 +216,58 @@ ddid_boot <- function(
     dat_tmp[[j]]$id_unit <- j
   }
 
-  ## create did_data object 
+  ## create did_data object
   if (isTRUE(is_panel)) {
     dat_boot <- did_panel_data(
       var_outcome = "outcome", var_treat = 'treatment', fm_prep$var_covars,
-      var_cluster, id_unit = "id_unit", id_time = 'id_time', 
+      var_cluster, id_unit = "id_unit", id_time = 'id_time',
       data = do.call(rbind, dat_tmp)
     )
   } else {
     dat_boot <- did_rcs_data(
       var_outcome = "outcome", var_treat = "Gi", var_post = "It",
-      fm_prep$var_covars, var_cluster, 
+      fm_prep$var_covars, var_cluster,
       id_time = "id_time", do.call(rbind, dat_tmp)
     )
   }
-  
+
   ## fit DID and sDID
   est <- ddid_fit(fm_prep$fm_did, dat_boot, lead)
   return(est)
 }
 
 
-#' Compute Point and Variance Estimates 
+#' Compute Point and Variance Estimates
 #' @keywords internal
 #' @importFrom dplyr tibble
 double_did_compute <- function(fit, weights, se_boot = TRUE) {
-  ## point estimate 
+  ## point estimate
   ## τ[d-did] = w[did] * τ[did] + w[s-did] * τ[s-did]
-  ddid <- fit[1] * weights$weight_did + 
+  ddid <- fit[1] * weights$weight_did +
           fit[2] * weights$weight_sdid
-          
-  ## variance estimate 
+
+  ## variance estimate
   var_did  <- weights$Vcov[1,1]
   var_sdid <- weights$Vcov[2,2]
   if (isTRUE(se_boot)) {
-    ## V(τ̂) = w^2[did] * Var(τ̂[did]) + w^2[s-did] * Var(τ̂[did]) + 
+    ## V(τ̂) = w^2[did] * Var(τ̂[did]) + w^2[s-did] * Var(τ̂[did]) +
     ##            2 * w[did] * w[s-did] * Cov(τ̂[did], τ̂[s-did])
-    cov_did  <- weights$Vcov[1,2]    
-    ddid_var <- weights$weight_did^2 * var_did + 
-                weights$weight_sdid^2 * var_sdid + 
-                2 * cov_did * weights$weight_did * weights$weight_sdid    
+    cov_did  <- weights$Vcov[1,2]
+    ddid_var <- weights$weight_did^2 * var_did +
+                weights$weight_sdid^2 * var_sdid +
+                2 * cov_did * weights$weight_did * weights$weight_sdid
   } else {
-    ## asymptotic variance 
-    ddid_var <- (1 / sum(weights$W))  
+    ## asymptotic variance
+    ddid_var <- (1 / sum(weights$W))
   }
-  
+
   ## organize output
   est <- tibble(
     estimator = c("Double-DID", "DID", "sDID"),
     estimate = c(ddid, fit[1], fit[2]),
     std.error = c(sqrt(ddid_var), sqrt(var_did), sqrt(var_sdid))
-  )  
-  
+  )
+
   return(est)
 }
 

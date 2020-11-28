@@ -4,8 +4,14 @@
 \alias{did_data_rcs}
 \title{Data processing function for repeated cross-section data}
 \usage{
-did_data_rcs(outcome, treatment, post_treatment, id_time, Xcov,
-  x_formula = NULL)
+did_data_rcs(
+  outcome,
+  treatment,
+  post_treatment,
+  id_time,
+  Xcov,
+  x_formula = NULL
+)
 }
 \arguments{
 \item{outcome}{a vector of outcome variable.}

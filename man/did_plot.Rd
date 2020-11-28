@@ -4,9 +4,22 @@
 \alias{did_plot}
 \title{DiD plot}
 \usage{
-did_plot(formula, data, post_treatment, id_subject = NULL, id_time,
-  diff_order = 0, ci = TRUE, alpha = 0.05, xlim = NULL,
-  ylim = NULL, col = NULL, loc = NULL, lwd = NULL, ...)
+did_plot(
+  formula,
+  data,
+  post_treatment,
+  id_subject = NULL,
+  id_time,
+  diff_order = 0,
+  ci = TRUE,
+  alpha = 0.05,
+  xlim = NULL,
+  ylim = NULL,
+  col = NULL,
+  loc = NULL,
+  lwd = NULL,
+  ...
+)
 }
 \arguments{
 \item{formula}{\code{outcome ~ treatment}.}
@@ -67,8 +80,10 @@ did_plot(lnavgsalary_cpi ~ oncycle, data = anzia2012,
 )
 }
 \seealso{
-Other main functions: \code{\link{did_plot_selection}},
-  \code{\link{did}}, \code{\link{plot.diddesign}},
-  \code{\link{summary.diddesign}}
+Other main functions: 
+\code{\link{did_plot_selection}()},
+\code{\link{did}()},
+\code{\link{plot.diddesign}()},
+\code{\link{summary.diddesign}()}
 }
 \concept{main functions}

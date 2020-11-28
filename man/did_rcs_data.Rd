@@ -4,8 +4,15 @@
 \alias{did_rcs_data}
 \title{Prepare data for the DID design with repeated cross-section data}
 \usage{
-did_rcs_data(var_outcome, var_treat, var_post, var_covars = NULL,
-  var_cluster = NULL, id_time, data)
+did_rcs_data(
+  var_outcome,
+  var_treat,
+  var_post,
+  var_covars = NULL,
+  var_cluster = NULL,
+  id_time,
+  data
+)
 }
 \description{
 Prepare data for the DID design with repeated cross-section data

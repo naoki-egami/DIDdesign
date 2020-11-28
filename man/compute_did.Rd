@@ -4,8 +4,16 @@
 \alias{compute_did}
 \title{Estimate DID}
 \usage{
-compute_did(dat_panel, outcome, treatment, id_time_use, id_subj_use,
-  time_weight, min_time = 3, lead)
+compute_did(
+  dat_panel,
+  outcome,
+  treatment,
+  id_time_use,
+  id_subj_use,
+  time_weight,
+  min_time = 3,
+  lead
+)
 }
 \description{
 Estimate DID

@@ -4,9 +4,17 @@
 \alias{did_data}
 \title{Transform data into did_double format}
 \usage{
-did_data(outcome, treatment, post_treatment = NULL, id_subject = NULL,
-  id_time = NULL, long = TRUE, Xcov = NULL, x_formula = NULL,
-  id_cluster = NULL)
+did_data(
+  outcome,
+  treatment,
+  post_treatment = NULL,
+  id_subject = NULL,
+  id_time = NULL,
+  long = TRUE,
+  Xcov = NULL,
+  x_formula = NULL,
+  id_cluster = NULL
+)
 }
 \arguments{
 \item{outcome}{Outcome vector when \code{long = TRUE} or outcome matrix when \code{long = FALSE}.}

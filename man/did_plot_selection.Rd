@@ -4,8 +4,17 @@
 \alias{did_plot_selection}
 \title{Plot function for selection}
 \usage{
-did_plot_selection(data, alpha = 0.05, equivalence = TRUE, eL = NULL,
-  eU = NULL, xlim = NULL, ylim = NULL, loc = NULL, ...)
+did_plot_selection(
+  data,
+  alpha = 0.05,
+  equivalence = TRUE,
+  eL = NULL,
+  eU = NULL,
+  xlim = NULL,
+  ylim = NULL,
+  loc = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{\code{diddesign} object.
@@ -55,8 +64,10 @@ did_plot_selection(fit2, equivalence = TRUE, eL = -0.005, eU = 0.005,
  ylim = c(-0.015, 0.015), main = "Nonparametric")
 }
 \seealso{
-Other main functions: \code{\link{did_plot}},
-  \code{\link{did}}, \code{\link{plot.diddesign}},
-  \code{\link{summary.diddesign}}
+Other main functions: 
+\code{\link{did_plot}()},
+\code{\link{did}()},
+\code{\link{plot.diddesign}()},
+\code{\link{summary.diddesign}()}
 }
 \concept{main functions}

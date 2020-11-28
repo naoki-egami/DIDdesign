@@ -4,7 +4,9 @@
 \name{dekadt2018}
 \alias{dekadt2018}
 \title{Dataset from de Kadt and Larreguy (2018)}
-\format{A panel data in \code{tbl} and \code{data.frame} format.}
+\format{
+A panel data in \code{tbl} and \code{data.frame} format.
+}
 \usage{
 data(dekadt2018)
 }

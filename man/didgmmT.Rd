@@ -4,8 +4,15 @@
 \alias{didgmmT}
 \title{DID-GMM with m-th order parallel treand assumption}
 \usage{
-didgmmT(Y, D, M, ep = 0.01, max_trial = 100, only_beta = FALSE,
-  only_oneM = FALSE)
+didgmmT(
+  Y,
+  D,
+  M,
+  ep = 0.01,
+  max_trial = 100,
+  only_beta = FALSE,
+  only_oneM = FALSE
+)
 }
 \arguments{
 \item{Y}{Outcome matrix.}

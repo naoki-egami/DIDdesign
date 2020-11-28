@@ -25,8 +25,10 @@ a list of the following components:
 Summarize output from \code{\link{did}} function
 }
 \seealso{
-Other main functions: \code{\link{did_plot_selection}},
-  \code{\link{did_plot}}, \code{\link{did}},
-  \code{\link{plot.diddesign}}
+Other main functions: 
+\code{\link{did_plot_selection}()},
+\code{\link{did_plot}()},
+\code{\link{did}()},
+\code{\link{plot.diddesign}()}
 }
 \concept{main functions}

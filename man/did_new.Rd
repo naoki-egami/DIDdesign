@@ -4,8 +4,15 @@
 \alias{did_new}
 \title{Double Differnece-in-Differences Estimator}
 \usage{
-did_new(formula, data, id_unit, id_time, design = "did",
-  is_panel = TRUE, option = list())
+did_new(
+  formula,
+  data,
+  id_unit,
+  id_time,
+  design = "did",
+  is_panel = TRUE,
+  option = list()
+)
 }
 \arguments{
 \item{formula}{A formula of the following form,
@@ -37,18 +44,25 @@ The default is \code{"did"}.}
 
 \item{is_panel}{A boolean argument. This should be \code{TRUE} when the dataset is panel (i.e., the same units are repeately observed over time); This should be \code{FALSE} when the dataset is the repeated cross-section (RCS) where different sets of units are observed at each time point.}
 
-\item{option}{A list of option parameters.}
+\item{option}{A list of the following option parameters:
+\describe{
+  \item{n_boot}{The number of bootstrap iterations.}
+  \item{se_boot}{A boolean argument. If \code{TRUE} bootstrap-based critical value is used to construct the confidence intervals.
+                   Default is \code{FALSE}}
+  \item{id_cluster}{A variable name of a cluster index used to conduct clustered bootstraps.
+                    If left unspecified, the unit level bootstrap will be conducted.}
+}}
 }
 \description{
 Implement the double did estimator and compute the variance via cluster bootstrap.
 }
 \examples{
 
-## The standard DID design 
-### (1) panel data 
-### (2) repeated cross-section data 
+## The standard DID design -----------
+### (1) panel data
+### (2) repeated cross-section data
 
-## (1) panel data
+## (1) panel data --------------------
 data(anzia2012)
 
 set.seed(1234)
@@ -63,7 +77,7 @@ fit_panel <- did_new(
 
 fit_panel
 
-## (2) repeated cross-section data 
+## (2) repeated cross-section data ---
 data(malesky2014)
 
 set.seed(1234)

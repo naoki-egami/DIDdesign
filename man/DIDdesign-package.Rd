@@ -28,11 +28,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Soichiro Yamauchi \email{email@gmail.com} (0000-0003-0554-2717)
+\strong{Maintainer}: Soichiro Yamauchi \email{email@gmail.com} (\href{https://orcid.org/0000-0003-0554-2717}{ORCID})
 
 Authors:
 \itemize{
-  \item Naoki Egami \email{email@gmail.com} (0000-0002-5491-2174)
+  \item Naoki Egami \email{email@gmail.com} (\href{https://orcid.org/0000-0002-5491-2174}{ORCID})
 }
 
 }
