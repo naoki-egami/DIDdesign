@@ -78,7 +78,6 @@ sa_double_did <- function(dat_panel, treatment, outcome, lead) {
 #' Create a G matrix
 #'
 #' @param dat_panel A class of \code{panelr} object.
-#' @import panelr
 #' @importFrom rlang sym !!
 #' @importFrom dplyr %>% select mutate
 #' @keywords internal
@@ -223,7 +222,6 @@ compute_sdid <- function(dat_panel, outcome, treatment,
 
 
 #' Block Bootstrap
-#' @import panelr
 #' @importFrom tibble as_tibble
 #' @keywords internal
 sample_panel <- function(panel_dat) {
