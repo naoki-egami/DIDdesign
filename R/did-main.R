@@ -77,7 +77,7 @@ did_new <- function(
 
   ## input check
   if (isFALSE(is_panel)) id_unit <- NULL
-  if (isTRUE(is_panel) && is.null(is_panel)) {
+  if (isTRUE(is_panel) && is.null(id_unit)) {
     stop("A vaiable name should be provided to id_unit.")
   }
 
