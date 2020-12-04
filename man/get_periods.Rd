@@ -4,7 +4,7 @@
 \alias{get_periods}
 \title{Obtain periods used for the analysis}
 \usage{
-get_periods(Gmat, thres = 3)
+get_periods(Gmat, thres = 1)
 }
 \arguments{
 \item{Gmat}{G matrix produced in \code{create_Gmat()}.}
