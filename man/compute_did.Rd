@@ -2,7 +2,7 @@
 % Please edit documentation in R/did-sad.R
 \name{compute_did}
 \alias{compute_did}
-\title{Estimate DID}
+\title{Estimate DID and sDID}
 \usage{
 compute_did(
   dat_panel,
@@ -16,6 +16,6 @@ compute_did(
 )
 }
 \description{
-Estimate DID
+Estimate DID and sDID
 }
 \keyword{internal}

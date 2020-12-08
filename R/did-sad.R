@@ -1,24 +1,16 @@
 
 
-#' Function to implement the Staggered Adption Design
+#' Function to implement DDID under the Staggered Adption Design
 #' @param formula A formula indicating outcome and treatment.
 #' @param data A long form panel data.
 #' @param id_subject A character variable indicating subject index.
 #' @param id_time A character variable indicating time index.
-#' @examples
-#' # simulate data
-#' set.seed(1234)
-#' dat <- simulate_sad(30, 10)
-#'
-#' # estimate
-#' sa_did_est(outcome ~ treatment, data = dat$dat,
-#'   id_subject = "id_subject", id_time = 'id_time'
-#' )
 #' @importFrom dplyr %>% as_tibble group_by
+#' @importFrom tibble tibble
 #' @importFrom future.apply future_lapply
 #' @importFrom future plan multiprocess sequential
-#' @export
-sa_did_est <- function(formula, data, id_subject, id_time, n_boot = 10, lead = 0, parallel = TRUE) {
+#' @keywords internal
+did_sad <- function(formula, data, id_subject, id_time, option) {
 
   ## keep track of long-form data with panel class from \code{panelr} package
   # dat_panel <- panel_data(data, id = id_subject, wave = id_time)
@@ -40,32 +32,29 @@ sa_did_est <- function(formula, data, id_subject, id_time, n_boot = 10, lead = 0
   ## obtain point estimates
   ## estimate DID and sDID
   ## --------------------------------------
-  est <- sa_double_did(dat_panel, treatment, outcome, lead)
+  est <- sa_double_did(dat_panel, treatment, outcome, option$lead)
 
 
   ## --------------------------------------
   ## obtain the weighting matrix via bootstrap
   ## --------------------------------------
-  if (isTRUE(parallel)) {
+  if (isTRUE(option$parallel)) {
     plan(multiprocess)
   } else {
     plan(sequential)
   }
 
-  # est_boot <- matrix(NA, nrow = n_boot, ncol = 2)
-  # for (b in 1:n_boot) {
-  #   dat_boot <- sample_panel(dat_panel)
-  #   est_boot[b,] <- sa_double_did(dat_boot, treatment, outcome, lead)
-  # }
-
-  est_boot <- do.call(rbind, future_lapply(1:n_boot, function(i) {
+  est_boot <- do.call(rbind, future_lapply(1:option$n_boot, function(i) {
       dat_boot <- sample_panel(dat_panel)
-      sa_double_did(dat_boot, treatment, outcome, lead)
+      sa_double_did(dat_boot, treatment, outcome, option$lead)
   }, future.seed = TRUE))
 
+  ## --------------------------------------
+  ## double DID estimator
+  ## --------------------------------------
 
   ## estimate GMM weighting matrix
-  W <- cov(est_boot)
+  W      <- cov(est_boot)
   w_did  <- (W[1,1] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
   w_sdid <- (W[2,2] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
   w_vec  <- c(w_did, w_sdid)
@@ -76,11 +65,23 @@ sa_did_est <- function(formula, data, id_subject, id_time, n_boot = 10, lead = 0
   ## compute the variance of double did
   var_ddid <- as.vector(t(w_vec^2) %*% apply(est_boot, 2, var))
 
-  return(list(est = est, res_boot = est_boot,
-    ddid = double_did, ddid_var = var_ddid, weights = w_vec))
+  ## --------------------------------------
+  ## prepare output
+  ## --------------------------------------
+  estimates <- tibble(
+    estimator = c("SA-Double-DID", "SA-DID", "SA-sDID"),
+    estimate  = c(est, double_did),
+    std.error = c(apply(est_boot, 2, sd), sqrt(var_ddid))
+  )
+
+  weights <- list(W = W, weight_did = w_did, weight_sdid = w_sdid)
+  return(list(estimates = estimates, weights = weights))
 }
 
 
+#' Compute the time-weighted DID and sDID
+#' @keywords internal
+#' @return A vector of two elements: Time-weighted DID (the first element) and time-weighted sequential DID (second).
 sa_double_did <- function(dat_panel, treatment, outcome, lead) {
   ## create Gmat and index for each design
   Gmat <- create_Gmat(dat_panel, treatment = treatment)
@@ -88,93 +89,16 @@ sa_double_did <- function(dat_panel, treatment, outcome, lead) {
   id_subj_use <- get_subjects(Gmat, id_time_use)
   time_weight <- get_time_weight(Gmat, id_time_use)
 
-  ## estimate DID and sDID for each periods
+  ## estimate DID and sDID for each periods and weight them by the proportion of treated units
   out <- compute_did(dat_panel, outcome, treatment,
                      id_time_use, id_subj_use, time_weight, lead = lead)
   return(out)
 }
 
 
-
-#' Create a G matrix
-#'
-#' @param dat_panel A class of \code{panelr} object.
-#' @importFrom rlang sym !!
-#' @importFrom dplyr %>% select mutate case_when
-#' @importFrom tidyr pivot_wider
+#' Estimate DID and sDID
 #' @keywords internal
-create_Gmat <- function(dat_panel, treatment) {
-  Gmat <- dat_panel %>%
-    group_by(id_subject) %>%
-    mutate(g_sum = max(id_time) - sum(!!sym(treatment)) + 1) %>%
-    mutate(g = case_when(
-      g_sum > id_time ~ 0,
-      g_sum == id_time ~ 1,
-      g_sum < id_time ~ -1
-    )) %>%
-    select(g, id_subject, id_time) %>%
-    pivot_wider(id_cols = id_subject, names_from = id_time, values_from = g) %>%
-    ungroup() %>%
-    select(-id_subject) %>%
-    data.matrix()
-
-  return(Gmat)
-}
-
-
-
-#' Obtain periods used for the analysis
-#' @param Gmat G matrix produced in \code{create_Gmat()}.
-#' @param thres A minimum number of treatd units for the period included in the analysis. Default is 2.
-#' @keywords internal
-get_periods <- function(Gmat, thres = 1) {
-  ## check which periods to use
-  ## only use periods that are more than "thres" observations treated
-  use_id <- which(apply(Gmat, 2, function(x) sum(x == 1) >= thres))
-
-  ## remove the last period if everyone is eventually treated
-  n_treated <- apply(Gmat, 2, function(x) sum(x == 1))
-  if (sum(n_treated[n_treated >= thres]) == nrow(Gmat)) {
-    use_id <- use_id[-length(use_id)]
-  }
-  return(use_id)
-}
-
-
-#' Obtain subject index for each periods
-#' @param Gamt G matrix created by \code{create_Gmat()}.
-#' @param id_time_use A vector of time index. Should be normalized.
-#' @keywords internal
-get_subjects <- function(Gmat, id_time_use) {
-  id_use <- list(); iter <- 1
-  for (i in 1:length(id_time_use)) {
-    tmp <- Gmat[,id_time_use[i]]
-    id_use[[iter]] <- which(tmp >= 0)
-    iter <- iter + 1
-  }
-
-  return(id_use)
-}
-
-
-#' Compute time-sepcific weights
-#' @param Gmat G matrix.
-#' @param id_time_use A vector of time index (normalized). Output of \code{get_periods}.
-#' @keywords internal
-get_time_weight <- function(Gmat, id_time_use) {
-  n_treated   <- sum(Gmat[,id_time_use] == 1)
-  time_weight <- rep(NA, length(id_time_use))
-  for (i in 1:length(id_time_use)) {
-    tmp <- Gmat[,id_time_use[i]]
-    time_weight[i] <- sum(tmp == 1) / n_treated
-  }
-  return(time_weight)
-}
-
-
-#' Estimate DID
-#' @keywords internal
-#' @import plm
+#' @importFrom plm plm
 #' @importFrom dplyr lag
 compute_did <- function(dat_panel, outcome, treatment,
   id_time_use, id_subj_use, time_weight, min_time = 3, lead) {
@@ -241,11 +165,11 @@ compute_did <- function(dat_panel, outcome, treatment,
 }
 
 
-#' Block Bootstrap
+#' Block Bootstrap used in SA design
 #' @importFrom tibble as_tibble
+#' @importFrom dplyr %>% filter mutate select pull
 #' @keywords internal
 sample_panel <- function(panel_dat) {
-
 
   ## get subject id for bootstrap
   id_vec     <- unique(pull(panel_dat, id_subject))
