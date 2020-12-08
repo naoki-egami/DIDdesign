@@ -19,6 +19,7 @@ Authors:
 
 
 Reference:
+
 - Egami and Yamauchi (2019) "How to Improve the Difference-in-Differences Design with Multiple Pre-treatment Periods."
 
 ## Installation Instructions:
@@ -35,6 +36,44 @@ Reference:
 
 
 ### Panel Data 
+
+
+```{r}
+## load package 
+require(DIDdesign)
+
+## load data 
+data(anzia2012)
+
+
+## estimate treatment effect
+set.seed(1234)
+fit_panel <- did(
+  formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
+                        ami_pc + asian_pc + black_pc + hisp_pc,
+  data    = anzia2012,
+  id_unit = "district",
+  id_time = "year",
+  option  = list(n_boot = 20, parallel = FALSE)
+)
+
+fit_panel$estimates
+
+
+## treatment effect on Y_{t+1}
+fit_panel_t1 <- did(
+  formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
+                        ami_pc + asian_pc + black_pc + hisp_pc,
+  data    = anzia2012,
+  id_unit = "district",
+  id_time = "year",
+  option  = list(n_boot = 20, lead = 1, parallel = FALSE)
+)
+
+fit_panel_t1$estimates
+```
+
+
 
 
 ### Repeated Cross-sectional Data 
