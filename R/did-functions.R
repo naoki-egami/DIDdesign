@@ -6,7 +6,7 @@ set_option <- function(option) {
   if (!exists('parallel', option)) option$parallel <- TRUE
   if (!exists('se_boot', option)) option$se_boot <- FALSE
   if (!exists('id_cluster', option)) option$id_cluster <- NULL
-  if (!exists('lead', option)) option$lead <- 1
+  if (!exists('lead', option)) option$lead <- 0
 
   return(option)
 }

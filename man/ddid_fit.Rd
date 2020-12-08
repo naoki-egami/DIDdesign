@@ -4,7 +4,7 @@
 \alias{ddid_fit}
 \title{Fit DID and sDID}
 \usage{
-ddid_fit(formula, data, lead = 1)
+ddid_fit(formula, data, lead = 0)
 }
 \arguments{
 \item{formula}{A formula of the form \code{y ~ Gi + It + Gi * It + x1 + x2}.}

@@ -40,7 +40,7 @@ Reference:
 
 ```{r}
 ## load package 
-require(DIDdesign)
+# require(DIDdesign)
 
 ## load data 
 data(anzia2012)

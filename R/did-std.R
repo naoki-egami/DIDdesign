@@ -64,8 +64,8 @@ did_std <- function(
 #' @importFrom rlang .data
 #' @return A numeric vector that containts the DID estimate and the sequential DID estimate.
 #' @keywords internal
-ddid_fit <- function(formula, data, lead = 1) {
-  time_use <- c(-1, lead - 1)
+ddid_fit <- function(formula, data, lead = 0) {
+  time_use <- c(-1, lead)
   est <- map_dbl(formula, function(fm) {
     fit <- lm(fm, data = filter(data, .data$id_time_std %in% time_use))
     return(fit$coef['Gi:It'])
