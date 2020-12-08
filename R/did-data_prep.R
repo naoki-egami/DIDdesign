@@ -94,9 +94,8 @@ did_rcs_data <- function(
 
   ## treat time
   treat_year <- treat_info$min_year[2]
-
   dat_use <- dat_use %>%
-    mutate(id_time_std = .data$id_time - .data$treat_year)
+    mutate(id_time_std = .data$id_time - treat_year)
 
   ## compute ΔY
   lag_y <- dat_use %>%

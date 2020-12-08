@@ -30,29 +30,6 @@
 #'  "Agents of the regime? Traditional leaders and electoral politics in South Africa."
 #'  \emph{The Journal of Politics} 80.2 (2018): 382-399.
 #'  \doi{10.1086/694540}
-#' @examples
-#' # load data
-#' data(dekadt2018)
-#'
-#' # did plot
-#' did_plot(anc_vs_na ~ treatment, data = dekadt2018,
-#'   id_subject = 'ward_id', id_time = 'year',
-#'   post_treatment = c(2009, 2011, 2014)
-#' )
-#'
-#' # fit
-#' fit <- did(anc_vs_na ~ treatment, data = dekadt2018,
-#'   id_subject = 'ward_id', id_time = 'year',
-#'   post_treatment = c(2009, 2011, 2014),
-#'   method = 'parametric'
-#' )
-#'
-#' # view results
-#' summary(fit)
-#'
-#' plot(fit, full = TRUE)
-#'
-#' did_plot_selection(fit, equivalence = FALSE, ylim = c(0, 0.1))
 #' @keywords dataset
 "dekadt2018"
 
@@ -71,3 +48,18 @@
 #'   \doi{10.1017/S0003055413000580}
 #' @keywords dataset
 "malesky2014"
+
+
+#' Dataset from Paglayan (2019)
+#' @name paglayan2019
+#' @keywords dataset
+"paglayan2019"
+
+#' Dataset from Sances (2015)
+#' @name sances2015
+#' @keywords dataset
+#' @references Michael W. Sances.
+#' "The Distributional Impact of Greater Responsivenes."
+#'  \emph{The Journal of Politics} 78.1 (2016).
+#'  \doi{10.1086/683026}
+"sances2015"

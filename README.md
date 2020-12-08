@@ -9,13 +9,14 @@ status](https://github.com/naoki-egami/DIDdesign/workflows/R-CMD-check/badge.svg
 
 Authors:
 
--   [Naoki Egami](https://scholar.princeton.edu/negami/home)
--   Soichiro Yamauchi
+-   [Naoki Egami](https://naokiegami.com/)
+-   [Soichiro Yamauchi](https://soichiroy.github.io/)
 
-Reference
+Reference: - Egami and Yamauchi (2019) “How to Improve the
+Difference-in-Differences Design with Multiple Pre-treatment Periods.”
 
-Installation
-------------
+Installation Instructions:
+--------------------------
 
 -   Downloading `DIDdesign` from Github
 

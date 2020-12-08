@@ -82,10 +82,10 @@ fit_panel <- did(
   data    = anzia2012,
   id_unit = "district",
   id_time = "year",
-  option  = list(n_boot = 20)
+  option  = list(n_boot = 20, parallel = FALSE)
 )
 
-fit_panel
+fit_panel$estimates
 
 ## (2) repeated cross-section data ---
 data(malesky2014)
@@ -96,14 +96,17 @@ ff_rcs <- did(
   data    = malesky2014,
   id_time = 'year',
   is_panel= FALSE,
-  option  = list(n_boot = 20, id_cluster = "tinh")
+  option  = list(n_boot = 20, id_cluster = "tinh", parallel = FALSE)
 )
 
+ff_rcs$estimates
 
 ## The staggered adoption design ----
 data(paglayan2019)
 
+
 ## prepare data
+require(dplyr)
 paglayan2019 <- paglayan2019 \%>\%
 mutate(id_time = year,
       id_subject = as.numeric(as.factor(state)),
@@ -117,9 +120,9 @@ fit_sa <- did(log_expenditure ~ treatment,
   id_unit = "id_subject",
   id_time = "id_time",
   design  = "sa",
-  option  = list(n_boot = 20, lead = 1)
+  option  = list(n_boot = 20, lead = 1, parallel = FALSE)
  )
 
-fit_sa
+fit_sa$estimates
 
 }

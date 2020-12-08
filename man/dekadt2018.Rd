@@ -13,30 +13,6 @@ data(dekadt2018)
 \description{
 Dataset from de Kadt and Larreguy (2018)
 }
-\examples{
-# load data
-data(dekadt2018)
-
-# did plot
-did_plot(anc_vs_na ~ treatment, data = dekadt2018,
-  id_subject = 'ward_id', id_time = 'year',
-  post_treatment = c(2009, 2011, 2014)
-)
-
-# fit
-fit <- did(anc_vs_na ~ treatment, data = dekadt2018,
-  id_subject = 'ward_id', id_time = 'year',
-  post_treatment = c(2009, 2011, 2014),
-  method = 'parametric'
-)
-
-# view results
-summary(fit)
-
-plot(fit, full = TRUE)
-
-did_plot_selection(fit, equivalence = FALSE, ylim = c(0, 0.1))
-}
 \references{
 De Kadt, Daniel, and Horacio A. Larreguy.
  "Agents of the regime? Traditional leaders and electoral politics in South Africa."

@@ -172,7 +172,7 @@ compute_did <- function(dat_panel, outcome, treatment,
 sample_panel <- function(panel_dat) {
 
   ## get subject id for bootstrap
-  id_vec     <- unique(pull(panel_dat, id_subject))
+  id_vec     <- unique(pull(panel_dat, .data$id_subject))
   id_boot    <- sample(id_vec, size = length(id_vec), replace = TRUE)
 
   ## constrcut a panel data for bootstrap
@@ -185,8 +185,8 @@ sample_panel <- function(panel_dat) {
 
   boot_dat <- do.call("rbind", dat_list) %>%
     as_tibble() %>%
-    select(-id_subject) %>%
-    mutate(id_subject = id_new)
+    select(-.data$id_subject) %>%
+    mutate(id_subject = .data$id_new)
 
   return(boot_dat)
 }
