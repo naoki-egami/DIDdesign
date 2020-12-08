@@ -1,9 +1,21 @@
+#' Set default value of options
+#' @keywords internal
+set_option <- function(option) {
 
-#' Transform formula 
+  if (!exists('n_boot', option)) option$n_boot <- 30
+  if (!exists('parallel', option)) option$parallel <- TRUE
+  if (!exists('se_boot', option)) option$se_boot <- FALSE
+  if (!exists('id_cluster', option)) option$id_cluster <- NULL
+  if (!exists('lead', option)) option$lead <- 1
+
+  return(option)
+}
+
+#' Transform formula
 #' @keywords internal
 #' @import Formula
 did_formula <- function(formula, is_panel) {
-  
+
   ## obtain variable names
   fm <- as.Formula(formula)
   n_vars_fm <- length(fm)
@@ -46,11 +58,11 @@ did_formula <- function(formula, is_panel) {
       update(fm_covar, outcome_delta ~ Gi + It + Gi : It + .)
     )
   }
-  
+
   return(list(
     fm_did = fm_did, fm_covar = fm_covar,
     var_outcome = var_outcome, var_treat = var_treat,
     var_post = var_post, var_covars = var_covars
   ))
-  
+
 }

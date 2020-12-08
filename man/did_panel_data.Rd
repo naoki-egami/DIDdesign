@@ -24,7 +24,7 @@ This should be left as \code{NULL} is no covariates are specified in formula.}
 
 \item{id_time}{A variable name of the time index.}
 
-\item{data}{A data frmae.}
+\item{data}{A data frame.}
 }
 \description{
 Prepare data for the DID design with panel data

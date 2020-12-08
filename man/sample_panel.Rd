@@ -2,11 +2,11 @@
 % Please edit documentation in R/did-sad.R
 \name{sample_panel}
 \alias{sample_panel}
-\title{Block Bootstrap}
+\title{Block Bootstrap used in SA design}
 \usage{
 sample_panel(panel_dat)
 }
 \description{
-Block Bootstrap
+Block Bootstrap used in SA design
 }
 \keyword{internal}
