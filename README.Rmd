@@ -32,17 +32,17 @@ Reference:
 	install_github("naoki-egami/DIDdesign", dependencies = TRUE)
 	```
 
-## The Standard Difference-in-Differences Design 
+## The Standard Difference-in-Differences Design
 
 
-### Panel Data 
+### Panel Data
 
 
 ```{r}
-## load package 
+## load package
 # require(DIDdesign)
 
-## load data 
+## load data
 data(anzia2012)
 
 
@@ -57,7 +57,7 @@ fit_panel <- did(
   option  = list(n_boot = 20, parallel = FALSE)
 )
 
-fit_panel$estimates
+summary(fit_panel)
 
 
 ## treatment effect on Y_{t+1}
@@ -70,14 +70,28 @@ fit_panel_t1 <- did(
   option  = list(n_boot = 20, lead = 1, parallel = FALSE)
 )
 
-fit_panel_t1$estimates
+summmary(fit_panel_t1)
 ```
 
 
 
 
-### Repeated Cross-sectional Data 
+### Repeated Cross-sectional Data
+
+```{r}
+data(malesky2014)
+
+set.seed(1234)
+ff_rcs <- did(
+ formula = transport ~ treatment + post_treat | factor(city),
+ data    = malesky2014,
+ id_time = 'year',
+ is_panel= FALSE,
+ option  = list(n_boot = 20, id_cluster = "tinh", parallel = FALSE)
+)
+
+summary(estimates)
+```
 
 
 ## Staggered Adoption Design
-
