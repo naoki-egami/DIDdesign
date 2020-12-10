@@ -97,7 +97,7 @@ did_compute_weights <- function(
 
   ## setup worker
   if (isTRUE(option$parallel)) {
-    plan(multiprocess)
+    plan(multicore)
   } else {
     plan(sequential)
   }

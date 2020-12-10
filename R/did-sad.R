@@ -39,7 +39,7 @@ did_sad <- function(formula, data, id_subject, id_time, option) {
   ## obtain the weighting matrix via bootstrap
   ## --------------------------------------
   if (isTRUE(option$parallel)) {
-    plan(multiprocess)
+    plan(multicore)
   } else {
     plan(sequential)
   }
