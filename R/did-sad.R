@@ -8,7 +8,7 @@
 #' @importFrom dplyr %>% as_tibble group_by
 #' @importFrom tibble tibble
 #' @importFrom future.apply future_lapply
-#' @importFrom future plan multiprocess sequential
+#' @importFrom future plan multicore sequential
 #' @keywords internal
 did_sad <- function(formula, data, id_subject, id_time, option) {
 
@@ -111,6 +111,7 @@ compute_did <- function(dat_panel, outcome, treatment,
   ## compute individual time specific DID
   for (i in 1:length(id_time_use)) {
     if ((id_time_use[i] >= min_time) && ((id_time_use[i] + lead) <= max_time)) {
+
 
       ## -------------------------------
       ## compute DID

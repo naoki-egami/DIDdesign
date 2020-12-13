@@ -54,7 +54,7 @@ fit_panel <- did(
   data    = anzia2012,
   id_unit = "district",
   id_time = "year",
-  option  = list(n_boot = 20, parallel = FALSE)
+  option  = list(n_boot = 200, parallel = TRUE)
 )
 
 summary(fit_panel)
@@ -67,7 +67,7 @@ fit_panel_t1 <- did(
   data    = anzia2012,
   id_unit = "district",
   id_time = "year",
-  option  = list(n_boot = 20, lead = 1, parallel = FALSE)
+  option  = list(n_boot = 200, lead = 1, parallel = FALSE)
 )
 
 summmary(fit_panel_t1)
