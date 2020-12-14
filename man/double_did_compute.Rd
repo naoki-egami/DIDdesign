@@ -4,7 +4,7 @@
 \alias{double_did_compute}
 \title{Compute Point and Variance Estimates}
 \usage{
-double_did_compute(fit, weights, se_boot = TRUE)
+double_did_compute(fit, weights, lead, se_boot = FALSE)
 }
 \description{
 Compute Point and Variance Estimates

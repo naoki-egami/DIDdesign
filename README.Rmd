@@ -5,6 +5,11 @@ output:
     variant: markdown_github
 ---
 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE)
+```
+
 # DIDdesign: Double Difference-in-Differences
 
 
@@ -38,39 +43,54 @@ Reference:
 ### Panel Data
 
 
+
+
 ```{r}
 ## load package
 require(DIDdesign)
 
 ## load data
 data(anzia2012)
+```
 
 
+
+
+```{r}
 ## estimate treatment effect
 set.seed(1234)
 fit_panel <- did(
-  formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
-                        ami_pc + asian_pc + black_pc + hisp_pc,
-  data    = anzia2012,
-  id_unit = "district",
-  id_time = "year",
-  option  = list(n_boot = 200, parallel = TRUE)
+  formula  = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper + ami_pc + 
+  				 																asian_pc + black_pc + hisp_pc,
+  data     = anzia2012,
+  id_unit  = "district",
+  id_time  = "year",
+  design   = "did",
+  is_panel = TRUE,
+  option   = list(n_boot = 100, parallel = TRUE, lead = 0:2)
 )
+```
 
+
+`did()` function takes the following arguments:
+
+- `formula`: A formula specifying variables. It should follow the form of `outcome ~ treatment | covariates`.
+   - `treatment` should be time-varying, that is, `treatment` takes zero for everyone before the treatment assignment, and takes 1 for units who are treated. See the example for how the treatment variable should be coded.
+   - `covariates` can be omitted as `outcome ~ treatment`.
+- `data`: A data frame. This can be either `data.frame` or `tibble`/
+- `id_unit`: A variable name in the data that uniquely identifies units (e.g., individuals or states).
+- `id_time`: A variable name in the data that uniquely identifies time (e.g., year).
+- `design`: Design option. It should be `"did"` when the standard DID design is used.
+- `is_panel`: A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeately overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data.
+- `option`: A list of options.
+   - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. 
+   - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package.
+   - `lead`: A vector of non-negative lead parameter. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`.
+  
+
+
+```{r}
 summary(fit_panel)
-
-
-## treatment effect on Y_{t+1}
-fit_panel_t1 <- did(
-  formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
-                        ami_pc + asian_pc + black_pc + hisp_pc,
-  data    = anzia2012,
-  id_unit = "district",
-  id_time = "year",
-  option  = list(n_boot = 200, lead = 1, parallel = TRUE)
-)
-
-summmary(fit_panel_t1)
 ```
 
 
@@ -78,7 +98,7 @@ summmary(fit_panel_t1)
 
 ### Repeated Cross-sectional Data
 
-```{r}
+```{r, eval=FALSE}
 data(malesky2014)
 
 set.seed(1234)
@@ -87,7 +107,7 @@ ff_rcs <- did(
  data    = malesky2014,
  id_time = 'year',
  is_panel= FALSE,
- option  = list(n_boot = 200, id_cluster = "tinh", parallel = TRUE)
+ option  = list(n_boot = 10, id_cluster = "tinh", parallel = TRUE)
 )
 
 summary(ff_rcs)
