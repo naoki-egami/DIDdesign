@@ -131,7 +131,7 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
       ddid_weight = c(NA, w_vec)
     )
 
-    W_save[[ll]] <- W
+    W_save[[ll]] <- solve(W)
   }
 
   ## summarise
@@ -143,7 +143,9 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
 #' Estimate DID and sDID
 #' @keywords internal
 #' @importFrom plm plm
-#' @importFrom dplyr lag
+#' @importFrom dplyr lag bind_rows filter select left_join
+#' @importFrom rlang !! sym
+#' @importFrom purrr map_dbl
 compute_did <- function(fm_prep, dat_panel, outcome, treatment,
   id_time_use, id_subj_use, time_weight, min_time = 3, lead, var_cluster_pre) {
 

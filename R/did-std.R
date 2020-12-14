@@ -43,16 +43,17 @@ did_std <- function(
   ## estimate ATT via DID and sDID    ##
   ## -------------------------------- ##
 
-  ## point estimate
-  fit_did  <- ddid_fit(fm_prep$fm_did, dat_did, lead = option$lead)
-  weights  <- did_compute_weights(
-    fm_prep, dat_did, var_cluster, is_panel, option
-  )
+  ## point estimate for DID and sDID
+  fit_did <- lapply(option$lead, function(ll) ddid_fit(fm_prep$fm_did, dat_did, lead = ll))
 
-  estimates <- double_did_compute(fit_did, weights, option$se_boot)
+  ## compute weights via bootstrap --> compute W
+  weights  <- did_compute_weights(fm_prep, dat_did, var_cluster, is_panel, option)
+
+  ## compute double did estimate and variance
+  estimates <- double_did_compute(fit_did, weights, option$lead, option$se_boot)
 
   ## compute double did estimate
-  return(list(estimates = estimates, weights = weights))
+  return(estimates)
 }
 
 #' Fit DID and sDID
@@ -78,11 +79,11 @@ ddid_fit <- function(formula, data, lead = 0) {
 #' Compute Weighting Matrix via Bootstrap
 #' @importFrom future.apply future_lapply
 #' @importFrom future plan multicore sequential
+#' @importFrom purrr map
 #' @keywords internal
 did_compute_weights <- function(
   fm_prep, dat_did, var_cluster, is_panel, option
 ) {
-
 
   ## setup cluster ID for bootstrap
   if (is.null(var_cluster)) {
@@ -92,7 +93,7 @@ did_compute_weights <- function(
   }
 
   ##
-  ## bootstrap
+  ## bootstrap to compute weights
   ##
 
   ## setup worker
@@ -104,22 +105,21 @@ did_compute_weights <- function(
 
   ## point estimates
   ## use future_lapply to implement the bootstrap parallel
-  est_boot <- do.call(rbind, future_lapply(1:option$n_boot, function(i) {
-    ddid_boot(
-      fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead
-    )
-  }, future.seed = TRUE))
+  est_boot <- future_lapply(1:option$n_boot, function(i) {
+    ddid_boot(fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead)
+  }, future.seed = TRUE)
 
-  ## compute weights
-  W <- cov(est_boot)
-  w_did  <- (W[1,1] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
-  w_sdid <- (W[2,2] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
 
-  return(list(
-    W = solve(W), weight_did = w_did, weight_sdid = w_sdid,
-    Vcov = W
-  ))
+  weights_save <- vector("list", length = length(option$lead))
+  for (ll in 1:length(option$lead)) {
+    tmp <- do.call(rbind, map(est_boot, ~.x[[ll]]))
+    W <- cov(tmp)
+    w_did  <- (W[1,1] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
+    w_sdid <- (W[2,2] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
+    weights_save[[ll]] <- list(W = solve(W), vcov = W, weights = c(w_did, w_sdid))
+  }
 
+  return(weights_save)
 }
 
 #' Bootstrap
@@ -160,41 +160,48 @@ ddid_boot <- function(
   }
 
   ## fit DID and sDID
-  est <- ddid_fit(fm_prep$fm_did, dat_boot, lead)
+  est <- lapply(lead, function(ll) ddid_fit(fm_prep$fm_did, dat_boot, ll))
   return(est)
 }
 
 
 #' Compute Point and Variance Estimates
 #' @keywords internal
-#' @importFrom dplyr tibble
-double_did_compute <- function(fit, weights, se_boot = TRUE) {
-  ## point estimate
-  ## τ[d-did] = w[did] * τ[did] + w[s-did] * τ[s-did]
-  ddid <- fit[1] * weights$weight_did +
-          fit[2] * weights$weight_sdid
+#' @importFrom dplyr as_tibble bind_rows
+double_did_compute <- function(fit, weights, lead, se_boot = FALSE) {
 
-  ## variance estimate
-  var_did  <- weights$Vcov[1,1]
-  var_sdid <- weights$Vcov[2,2]
-  if (isTRUE(se_boot)) {
-    ## V(τ̂) = w^2[did] * Var(τ̂[did]) + w^2[s-did] * Var(τ̂[did]) +
-    ##            2 * w[did] * w[s-did] * Cov(τ̂[did], τ̂[s-did])
-    cov_did  <- weights$Vcov[1,2]
-    ddid_var <- weights$weight_did^2 * var_did +
-                weights$weight_sdid^2 * var_sdid +
-                2 * cov_did * weights$weight_did * weights$weight_sdid
-  } else {
-    ## asymptotic variance
-    ddid_var <- (1 / sum(weights$W))
+  estimates <- W_save <- vector("list", length = length(lead))
+  for (ll in 1:length(lead)) {
+    ## compute the
+    ddid <- as.vector(weights[[ll]]$weights %*% fit[[ll]])
+
+    ## variance estimate
+    var_did  <- weights[[ll]]$vcov[1,1]
+    var_sdid <- weights[[ll]]$vcov[2,2]
+
+    if (isTRUE(se_boot)) {
+      ## V(τ̂) = w^2[did] * Var(τ̂[did]) + w^2[s-did] * Var(τ̂[did]) +
+      ##            2 * w[did] * w[s-did] * Cov(τ̂[did], τ̂[s-did])
+      cov_did  <- weights[[ll]]$Vcov[1,2]
+      ddid_var <- weights[[ll]]$weights[1]^2 * var_did +
+                  weights[[ll]]$weights[2]^2 * var_sdid +
+                  2 * cov_did * prod(weights[[ll]]$weights)
+    } else {
+      ## asymptotic variance
+      ddid_var <- (1 / sum(weights[[ll]]$W))
+    }
+
+    estimates[[ll]] <- data.frame(
+      estimator   = c("Double-DID", "DID", "sDID"),
+      lead        = lead[ll],
+      estimate    = c(ddid, fit[[ll]]),
+      std.error   = c(sqrt(ddid_var), sqrt(var_did), sqrt(var_sdid)),
+      ddid_weight = c(NA, weights[[ll]]$weights)
+    )
+
+    W_save[[ll]] <- weights[[ll]]$W
   }
 
-  ## organize output
-  est <- tibble(
-    estimator = c("Double-DID", "DID", "sDID"),
-    estimate = c(ddid, fit[1], fit[2]),
-    std.error = c(sqrt(ddid_var), sqrt(var_did), sqrt(var_sdid))
-  )
-
-  return(est)
+  estimates <- as_tibble(bind_rows(estimates))
+  return(list(estimates = estimates, weights = W_save))
 }
