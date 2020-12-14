@@ -14,9 +14,10 @@ summary.DIDdesign <- function(obj) {
   out$statistic <- out$estimate / out$std.error
   out$p_value   <- 2 * pnorm(abs(out$statistic), lower.tail = FALSE)
 
-  ## add weights
-  weights <- c(NA, obj$weights$weight_did, obj$weights$weight_sdid)
-  out$ddid_weights <- weights
+  out <- out[, c("estimator", "lead", "estimate", "std.error", "statistic", "p_value", "ddid_weight")]
+  # ## add weights
+  # weights <- c(NA, obj$weights$weight_did, obj$weights$weight_sdid)
+  # out$ddid_weights <- weights
 
   class(out) <- c(class(out), "summary.DIDdesign.")
   return(out)
