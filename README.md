@@ -133,3 +133,65 @@ summary(ff_rcs)
 
 Staggered Adoption Design
 -------------------------
+
+``` r
+## data 
+require(dplyr)
+```
+
+    ## Loading required package: dplyr
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+paglayan2019 <- paglayan2019 %>%
+    filter(!(state %in% c("WI", "DC"))) %>% 
+    mutate(id_time = year,
+                 id_subject = as.numeric(as.factor(state)),
+                 log_expenditure = log(pupil_expenditure + 1),
+                 log_salary      = log(teacher_salary + 1))
+
+## estimate
+set.seed(1234)
+fit_sa <- did(
+  log_expenditure ~ treatment,
+  data    = paglayan2019,
+  id_unit = "id_subject",
+  id_time = "id_time",
+  design  = "sa",
+  option  = list(n_boot = 20, lead = 0:5, thres = 2, parallel = FALSE)
+)
+
+summary(fit_sa)
+```
+
+    ## # A tibble: 18 x 7
+    ##    estimator      lead  estimate std.error statistic p_value ddid_weight
+    ##    <chr>         <int>     <dbl>     <dbl>     <dbl>   <dbl>       <dbl>
+    ##  1 SA-Double-DID     0  0.00805     0.0235    0.343   0.732      NA     
+    ##  2 SA-DID            0  0.0149      0.0151    0.991   0.322      -0.164 
+    ##  3 SA-sDID           0  0.00903     0.0201    0.450   0.653       1.16  
+    ##  4 SA-Double-DID     1 -0.0165      0.0202   -0.815   0.415      NA     
+    ##  5 SA-DID            1  0.000916    0.0190    0.0481  0.962       0.166 
+    ##  6 SA-sDID           1 -0.0199      0.0240   -0.833   0.405       0.834 
+    ##  7 SA-Double-DID     2  0.0235      0.0112    2.11    0.0352     NA     
+    ##  8 SA-DID            2  0.0267      0.0160    1.67    0.0953      0.532 
+    ##  9 SA-sDID           2  0.0199      0.0154    1.29    0.197       0.468 
+    ## 10 SA-Double-DID     3 -0.00992     0.0224   -0.443   0.657      NA     
+    ## 11 SA-DID            3  0.0205      0.0140    1.47    0.143       0.0670
+    ## 12 SA-sDID           3 -0.0121      0.0239   -0.505   0.613       0.933 
+    ## 13 SA-Double-DID     4 -0.0160      0.0189   -0.849   0.396      NA     
+    ## 14 SA-DID            4  0.00759     0.0165    0.461   0.645       0.106 
+    ## 15 SA-sDID           4 -0.0188      0.0210   -0.895   0.371       0.894 
+    ## 16 SA-Double-DID     5  0.00128     0.0112    0.114   0.909      NA     
+    ## 17 SA-DID            5  0.00930     0.0143    0.651   0.515       0.407 
+    ## 18 SA-sDID           5 -0.00421     0.0161   -0.261   0.794       0.593

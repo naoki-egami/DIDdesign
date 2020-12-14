@@ -119,3 +119,28 @@ summary(ff_rcs)
 
 
 ## Staggered Adoption Design
+
+
+```{r sa}
+## data 
+require(dplyr)
+paglayan2019 <- paglayan2019 %>%
+	filter(!(state %in% c("WI", "DC"))) %>%	
+	mutate(id_time = year,
+				 id_subject = as.numeric(as.factor(state)),
+				 log_expenditure = log(pupil_expenditure + 1),
+				 log_salary      = log(teacher_salary + 1))
+
+## estimate
+set.seed(1234)
+fit_sa <- did(
+  log_expenditure ~ treatment,
+  data    = paglayan2019,
+  id_unit = "id_subject",
+  id_time = "id_time",
+  design  = "sa",
+  option  = list(n_boot = 20, lead = 0:5, thres = 2, parallel = FALSE)
+)
+
+summary(fit_sa)
+```

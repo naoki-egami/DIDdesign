@@ -77,17 +77,15 @@
 #'
 #' ## The staggered adoption design ----
 #' data(paglayan2019)
-#'
+#' paglayan2019 <- paglayan2019 %>%
+#'   filter(!(state %in% c("WI", "DC"))) %>%
+#'   mutate(id_time = year,
+#'          id_subject = as.numeric(as.factor(state)),
+#'          log_expenditure = log(pupil_expenditure + 1),
+#'          log_salary      = log(teacher_salary + 1))
 #'
 #' ## prepare data
 #' require(dplyr)
-#' paglayan2019 <- paglayan2019 %>%
-#' mutate(id_time = year,
-#'       id_subject = as.numeric(as.factor(state)),
-#'       log_expenditure = log(pupil_expenditure + 1),
-#'       log_salary      = log(teacher_salary + 1)) %>%
-#' filter(!(state %in% c("WI", "DC")))
-#'
 #' # estimate effects
 #' set.seed(1234)
 #' fit_sa <- did(
