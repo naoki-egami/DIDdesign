@@ -6,6 +6,9 @@
 \usage{
 \method{print}{summary.DIDdesign}(obj)
 }
+\arguments{
+\item{obj}{An object of \code{summary.DIDdesign} class. This is typically an output of \code{summary.DIDdesign()} function.}
+}
 \description{
 Print
 }

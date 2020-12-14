@@ -73,7 +73,7 @@
 #'   option  = list(n_boot = 20, id_cluster = "tinh", parallel = FALSE)
 #' )
 #'
-#' ff_rcs$estimates
+#' summary(ff_rcs)
 #'
 #' ## The staggered adoption design ----
 #' data(paglayan2019)
@@ -88,22 +88,25 @@
 #'       log_salary      = log(teacher_salary + 1)) %>%
 #' filter(!(state %in% c("WI", "DC")))
 #'
+#' # estimate effects
 #' set.seed(1234)
-#' fit_sa <- did(log_expenditure ~ treatment,
-#'               data    = paglayan2019,
-#'               id_unit = "id_subject",
-#'							 id_time = "id_time",
-#'							 design  = "sa",
-#'							 option  = list(n_boot = 20, lead = 0:5, thres = 1, parallel = FALSE)
+#' fit_sa <- did(
+#'   log_expenditure ~ treatment,
+#'   data    = paglayan2019,
+#'   id_unit = "id_subject",
+#'   id_time = "id_time",
+#'   design  = "sa",
+#'   option  = list(n_boot = 20, lead = 0:5, thres = 2, parallel = FALSE)
 #' )
 #'
 #' summary(fit_sa)
 #'
-#' @return An object of \code{DIDdesign} class, which is a list of following items:
+#' @return \code{did} returns an object of \code{DIDdesign} class, which is a list of following items:
 #' \describe{
 #'   \item{estimates}{A table of estimates in the tibble format.}
 #'   \item{weights}{A list of weight information.}
 #' }
+#' The functions `summary` is used to obtain and print a summary of the results.
 did <- function(
   formula, data, id_unit, id_time, design = "did",
   is_panel = TRUE, option = list()

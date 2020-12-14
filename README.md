@@ -37,11 +37,7 @@ The Standard Difference-in-Differences Design
 ``` r
 ## load package
 require(DIDdesign)
-```
 
-    ## Loading required package: DIDdesign
-
-``` r
 ## load data
 data(anzia2012)
 ```
@@ -50,14 +46,14 @@ data(anzia2012)
 ## estimate treatment effect
 set.seed(1234)
 fit_panel <- did(
-  formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper + ami_pc + 
-                                                                                asian_pc + black_pc + hisp_pc,
-  data    = anzia2012,
-  id_unit = "district",
-  id_time = "year",
-  design  = "did",
+  formula  = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper + 
+                                          ami_pc + asian_pc + black_pc + hisp_pc,
+  data     = anzia2012,
+  id_unit  = "district",
+  id_time  = "year",
+  design   = "did",
   is_panel = TRUE,
-  option  = list(n_boot = 100, parallel = TRUE, lead = 0:2)
+  option   = list(n_boot = 100, parallel = TRUE, lead = 0:2)
 )
 ```
 
@@ -92,6 +88,7 @@ fit_panel <- did(
         (`lead = 1`) will be estimated. Default is `lead = 0`.
 
 ``` r
+## view the estimates
 summary(fit_panel)
 ```
 
@@ -107,6 +104,8 @@ summary(fit_panel)
     ## 7 Double-DID     2 -0.00648   0.00422    -1.53  0.125        NA    
     ## 8 DID            2 -0.0115    0.00505    -2.27  0.0230        0.613
     ## 9 sDID           2  0.00145   0.00457     0.318 0.750         0.387
+
+`summary()` function can be used to view estimates.
 
 ### Repeated Cross-sectional Data
 

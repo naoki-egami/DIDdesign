@@ -27,6 +27,7 @@ summary.DIDdesign <- function(obj) {
 #' Print
 #' @export
 #' @importFrom cli cat_rule
+#' @param obj An object of \code{summary.DIDdesign} class. This is typically an output of \code{summary.DIDdesign()} function.
 print.summary.DIDdesign <- function(obj) {
   cat_rule(left = crayon::bold("Estimates"))
   print(obj)
