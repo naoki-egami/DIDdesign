@@ -4,10 +4,10 @@
 \alias{print.summary.DIDdesign}
 \title{Print}
 \usage{
-\method{print}{summary.DIDdesign}(obj)
+\method{print}{summary.DIDdesign}(x, ...)
 }
 \arguments{
-\item{obj}{An object of \code{summary.DIDdesign} class. This is typically an output of \code{summary.DIDdesign()} function.}
+\item{x}{An object of \code{summary.DIDdesign} class. This is typically an output of \code{summary.DIDdesign()} function.}
 }
 \description{
 Print
