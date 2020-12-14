@@ -56,7 +56,7 @@ data(anzia2012)
 
 
 
-```{r}
+```{r panel}
 ## estimate treatment effect
 set.seed(1234)
 fit_panel <- did(
@@ -102,7 +102,7 @@ summary(fit_panel)
 
 ### Repeated Cross-sectional Data
 
-```{r, eval=FALSE}
+```{r, rcs}
 data(malesky2014)
 
 set.seed(1234)
@@ -111,7 +111,7 @@ ff_rcs <- did(
  data    = malesky2014,
  id_time = 'year',
  is_panel= FALSE,
- option  = list(n_boot = 10, id_cluster = "tinh", parallel = TRUE)
+ option  = list(n_boot = 10, parallel = TRUE, id_cluster = "tinh", lead = 0)
 )
 
 summary(ff_rcs)

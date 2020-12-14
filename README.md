@@ -118,11 +118,18 @@ ff_rcs <- did(
  data    = malesky2014,
  id_time = 'year',
  is_panel= FALSE,
- option  = list(n_boot = 10, id_cluster = "tinh", parallel = TRUE)
+ option  = list(n_boot = 10, parallel = TRUE, id_cluster = "tinh", lead = 0)
 )
 
 summary(ff_rcs)
 ```
+
+    ## # A tibble: 3 x 7
+    ##   estimator   lead estimate std.error statistic  p_value ddid_weight
+    ##   <chr>      <dbl>    <dbl>     <dbl>     <dbl>    <dbl>       <dbl>
+    ## 1 Double-DID     0    0.262    0.0692      3.78 0.000154       NA   
+    ## 2 DID            0    0.101    0.0940      1.07 0.284          -1.37
+    ## 3 sDID           0    0.169    0.130       1.30 0.194           2.37
 
 Staggered Adoption Design
 -------------------------
