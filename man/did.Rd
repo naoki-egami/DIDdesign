@@ -104,6 +104,7 @@ summary(ff_rcs)
 
 ## The staggered adoption design ----
 data(paglayan2019)
+require(dplyr)
 paglayan2019 <- paglayan2019 \%>\%
   filter(!(state \%in\% c("WI", "DC"))) \%>\%
   mutate(id_time = year,
