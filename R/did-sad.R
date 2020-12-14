@@ -8,7 +8,7 @@
 #' @importFrom dplyr %>% as_tibble group_by
 #' @importFrom tibble tibble
 #' @importFrom future.apply future_lapply
-#' @importFrom future plan multiprocess sequential
+#' @importFrom future plan multicore sequential
 #' @keywords internal
 did_sad <- function(formula, data, id_subject, id_time, option) {
 
@@ -18,22 +18,33 @@ did_sad <- function(formula, data, id_subject, id_time, option) {
   ## normalize the time index
   dat_panel <- as_tibble(data) %>%
     rename(id_subject = !!sym(id_subject), id_time = !!sym(id_time)) %>%
-    mutate(id_time = as.numeric(as.factor(id_time)))
+    mutate(id_time = as.numeric(as.factor(id_time))) %>%
+    arrange(id_subject, id_time)
+
+  is_panel <- TRUE
+  var_cluster <- option$id_cluster
+  if (is.null(var_cluster) && isTRUE(is_panel)) {
+    var_cluster <- "id_unit"
+    option$var_cluster_pre <- id_subject
+  }
 
   ## extract variable informations
   if (!("formula" %in% class(formula))) {
     formula <- as.formula(formula)
   }
+
   all_vars  <- all.vars(formula)
   outcome   <- all_vars[1]
   treatment <- all_vars[2]
+
+  ## prepare custom formula
+  fm_prep <- did_formula(formula, is_panel)
 
   ## --------------------------------------
   ## obtain point estimates
   ## estimate DID and sDID
   ## --------------------------------------
-  est <- sa_double_did(dat_panel, treatment, outcome, option$lead)
-
+  est <- sa_double_did(fm_prep, dat_panel, treatment, outcome, option)
 
   ## --------------------------------------
   ## obtain the weighting matrix via bootstrap
@@ -44,65 +55,100 @@ did_sad <- function(formula, data, id_subject, id_time, option) {
     plan(sequential)
   }
 
-  est_boot <- do.call(rbind, future_lapply(1:option$n_boot, function(i) {
+  est_boot <- future_lapply(1:option$n_boot, function(i) {
       dat_boot <- sample_panel(dat_panel)
-      sa_double_did(dat_boot, treatment, outcome, option$lead)
-  }, future.seed = TRUE))
+      sa_double_did(fm_prep, dat_boot, treatment, outcome, option)
+  }, future.seed = TRUE)
 
   ## --------------------------------------
   ## double DID estimator
   ## --------------------------------------
-
-  ## estimate GMM weighting matrix
-  W      <- cov(est_boot)
-  w_did  <- (W[1,1] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
-  w_sdid <- (W[2,2] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
-  w_vec  <- c(w_did, w_sdid)
-
-  ## double did estimate
-  double_did <- as.vector(t(w_vec) %*% est)
-
-  ## compute the variance of double did
-  var_ddid <- as.vector(t(w_vec^2) %*% apply(est_boot, 2, var))
-
-  ## --------------------------------------
-  ## prepare output
-  ## --------------------------------------
-  estimates <- tibble(
-    estimator = c("SA-Double-DID", "SA-DID", "SA-sDID"),
-    estimate  = c(est, double_did),
-    std.error = c(apply(est_boot, 2, sd), sqrt(var_ddid))
-  )
-
-  weights <- list(W = W, weight_did = w_did, weight_sdid = w_sdid)
-  return(list(estimates = estimates, weights = weights))
+  estimates <- sa_did_to_ddid(est, est_boot, lead = option$lead)
+  return(estimates)
 }
 
 
 #' Compute the time-weighted DID and sDID
 #' @keywords internal
 #' @return A vector of two elements: Time-weighted DID (the first element) and time-weighted sequential DID (second).
-sa_double_did <- function(dat_panel, treatment, outcome, lead) {
+sa_double_did <- function(formula, dat_panel, treatment, outcome, option) {
   ## create Gmat and index for each design
   Gmat <- create_Gmat(dat_panel, treatment = treatment)
-  id_time_use <- get_periods(Gmat)
+  id_time_use <- get_periods(Gmat, option$thres)
   id_subj_use <- get_subjects(Gmat, id_time_use)
   time_weight <- get_time_weight(Gmat, id_time_use)
 
   ## estimate DID and sDID for each periods and weight them by the proportion of treated units
-  out <- compute_did(dat_panel, outcome, treatment,
-                     id_time_use, id_subj_use, time_weight, lead = lead)
+  out <- compute_did(formula, dat_panel, outcome, treatment,
+                     id_time_use, id_subj_use, time_weight,
+                     lead = option$lead, var_cluster_pre = option$var_cluster_pre)
   return(out)
 }
 
+
+#' Compute lead specific variance covariance matrix
+#' @keywords internal
+#' @importFrom purrr map
+sa_calc_cov <- function(obj, lead) {
+  tmp <- map(obj, ~cbind(.x$DID[[lead]], .x$sDID[[lead]]))
+  cov_est <- cov(do.call(rbind, tmp))
+  return(cov_est)
+}
+
+
+#' Convert estimates into double did
+#' @keywords internal
+#' @importFrom dplyr as_tibble
+sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
+
+  estimates <- W_save <- vector("list", length = length(lead))
+
+
+  for (ll in 1:length(lead)) {
+    tmp <- matrix(NA, nrow = 3, ncol = 3)
+
+    ## compute variance covariance matrix
+    W <- sa_calc_cov(obj_boot, lead[ll]+1)
+
+    ## compute weight from Vcov
+    w_did  <- (W[1,1] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
+    w_sdid <- (W[2,2] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
+    w_vec  <- c(w_did, w_sdid)
+
+    ## compute double did
+    est  <- c(obj_point$DID[[ll]], obj_point$sDID[[ll]])
+    ddid <- t(w_vec) %*% est
+
+    ## variance
+    var_ddid <- as.vector(t(w_vec^2) %*% diag(W))
+
+    ## save weights
+    estimates[[ll]] <- data.frame(
+      estimator = c("SA-Double-DID", "SA-DID", "SA-sDID"),
+      lead      = lead[ll],
+      estimate  = c(ddid, est),
+      std.error = sqrt(c(var_ddid, diag(W))),
+      ddid_weight = c(NA, w_vec)
+    )
+
+    W_save[[ll]] <- W
+  }
+
+  ## summarise
+  estimates <- as_tibble(bind_rows(estimates))
+  return(list(estimates = estimates, weights = W_save))
+
+}
 
 #' Estimate DID and sDID
 #' @keywords internal
 #' @importFrom plm plm
 #' @importFrom dplyr lag
-compute_did <- function(dat_panel, outcome, treatment,
-  id_time_use, id_subj_use, time_weight, min_time = 3, lead) {
-  est_did <- est_sdid <- list(); iter <- 1
+compute_did <- function(fm_prep, dat_panel, outcome, treatment,
+  id_time_use, id_subj_use, time_weight, min_time = 3, lead, var_cluster_pre) {
+
+  est_did <- list()
+  iter <- 1
 
   ## we need to renormalize weights if past periods is not avaialbe
   time_weight_new <- list()
@@ -112,38 +158,47 @@ compute_did <- function(dat_panel, outcome, treatment,
   for (i in 1:length(id_time_use)) {
     if ((id_time_use[i] >= min_time) && ((id_time_use[i] + lead) <= max_time)) {
 
+      est_did[[iter]] <- vector("list", length = length(lead))
+
       ## -------------------------------
       ## compute DID
       ## -------------------------------
       ## subset the data
       dat_use <- dat_panel %>%
         filter(id_subject %in% id_subj_use[[i]]) %>%
-        filter(id_time == (id_time_use[i] + lead) |
-               id_time == id_time_use[i]-1)
+        filter(id_time == (id_time_use[[i]]) |  ## this part is wrong! Lead only applies to the outcome
+               id_time == id_time_use[[i]]-1 |
+               id_time == id_time_use[[i]]-2)
 
-      ## estimate DID using plm
-      fm  <- as.formula(paste(outcome, treatment, sep = "~"))
-      fit <- plm::plm(fm, data = dat_use, index = c("id_subject", "id_time"),
-                      effects = 'twoways', model = 'within')
-      est_did[[iter]] <- fit$coef
+      if (max(lead) > 0) {
+        ## handle lead cases
+        treatment_info <- dat_panel %>%
+          filter(id_subject %in% id_subj_use[[i]]) %>%
+          filter(id_time == id_time_use[[i]]) %>%
+          select(id_subject, !!sym(treatment))
+
+        outcome_lead <- dat_panel %>%
+          filter(id_subject %in% id_subj_use[[i]]) %>%
+          filter(id_time <= (id_time_use[[i]] + max(lead)) &
+                 id_time >= (id_time_use[[i]] + max(1, min(lead)))) %>%
+          select(-!!sym(treatment)) %>%
+          left_join(treatment_info, by = 'id_subject')
+
+        dat_use <- bind_rows(dat_use, outcome_lead)
+      }
+
 
       ## -------------------------------
-      ## compute sDID
+      ## estimate DID and sDID
       ## -------------------------------
-      dat_use <- dat_panel %>%
-        group_by(id_subject) %>%
-        mutate(outcome_lag = lag(!!sym(outcome), order_by = id_time)) %>%
-        mutate(outcome_diff = !!sym(outcome) - outcome_lag) %>%
-        filter(id_subject %in% id_subj_use[[i]]) %>%
-        filter(id_time == (id_time_use[i] + lead) |
-               id_time == id_time_use[i]-1)
+      dat_did <- did_panel_data(
+        fm_prep$var_outcome, fm_prep$var_treat, fm_prep$var_covars,
+        var_cluster_pre, id_unit = "id_subject", id_time = "id_time", dat_use
+      )
 
-      ## estimate DID using plm
-      fm  <- as.formula(paste("outcome_diff", treatment, sep = "~"))
-      fit <- plm(fm, data = dat_use, index = c("id_subject", "id_time"),
-                  effects = 'twoways', model = 'within')
-
-      est_sdid[[iter]] <- fit$coef
+      for (ll in 1:length(lead)) {
+        est_did[[iter]][[ll]]  <- ddid_fit(fm_prep$fm_did, dat_did, lead = lead[ll])
+      }
 
       ## -------------------------------
       ## time weights
@@ -157,10 +212,17 @@ compute_did <- function(dat_panel, outcome, treatment,
   ## combine all did estimates
   ## -------------------------------
   time_weight_new <- unlist(time_weight_new)
-  did_vec  <- as.vector(unlist(est_did) %*% (time_weight_new / sum(time_weight_new)))
-  sdid_vec <- as.vector(unlist(est_sdid) %*% (time_weight_new / sum(time_weight_new)))
 
-  res <- c(did_vec, sdid_vec); names(res) <- c("DID", "sDID")
+  did_vec <- sdid_vec <- list()
+  for (ll in 1:length(lead)) {
+    did_est <- map_dbl(est_did, ~.x[[ll]][1])
+    sdid_est <- map_dbl(est_did, ~.x[[ll]][2])
+    did_vec[[ll]] <- did_est %*% (time_weight_new / sum(time_weight_new))
+    sdid_vec[[ll]] <- sdid_est %*% (time_weight_new / sum(time_weight_new))
+  }
+
+
+  res <- list("DID" = did_vec, "sDID" = sdid_vec)
   return(res)
 }
 
@@ -172,8 +234,8 @@ compute_did <- function(dat_panel, outcome, treatment,
 sample_panel <- function(panel_dat) {
 
   ## get subject id for bootstrap
-  id_vec     <- unique(pull(panel_dat, .data$id_subject))
-  id_boot    <- sample(id_vec, size = length(id_vec), replace = TRUE)
+  id_vec  <- unique(pull(panel_dat, .data$id_subject))
+  id_boot <- sample(id_vec, size = length(id_vec), replace = TRUE)
 
   ## constrcut a panel data for bootstrap
   tmp <- as.data.frame(panel_dat)

@@ -7,7 +7,7 @@ set_option <- function(option) {
   if (!exists('se_boot', option)) option$se_boot <- FALSE
   if (!exists('id_cluster', option)) option$id_cluster <- NULL
   if (!exists('lead', option)) option$lead <- 0
-
+  if (!exists('thres', option)) option$thres <- 2
   return(option)
 }
 

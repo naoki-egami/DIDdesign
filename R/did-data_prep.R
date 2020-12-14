@@ -16,19 +16,19 @@ did_panel_data <- function(
 ) {
 
   ## time and unit
-  var_unit <- pull(data, !!sym(id_unit))
-  var_year <- pull(data, !!sym(id_time))
+  # var_unit <- pull(data, !!sym(id_unit))
+  # var_year <- pull(data, !!sym(id_time))
 
   ## create a working dataset
-  var_select <- c(var_outcome, var_treat)
+  var_select <- c(var_outcome, var_treat, id_unit, id_time)
   if (!is.null(var_covars)) var_select <- c(var_select, var_covars)
   if (!is.null(var_cluster)) var_select <- c(var_select, var_cluster)
 
   dat_use <- data %>%
     select(all_of(var_select)) %>%
-    mutate(id_unit = var_unit,
-           id_time = as.numeric(as.factor(as.character(var_year)))) %>%
-    rename(outcome = !!sym(var_outcome), treatment = !!sym(var_treat))
+    rename(outcome = !!sym(var_outcome), treatment = !!sym(var_treat),
+           id_unit = !!sym(id_unit), id_time = !!sym(id_time)) %>%
+    mutate(id_time = as.numeric(as.factor(id_time)))
 
 
   ## treatment info

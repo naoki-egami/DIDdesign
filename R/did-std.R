@@ -77,7 +77,7 @@ ddid_fit <- function(formula, data, lead = 0) {
 
 #' Compute Weighting Matrix via Bootstrap
 #' @importFrom future.apply future_lapply
-#' @importFrom future plan multiprocess sequential
+#' @importFrom future plan multicore sequential
 #' @keywords internal
 did_compute_weights <- function(
   fm_prep, dat_did, var_cluster, is_panel, option
