@@ -4,7 +4,7 @@
 \alias{sa_double_did}
 \title{Compute the time-weighted DID and sDID}
 \usage{
-sa_double_did(dat_panel, treatment, outcome, lead)
+sa_double_did(formula, dat_panel, treatment, outcome, option)
 }
 \value{
 A vector of two elements: Time-weighted DID (the first element) and time-weighted sequential DID (second).

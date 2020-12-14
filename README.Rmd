@@ -40,7 +40,7 @@ Reference:
 
 ```{r}
 ## load package
-# require(DIDdesign)
+require(DIDdesign)
 
 ## load data
 data(anzia2012)
@@ -67,7 +67,7 @@ fit_panel_t1 <- did(
   data    = anzia2012,
   id_unit = "district",
   id_time = "year",
-  option  = list(n_boot = 200, lead = 1, parallel = FALSE)
+  option  = list(n_boot = 200, lead = 1, parallel = TRUE)
 )
 
 summmary(fit_panel_t1)
@@ -87,10 +87,10 @@ ff_rcs <- did(
  data    = malesky2014,
  id_time = 'year',
  is_panel= FALSE,
- option  = list(n_boot = 20, id_cluster = "tinh", parallel = FALSE)
+ option  = list(n_boot = 200, id_cluster = "tinh", parallel = TRUE)
 )
 
-summary(estimates)
+summary(ff_rcs)
 ```
 
 

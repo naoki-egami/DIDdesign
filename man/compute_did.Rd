@@ -5,6 +5,7 @@
 \title{Estimate DID and sDID}
 \usage{
 compute_did(
+  fm_prep,
   dat_panel,
   outcome,
   treatment,
@@ -12,7 +13,8 @@ compute_did(
   id_subj_use,
   time_weight,
   min_time = 3,
-  lead
+  lead,
+  var_cluster_pre
 )
 }
 \description{

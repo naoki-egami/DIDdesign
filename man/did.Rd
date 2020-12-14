@@ -85,7 +85,7 @@ fit_panel <- did(
   option  = list(n_boot = 20, parallel = FALSE)
 )
 
-fit_panel$estimates
+summary(fit_panel)
 
 ## (2) repeated cross-section data ---
 data(malesky2014)
@@ -116,13 +116,13 @@ filter(!(state \%in\% c("WI", "DC")))
 
 set.seed(1234)
 fit_sa <- did(log_expenditure ~ treatment,
-  data    = paglayan2019,
-  id_unit = "id_subject",
-  id_time = "id_time",
-  design  = "sa",
-  option  = list(n_boot = 20, lead = 1, parallel = FALSE)
- )
+              data    = paglayan2019,
+              id_unit = "id_subject",
+						 id_time = "id_time",
+						 design  = "sa",
+						 option  = list(n_boot = 20, lead = 0:5, thres = 1, parallel = FALSE)
+)
 
-fit_sa$estimates
+summary(fit_sa)
 
 }
