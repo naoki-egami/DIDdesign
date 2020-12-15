@@ -256,7 +256,7 @@ check_sa$estimate
 ```
 
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5, out.width="70%", fig.align="center"}
+```{r dpi=250, fig.height = 3.5, fig.width = 5, fig.align="center", out.width="70%"}
 check_sa$plot + ggplot2::theme(aspect.ratio=1)
 ```
 
@@ -287,7 +287,7 @@ head(summary(fit_sa))
 ```
 
 
-```{r echo=FALSE, out.width="100%", dpi=250}
+```{r echo=FALSE, out.width="80%", dpi=250}
 ## plot data   
 plot_dat <- as_tibble(summary(fit_sa)) %>%
   filter(estimator == "SA-Double-DID") %>%
