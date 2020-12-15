@@ -157,7 +157,7 @@ check_rcs <- did_check(
 check_rcs$estimate
 ```
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5}
+```{r dpi=250, fig.height = 3.5, fig.width = 5,  out.width="70%"}
 check_rcs$plot
 ```
 

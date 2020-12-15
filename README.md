@@ -173,7 +173,7 @@ check_rcs$estimate
 check_rcs$plot
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="70%" />
 
 ``` r
 ## estimate ATT
