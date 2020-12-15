@@ -82,7 +82,7 @@ check_panel$estimate
 ```
 
 ```{r dpi=250, fig.height = 3.5, fig.width = 5}
-check_panel$plot + ggplot2::ylim(10.6, 10.7)
+check_panel$plot + ggplot2::ylim(10.6, 10.7) + ggplot2::theme(aspect.ratio=1)
 ```
 
 
