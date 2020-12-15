@@ -173,7 +173,7 @@ did_std_plot <- function(data) {
          ungroup()
   gg <- ggplot(dat_plot, aes(x = time_to_treat, y = outcome_mean, color = group)) +
           geom_vline(xintercept = 0, linetype = 'dashed') +  geom_line() + geom_point() +
-          labs(x = "Time relative to treatment assignment", y = "Mean of the outcome", color = "Group") +
+          labs(x = "Time relative to treatment assignment", y = "Mean Outcome", color = "Group") +
           scale_color_manual(values = c("gray50", '#1E88A8')) +
           theme_bw()
 
