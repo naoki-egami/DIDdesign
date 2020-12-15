@@ -69,7 +69,7 @@ check_panel$estimate
 check_panel$plot + ggplot2::ylim(10.6, 10.7) + ggplot2::theme(aspect.ratio=1)
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="70%" style="display: block; margin: auto;" />
 
 ### Step 2: Estimate the treatment effect with the double DID estimator
 
@@ -170,10 +170,10 @@ check_rcs$estimate
 ```
 
 ``` r
-check_rcs$plot
+check_rcs$plot + ggplot2::theme(aspect.ratio=1)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="70%" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" />
 
 ``` r
 ## estimate ATT
@@ -254,10 +254,10 @@ check_sa$estimate
 ```
 
 ``` r
-check_sa$plot
+check_sa$plot + ggplot2::theme(aspect.ratio=1)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" />
 
 ## Step 2: Estimate staggered-adoption average treatment effect
 

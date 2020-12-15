@@ -81,7 +81,7 @@ check_panel <- did_check(
 check_panel$estimate
 ```
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5}
+```{r dpi=250, fig.height = 3.5, fig.width = 5, out.width="70%", fig.align="center"}
 check_panel$plot + ggplot2::ylim(10.6, 10.7) + ggplot2::theme(aspect.ratio=1)
 ```
 
@@ -157,8 +157,8 @@ check_rcs <- did_check(
 check_rcs$estimate
 ```
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5,  out.width="70%"}
-check_rcs$plot
+```{r dpi=250, fig.height = 3.5, fig.width = 5, out.width="70%", fig.align="center"}
+check_rcs$plot + ggplot2::theme(aspect.ratio=1)
 ```
 
 
@@ -256,8 +256,8 @@ check_sa$estimate
 ```
 
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5}
-check_sa$plot
+```{r dpi=250, fig.height = 3.5, fig.width = 5, out.width="70%", fig.align="center"}
+check_sa$plot + ggplot2::theme(aspect.ratio=1)
 ```
 
 ## Step 2: Estimate staggered-adoption average treatment effect
