@@ -223,8 +223,9 @@ summary(fit_sa)
 plot_dat <- as_tibble(summary(fit_sa)) %>% filter(estimator == "SA-Double-DID")
 plot(plot_dat$lead, plot_dat$estimate, pch = 16,
      xlab = "Time", ylab = "SA-ATT", main = "Double DID Estimates",
-     xaxt = "n", ylim = c(-0.1, 0.1)
+     xaxt = "n", ylim = c(-0.1, 0.1), las = 1
    )
+abline(h = 0, col = 'red', lty = 3, lwd = 1.5)
 axis(1, at = plot_dat$lead, labels = paste0("t=", plot_dat$lead))
 for (i in 1:nrow(plot_dat)) {
   lines(c(plot_dat$lead[i], plot_dat$lead[i]),
