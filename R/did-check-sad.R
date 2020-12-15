@@ -74,7 +74,6 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
   ## --------------------------------------
   gg <- did_sad_plot(estimates)
   return(list(est = estimates, plot = gg))
-
 }
 
 

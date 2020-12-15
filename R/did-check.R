@@ -37,7 +37,26 @@ did_check <- function(
   ) %>%
   select(-.data$CI90_UB_ab, -.data$CI90_LB_ab)
 
-  out <- list(estimate = estimate, plot = fit$plot$plot, dat_plot = fit$plot$dat_plot)
+  out <- list(estimate = estimate, plot = fit$plot)
   class(out) <- c(class(out), "DIDdesign_check")
+  attr(out, 'design') <- design
   return(out)
+}
+
+
+
+#' Plot
+#' @export
+#' @import patchwork
+#' @importFrom ggplot2 theme
+plot.DIDdesign_check <- function(obj) {
+
+  if (attr(obj, "design") == "sa") {
+
+  } else {
+    p1 <- obj$plot[[1]]$plot + theme(aspect.ratio=1)
+    p2 <- obj$plot[[2]]$plot + theme(aspect.ratio=1)
+    pp <- p2 + p1
+  }
+  return(pp)
 }

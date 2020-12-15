@@ -81,8 +81,8 @@ check_panel <- did_check(
 check_panel$estimate
 ```
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5, out.width="70%", fig.align="center"}
-check_panel$plot + ggplot2::ylim(10.6, 10.7) + ggplot2::theme(aspect.ratio=1)
+```{r dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
+plot(check_panel)
 ```
 
 
@@ -157,9 +157,10 @@ check_rcs <- did_check(
 check_rcs$estimate
 ```
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5, out.width="70%", fig.align="center"}
-check_rcs$plot + ggplot2::theme(aspect.ratio=1)
+```{r dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
+plot(check_rcs)
 ```
+
 
 
 ```{r rcs_estimate}
@@ -256,7 +257,7 @@ check_sa$estimate
 ```
 
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5, fig.align="center", out.width="70%"}
+```{r dpi=250, fig.height = 3.5, fig.width = 5, fig.align="center", out.width="70%", eval=FALSE}
 check_sa$plot + ggplot2::theme(aspect.ratio=1)
 ```
 

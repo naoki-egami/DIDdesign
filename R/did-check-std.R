@@ -81,12 +81,14 @@ did_check_std <- function(
     )
   }
 
+  estimates <- as_tibble(bind_rows(estimates))
   ## --------------------------------------------
   ## generate a DID plot
   ## --------------------------------------------
-  gg <- did_std_plot(dat_did)
+  p1 <- did_std_plot(dat_did)
+  p2 <- did_sad_plot(estimates)
 
-  return(list(est = as_tibble(bind_rows(estimates)), plot = gg))
+  return(list(est = estimates, plot = list(p1, p2)))
 }
 
 
