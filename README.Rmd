@@ -76,7 +76,10 @@ check_panel <- did_check(
 )
 
 check_panel$estimate
-check_panel$plot + ggplot2::theme_bw()
+```
+
+```{r dpi=250, fig.height = 3.5}
+check_panel$plot
 ```
 
 
