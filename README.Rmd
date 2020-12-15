@@ -217,5 +217,5 @@ ggplot(as_tibble(summary(fit_sa)) %>% filter(estimator == "SA-Double-DID"),
   geom_point() +
   theme_bw() +
   ylim(-0.1, 0.1) +
-  labs(x = "Time", y = "SA-ATT")
+  labs(x = "Time", y = "SA-ATT", title = "Double DID Estimates")
 ```
