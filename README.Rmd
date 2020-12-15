@@ -125,7 +125,7 @@ ff_rcs <- did(
   data    = malesky2014,
   id_time = 'year',
   is_panel= FALSE,
-  option  = list(n_boot = 20, parallel = FALSE, id_cluster = "tinh", lead = 0)
+  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lead = 0)
 )
 ```
 
