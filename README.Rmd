@@ -225,9 +225,9 @@ require(ggplot2)
 plot_dat <- as_tibble(summary(fit_sa)) %>% filter(estimator == "SA-Double-DID")
 plot(plot_dat$lead, plot_dat$estimate, pch = 16,
      xlab = "Time", ylab = "SA-ATT", main = "Double DID Estimates",
-     xaxt = "n"
+     xaxt = "n", ylim = c(-0.1, 0.1)
    )
-axis(1, at = plot_dat$lead, labels = paste0("t=", plot_dat$lead)) 
+axis(1, at = plot_dat$lead, labels = paste0("t=", plot_dat$lead))
 for (i in 1:nrow(plot_dat)) {
   lines(c(i,i),
         c(plot_dat$estimate[i] - 1.96 * plot_dat$std.error[i],
