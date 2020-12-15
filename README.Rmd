@@ -45,13 +45,15 @@ Reference:
 	install_github("naoki-egami/DIDdesign", dependencies = TRUE)
 	```
 
+## Table of Contents
+
+1. Standard DID with Panel Data
+2. Standard DID with Repeated Cross-Section Data
+3. Staggered Adoption Design
+
+
+
 ## The Standard Difference-in-Differences Design with Panel Data
-
-
-
-
-
-
 
 ```{r, message=FALSE,warning=FALSE}
 ## load package
@@ -65,6 +67,7 @@ data(anzia2012)
 ### Step 1: Assess the parallel trends assumption
 
 ```{r}
+## check parallel trends
 set.seed(1234)
 check_panel <- did_check(
   formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
@@ -130,7 +133,7 @@ summary(fit_panel)
 
 
 
-## The Standard Difference-in-Differences Design with Repeated Cross-sectional Data
+## The Standard DID Design with Repeated Cross-sectional Data
 
 Sometimes, each period consists of different units, instead of repeated observations of the same units.
 `did()` can handle such "repeated cross-sectional" data by setting `is_panel = FALSE`.
@@ -140,6 +143,7 @@ As an example, we analyze `malesky2014` dataset (see `?malesky2014` for more det
 ## load data
 data(malesky2014)
 
+## check parallel trends
 set.seed(1234)
 check_rcs <- did_check(
   formula = transport ~ treatment + post_treat | factor(city),
@@ -149,7 +153,11 @@ check_rcs <- did_check(
   option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lag = 1)
 )
 
+## summary
 check_rcs$estimate
+```
+
+```{r dpi=250, fig.height = 3.5, fig.width = 5}
 check_rcs$plot
 ```
 
@@ -229,6 +237,30 @@ box(lwd = 1.1)
 ```
 
 As we can see in the above plot, states receive the treatment at different years ranging from 1965 at earliest to 1987 at latest (and some of the states never receive the treatment).
+
+
+## Step 1: Assess the pre-treatment parallel trends
+
+```{r}
+set.seed(1234)
+check_sa <- did_check(
+  formula = log_expenditure ~ treatment,
+  data    = paglayan2019,
+  id_unit = "id_subject",
+  id_time = "id_time",
+  design  = "sa",
+  option  = list(n_boot = 200, parallel = TRUE, thres = 1, lag = 1:5)
+)
+
+check_sa$estimate
+```
+
+
+```{r dpi=250, fig.height = 3.5, fig.width = 5}
+check_sa$plot
+```
+
+## Step 2: Estimate staggered-adoption average treatment effect
 
 `did()` function can handle the staggered adoption design by setting the `design` argument to `design = "SA"`.
 
