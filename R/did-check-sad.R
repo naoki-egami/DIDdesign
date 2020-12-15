@@ -176,10 +176,10 @@ did_sad_pattern <- function(data, treatment, Gmat) {
            treatment  = ifelse(.data$treatment == 1, "treated", "control"))
   gg <- ggplot(data, aes(x = id_time, y = id_subject, fill = !!sym(treatment))) +
     geom_tile() +
-    scale_fill_manual(values = c("gray50", '#1E88A8')) +
+    scale_fill_manual(values = c("lightgray", '#1E88A8')) +
     theme_bw() +
     theme(axis.text.x = element_blank(), axis.text.y = element_blank(),
-           axis.title.x = element_text(vjust = -5),  axis.ticks.x = element_blank()) +
+           axis.title.x = element_text(vjust = -4),  axis.ticks.x = element_blank()) +
     labs(x = "Time", y = "Unit", fill = "Status")
 
   return(list(plot = gg, dat_plot = data))
