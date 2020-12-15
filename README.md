@@ -59,7 +59,7 @@ check_panel$estimate
 ```
 
 ``` r
-check_panel$plot
+check_panel$plot + ggplot2::ylim(10.6, 10.7)
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />

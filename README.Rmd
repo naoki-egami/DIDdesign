@@ -78,8 +78,8 @@ check_panel <- did_check(
 check_panel$estimate
 ```
 
-```{r dpi=250, fig.height = 3.5}
-check_panel$plot
+```{r dpi=250, fig.height = 3.5, fig.width = 5}
+check_panel$plot + ggplot2::ylim(10.6, 10.7)
 ```
 
 

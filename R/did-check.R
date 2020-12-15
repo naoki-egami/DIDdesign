@@ -37,7 +37,7 @@ did_check <- function(
   ) %>%
   select(-.data$CI90_UB_ab, -.data$CI90_LB_ab)
 
-  out <- list(estimate = estimate, plot = fit$plot)
+  out <- list(estimate = estimate, plot = fit$plot$plot, dat_plot = fit$plot$dat_plot)
   class(out) <- c(class(out), "DIDdesign_check")
   return(out)
 }
@@ -136,16 +136,20 @@ did_check_std <- function(
 #' @param data A data object from \code{did_panel_data} or \code{did_rcs_data}
 #' @return A ggplot object
 #' @importFrom ggplot2 ggplot geom_line geom_point aes geom_vline labs theme_bw
-#' @importFrom dplyr %>% across group_by summarise mutate
+#' @importFrom dplyr %>% across group_by summarise mutate ungroup select
 did_std_plot <- function(data) {
-  gg <- data %>% group_by(.data$id_time_std, .data$Gi) %>%
-         summarise(across(.data$outcome, mean)) %>%
-         mutate(Group = ifelse(.data$Gi == 1, "Treated", "Control")) %>%
-         ggplot(aes(x = id_time_std, y = outcome, color = Group)) +
+  dat_plot <- data %>% group_by(.data$id_time_std, .data$Gi) %>%
+         summarise(across(.data$outcome, list(mean = mean, sd = sd))) %>%
+         mutate(group = ifelse(.data$Gi == 1, "Treated", "Control")) %>%
+         select(group, time_to_treat = id_time_std, outcome_mean, std.error = outcome_sd) %>%
+         mutate(CI90_UB = outcome_mean + qnorm(0.95) * std.error,
+                CI90_LB = outcome_mean - qnorm(0.95) * std.error) %>%
+         ungroup()
+  gg <- ggplot(dat_plot, aes(x = time_to_treat, y = outcome_mean, color = group)) +
           geom_vline(xintercept = 0) +  geom_line() + geom_point() +
           labs(x = "Time relative to treatment assignment", ylab = "Mean of the outcome") +
           theme_bw()
-  return(gg)
+  return(list(plot = gg, dat_plot = dat_plot))
 }
 
 #' Run a placebo regression
