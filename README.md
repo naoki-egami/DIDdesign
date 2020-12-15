@@ -197,9 +197,9 @@ summary(ff_rcs)
 #> # A tibble: 3 x 7
 #>   estimator   lead estimate std.error statistic p_value ddid_weight
 #>   <chr>      <dbl>    <dbl>     <dbl>     <dbl>   <dbl>       <dbl>
-#> 1 Double-DID     0    0.228    0.0773      2.95 0.00320      NA    
-#> 2 DID            0    0.101    0.0880      1.14 0.253        -0.871
-#> 3 sDID           0    0.169    0.119       1.42 0.156         1.87
+#> 1 Double-DID     0    0.239    0.0909     2.63  0.00842       NA   
+#> 2 DID            0    0.101    0.105      0.957 0.338         -1.04
+#> 3 sDID           0    0.169    0.138      1.22  0.221          2.04
 ```
 
 ## Staggered Adoption Design
