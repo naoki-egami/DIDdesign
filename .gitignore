@@ -6,3 +6,4 @@ inst/doc
 .DS_Store
 .Rapp.history
 dormant_code
+^README_cache$
