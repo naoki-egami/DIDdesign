@@ -71,6 +71,10 @@ plot(check_panel)
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" style="display: block; margin: auto;" />
 
+If a user wish to create custom figures, data used to generate the above
+plot are available via `check_panel$plot[[1]]$dat_plot` and
+`check_panel$plot[[2]]$dat_plot`.
+
 ### Step 2: Estimate the treatment effect with the double DID estimator
 
 ``` r
@@ -254,8 +258,10 @@ check_sa$estimate
 ```
 
 ``` r
-check_sa$plot + ggplot2::theme(aspect.ratio=1)
+plot(check_sa)
 ```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" />
 
 ## Step 2: Estimate staggered-adoption average treatment effect
 
