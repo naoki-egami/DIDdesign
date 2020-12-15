@@ -85,7 +85,8 @@ check_panel$estimate
 plot(check_panel)
 ```
 
-
+If a user wish to create custom figures, data used to generate the above plot are available via
+`check_panel$plot[[1]]$dat_plot` and `check_panel$plot[[2]]$dat_plot`.
 
 ### Step 2: Estimate the treatment effect with the double DID estimator
 
@@ -257,8 +258,8 @@ check_sa$estimate
 ```
 
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5, fig.align="center", out.width="70%", eval=FALSE}
-check_sa$plot + ggplot2::theme(aspect.ratio=1)
+```{r dpi=250, fig.height = 3.5, fig.width = 5, fig.align="center", out.width="70%"}
+plot(check_sa)
 ```
 
 ## Step 2: Estimate staggered-adoption average treatment effect

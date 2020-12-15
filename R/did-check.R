@@ -52,7 +52,7 @@ did_check <- function(
 plot.DIDdesign_check <- function(obj) {
 
   if (attr(obj, "design") == "sa") {
-
+    pp <- obj$plot[[1]]$plot + theme(aspect.ratio=1)
   } else {
     p1 <- obj$plot[[1]]$plot + theme(aspect.ratio=1)
     p2 <- obj$plot[[2]]$plot + theme(aspect.ratio=1)

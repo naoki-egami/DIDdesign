@@ -178,6 +178,5 @@ did_std_plot <- function(data) {
           labs(x = "Time relative to treatment assignment", y = "Mean Outcome", color = "Group") +
           scale_color_manual(values = c("gray50", '#1E88A8')) +
           theme_bw()
-
   return(list(plot = gg, dat_plot = dat_plot))
 }
