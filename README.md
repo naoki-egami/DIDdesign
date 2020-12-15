@@ -56,10 +56,13 @@ check_panel$estimate
 #> 1 -0.00361      1   0.00265  -0.00796   0.00796
 #> 2  0.00326      2   0.00231  -0.00705   0.00705
 #> 3 -0.000434     3   0.00271  -0.00489   0.00489
-check_panel$plot + ggplot2::theme_bw()
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+``` r
+check_panel$plot + ggplot2::ylim(10.6, 10.7)
+```
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 ### Step 2: Estimate the treatment effect with the double DID estimator
 
@@ -255,4 +258,4 @@ head(summary(fit_sa))
 #> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332      0.773
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
