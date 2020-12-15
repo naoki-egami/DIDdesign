@@ -5,7 +5,7 @@
 #' @param data A long form panel data.
 #' @param id_subject A character variable indicating subject index.
 #' @param id_time A character variable indicating time index.
-#' @importFrom dplyr %>% as_tibble group_by
+#' @importFrom dplyr %>% as_tibble group_by arrange
 #' @importFrom tibble tibble
 #' @importFrom future.apply future_lapply
 #' @importFrom future plan multicore sequential
@@ -167,7 +167,7 @@ compute_did <- function(fm_prep, dat_panel, outcome, treatment,
       ## subset the data
       dat_use <- dat_panel %>%
         filter(.data$id_subject %in% id_subj_use[[i]]) %>%
-        filter(.data$id_time == (id_time_use[[i]]) |  ## this part is wrong! Lead only applies to the outcome
+        filter(.data$id_time == (id_time_use[[i]]) |
                .data$id_time == id_time_use[[i]]-1 |
                .data$id_time == id_time_use[[i]]-2)
 

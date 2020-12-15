@@ -26,6 +26,12 @@ Reference:
     install_github("naoki-egami/DIDdesign", dependencies = TRUE)
     ```
 
+## Table of Contents
+
+1.  Standard DID with Panel Data
+2.  Standard DID with Repeated Cross-Section Data
+3.  Staggered Adoption Design
+
 ## The Standard Difference-in-Differences Design with Panel Data
 
 ``` r
@@ -39,6 +45,7 @@ data(anzia2012)
 ### Step 1: Assess the parallel trends assumption
 
 ``` r
+## check parallel trends
 set.seed(1234)
 check_panel <- did_check(
   formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
@@ -132,7 +139,7 @@ summary(fit_panel)
 
 `summary()` function can be used to view estimates.
 
-## The Standard Difference-in-Differences Design with Repeated Cross-sectional Data
+## The Standard DID Design with Repeated Cross-sectional Data
 
 Sometimes, each period consists of different units, instead of repeated
 observations of the same units. `did()` can handle such “repeated
@@ -144,6 +151,7 @@ this dataset).
 ## load data
 data(malesky2014)
 
+## check parallel trends
 set.seed(1234)
 check_rcs <- did_check(
   formula = transport ~ treatment + post_treat | factor(city),
@@ -153,15 +161,19 @@ check_rcs <- did_check(
   option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lag = 1)
 )
 
+## summary
 check_rcs$estimate
 #> # A tibble: 1 x 5
 #>   estimate   lag std.error EqCI95_LB EqCI95_UB
 #>      <dbl> <dbl>     <dbl>     <dbl>     <dbl>
 #> 1  -0.0609     1    0.0485    -0.141     0.141
+```
+
+``` r
 check_rcs$plot
 ```
 
-<img src="man/figures/README-rcs-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
 ``` r
 ## estimate ATT
@@ -217,6 +229,38 @@ As we can see in the above plot, states receive the treatment at
 different years ranging from 1965 at earliest to 1987 at latest (and
 some of the states never receive the treatment).
 
+## Step 1: Assess the pre-treatment parallel trends
+
+``` r
+set.seed(1234)
+check_sa <- did_check(
+  formula = log_expenditure ~ treatment,
+  data    = paglayan2019,
+  id_unit = "id_subject",
+  id_time = "id_time",
+  design  = "sa",
+  option  = list(n_boot = 200, parallel = TRUE, thres = 1, lag = 1:5)
+)
+
+check_sa$estimate
+#> # A tibble: 5 x 5
+#>   estimate   lag std.error EqCI95_LB EqCI95_UB
+#>      <dbl> <int>     <dbl>     <dbl>     <dbl>
+#> 1 -0.00267     1   0.00864   -0.0169    0.0169
+#> 2 -0.0124      2   0.00886   -0.0270    0.0270
+#> 3  0.00227     3   0.0110    -0.0204    0.0204
+#> 4 -0.00758     4   0.0119    -0.0271    0.0271
+#> 5 -0.0107      5   0.00894   -0.0254    0.0254
+```
+
+``` r
+check_sa$plot
+```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+
+## Step 2: Estimate staggered-adoption average treatment effect
+
 `did()` function can handle the staggered adoption design by setting the
 `design` argument to `design = "SA"`.
 
@@ -258,4 +302,4 @@ head(summary(fit_sa))
 #> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332      0.773
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
