@@ -222,13 +222,15 @@ summary(fit_sa)
 ```{r echo=FALSE, out.width="100%", dpi=250}
 require(ggplot2)
 
-ggplot(as_tibble(summary(fit_sa)) %>% filter(estimator == "SA-Double-DID"),
-       aes(x = lead, y = estimate)) +
-  geom_hline(yintercept = 0, color = 'red', linetype = 'dashed') +
-  geom_errorbar(aes(ymin = estimate - 1.96 * std.error,
-                    ymax = estimate + 1.96 * std.error), width = 0.1) +
-  geom_point() +
-  theme_bw() +
-  ylim(-0.1, 0.1) +
-  labs(x = "Time", y = "SA-ATT", title = "Double DID Estimates")
+plot_dat <- as_tibble(summary(fit_sa)) %>% filter(estimator == "SA-Double-DID")
+plot(plot_dat$lead, plot_dat$estimate, pch = 16,
+     xlab = "Time", ylab = "SA-ATT", main = "Double DID Estimates",
+     xaxt = "n"
+   )
+axis(1, at = plot_dat$lead, labels = paste0("t=", plot_dat$lead)) 
+for (i in 1:nrow(plot_dat)) {
+  lines(c(i,i),
+        c(plot_dat$estimate[i] - 1.96 * plot_dat$std.error[i],
+          plot_dat$estimate[i] + 1.96 * plot_dat$std.error[i]))
+}
 ```
