@@ -50,7 +50,7 @@ fit_panel <- did(
   id_time  = "year",
   design   = "did",
   is_panel = TRUE,
-  option   = list(n_boot = 100, parallel = TRUE, lead = 0:2)
+  option   = list(n_boot = 200, parallel = TRUE, lead = 0:2)
 )
 ```
 
@@ -116,53 +116,66 @@ ff_rcs <- did(
  data    = malesky2014,
  id_time = 'year',
  is_panel= FALSE,
- option  = list(n_boot = 10, parallel = TRUE, id_cluster = "tinh", lead = 0)
+ option  = list(n_boot = 20, parallel = TRUE, id_cluster = "tinh", lead = 0)
 )
 
 summary(ff_rcs)
-#> # A tibble: 3 x 7
-#>   estimator   lead estimate std.error statistic  p_value ddid_weight
-#>   <chr>      <dbl>    <dbl>     <dbl>     <dbl>    <dbl>       <dbl>
-#> 1 Double-DID     0    0.262    0.0692      3.78 0.000154       NA   
-#> 2 DID            0    0.101    0.0940      1.07 0.284          -1.37
-#> 3 sDID           0    0.169    0.130       1.30 0.194           2.37
 ```
 
 ## Staggered Adoption Design
 
 `DIDdesign` supports the staggered adoption design where units receive
-the treatment at different periods of time.
+the treatment at different periods of time. As an example, we analyze
+`paglayan2019` dataset in the package (see `?paglayan2019` for more
+details about this dataset).
 
 ``` r
 ## data
 require(dplyr)
 require(tibble)
 
+## format dataset
 paglayan2019 <- paglayan2019 %>%
     filter(!(state %in% c("WI", "DC"))) %>%
     mutate(id_time = year,
-                 id_subject = as.numeric(as.factor(state)),
-                 log_expenditure = log(pupil_expenditure + 1),
-                 log_salary      = log(teacher_salary + 1))
+         id_subject = as.numeric(as.factor(state)),
+         log_expenditure = log(pupil_expenditure + 1),
+         log_salary      = log(teacher_salary + 1))
 ```
-
-    #> Loading required package: tidyr
-    #> Loading required package: stringr
 
 <img src="man/figures/README-sa_plot-1.png" width="100%" />
 
+As we can see in the above plot, states receive the treatment at
+different years ranging from 1965 at earliest to 1987 at latest (and
+some of the states never receive the treatment).
+
+`did()` function can handle the staggered adoption design by setting the
+`design` argument to `design = "SA"`.
+
 ``` r
-## estimate
+## estimate time-weighted SA-ATE
 set.seed(1234)
 fit_sa <- did(
-  log_expenditure ~ treatment,
+  formula = log_expenditure ~ treatment,
   data    = paglayan2019,
   id_unit = "id_subject",
   id_time = "id_time",
   design  = "sa",
-  option  = list(n_boot = 20, lead = 0:5, thres = 2, parallel = FALSE)
+  option  = list(n_boot = 200, lead = 0:5, thres = 2, parallel = TRUE)
 )
 ```
+
+In addition to options described in the previous section, there is one
+additional argument specific to the staggered adoption design.
+
+  - `thres` parameter in the option control the minimum number of
+    treated units for a particular time to be included in the treatment
+    effect estimation. For example if `thres = 2`, the effect for
+    Tennessee will be removed from the time-average effect because it’s
+    the only unit who received the treatment in 1972 (i.e., the number
+    of treated units in 1972 is less than the threshold).
+
+<!-- end list -->
 
 ``` r
 summary(fit_sa)
@@ -188,3 +201,5 @@ summary(fit_sa)
 #> 17 SA-DID            5  0.00930     0.0143    0.651   0.515       0.407 
 #> 18 SA-sDID           5 -0.00421     0.0161   -0.261   0.794       0.593
 ```
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="50%" />

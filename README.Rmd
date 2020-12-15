@@ -12,7 +12,9 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%",
-  cache = TRUE  
+  cache = TRUE,
+  warning = FALSE,
+  message = FALSE
 )
 ```
 
@@ -73,7 +75,7 @@ fit_panel <- did(
   id_time  = "year",
   design   = "did",
   is_panel = TRUE,
-  option   = list(n_boot = 100, parallel = TRUE, lead = 0:2)
+  option   = list(n_boot = 200, parallel = TRUE, lead = 0:2)
 )
 ```
 
@@ -108,7 +110,7 @@ summary(fit_panel)
 
 ### Repeated Cross-sectional Data
 
-```{r, rcs}
+```{r, rcs, eval=FALSE}
 data(malesky2014)
 
 set.seed(1234)
@@ -117,7 +119,7 @@ ff_rcs <- did(
  data    = malesky2014,
  id_time = 'year',
  is_panel= FALSE,
- option  = list(n_boot = 10, parallel = TRUE, id_cluster = "tinh", lead = 0)
+ option  = list(n_boot = 20, parallel = TRUE, id_cluster = "tinh", lead = 0)
 )
 
 summary(ff_rcs)
@@ -127,21 +129,23 @@ summary(ff_rcs)
 ## Staggered Adoption Design
 
 `DIDdesign` supports the staggered adoption design where units receive the treatment at different periods of time.
+As an example, we analyze `paglayan2019` dataset in the package (see `?paglayan2019` for more details about this dataset).
 
 ```{r sa_data, warning=FALSE, message=FALSE}
 ## data
 require(dplyr)
 require(tibble)
 
+## format dataset
 paglayan2019 <- paglayan2019 %>%
 	filter(!(state %in% c("WI", "DC"))) %>%
 	mutate(id_time = year,
-				 id_subject = as.numeric(as.factor(state)),
-				 log_expenditure = log(pupil_expenditure + 1),
-				 log_salary      = log(teacher_salary + 1))
+         id_subject = as.numeric(as.factor(state)),
+         log_expenditure = log(pupil_expenditure + 1),
+         log_salary      = log(teacher_salary + 1))
 ```
 
-```{r sa_plot, echo=FALSE, dpi=250}
+```{r sa_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE}
 require(tidyr)
 require(stringr)
 
@@ -173,22 +177,45 @@ abline(h = seq(0, 1, length.out = nrow(treatment_variation)) + diff_h/2, lty = 1
 abline(v = seq(0, 1, length.out = ncol(treatment_variation)) + diff_v/ 2, lty = 1, col = 'white', lwd = 0.3)
 legend("topright", legend = c("Treated", "Control"), fill = c('#1E88A8', 'lightgray'), bg = 'white', cex = 0.8)
 box(lwd = 1.1)
-
 ```
 
+As we can see in the above plot, states receive the treatment at different years ranging from 1965 at earliest to 1987 at latest (and some of the states never receive the treatment).
+
+`did()` function can handle the staggered adoption design by setting the `design` argument to `design = "SA"`.
+
 ```{r sa_estimation}
-## estimate
+## estimate time-weighted SA-ATE
 set.seed(1234)
 fit_sa <- did(
-  log_expenditure ~ treatment,
+  formula = log_expenditure ~ treatment,
   data    = paglayan2019,
   id_unit = "id_subject",
   id_time = "id_time",
   design  = "sa",
-  option  = list(n_boot = 20, lead = 0:5, thres = 2, parallel = FALSE)
+  option  = list(n_boot = 200, lead = 0:5, thres = 2, parallel = TRUE)
 )
 ```
 
+In addition to options described in the previous section, there is one additional argument specific to the staggered adoption design.
+
+- `thres` parameter in the option control the minimum number of treated units for a particular time to be included in the treatment effect estimation. For example if `thres = 2`, the effect for Tennessee will be removed from the time-average effect because it's the only unit who received the treatment in 1972 (i.e., the number of treated units in 1972 is less than the threshold).
+
+
 ```{r sa_summary}
 summary(fit_sa)
+```
+
+
+```{r echo=FALSE, out.width="50%", dpi=250}
+require(ggplot2)
+
+ggplot(as_tibble(summary(fit_sa)) %>% filter(estimator == "SA-Double-DID"),
+       aes(x = lead, y = estimate)) +
+  geom_hline(yintercept = 0, color = 'red', linetype = 'dashed') +
+  geom_errorbar(aes(ymin = estimate - 1.96 * std.error,
+                    ymax = estimate + 1.96 * std.error), width = 0.1) +
+  geom_point() +
+  theme_bw() +
+  ylim(-0.1, 0.1) +
+  labs(x = "Time", y = "SA-ATT")
 ```
