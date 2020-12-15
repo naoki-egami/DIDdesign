@@ -6,4 +6,4 @@
 ^\.github$
 ^dormant-code$
 ^LICENSE$
-
+^README\.Rmd$

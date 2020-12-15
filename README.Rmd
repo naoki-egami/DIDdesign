@@ -2,12 +2,18 @@
 title: "DIDdesign"
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
 ---
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=TRUE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  cache = TRUE  
+)
 ```
 
 # DIDdesign: Double Difference-in-Differences
@@ -60,7 +66,7 @@ data(anzia2012)
 ## estimate treatment effect
 set.seed(1234)
 fit_panel <- did(
-  formula  = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper + 
+  formula  = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
                                           ami_pc + asian_pc + black_pc + hisp_pc,
   data     = anzia2012,
   id_unit  = "district",
@@ -83,10 +89,10 @@ fit_panel <- did(
 - `design`: Design option. It should be `"did"` when the standard DID design is used.
 - `is_panel`: A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeately overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data.
 - `option`: A list of options.
-   - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. 
+   - `n_boot`: Number of bootstrap iterations to estimate weighting matrix.
    - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package.
    - `lead`: A vector of non-negative lead parameter. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`.
-  
+
 
 
 ```{r}
@@ -120,17 +126,57 @@ summary(ff_rcs)
 
 ## Staggered Adoption Design
 
+`DIDdesign` supports the staggered adoption design where units receive the treatment at different periods of time.
 
-```{r sa}
-## data 
+```{r sa_data, warning=FALSE, message=FALSE}
+## data
 require(dplyr)
+require(tibble)
+
 paglayan2019 <- paglayan2019 %>%
-	filter(!(state %in% c("WI", "DC"))) %>%	
+	filter(!(state %in% c("WI", "DC"))) %>%
 	mutate(id_time = year,
 				 id_subject = as.numeric(as.factor(state)),
 				 log_expenditure = log(pupil_expenditure + 1),
 				 log_salary      = log(teacher_salary + 1))
+```
 
+```{r sa_plot, echo=FALSE, dpi=250}
+require(tidyr)
+require(stringr)
+
+treatment_variation <- paglayan2019 %>%
+  select(state, year, treatment) %>%
+  group_by(state) %>%
+  mutate(treatment_sum = sum(treatment)) %>%
+  arrange(desc(treatment_sum), state, year) %>%
+  select(-treatment_sum) %>%
+  pivot_wider(id_cols = "state", names_prefix = "year",
+              names_from = year, values_from = treatment) %>%
+  ungroup() %>%  column_to_rownames(var = "state") %>%
+  data.matrix()
+
+
+## plot
+par(mar = c(2, 2, 0.5, 0.5))
+image(t(apply(treatment_variation, 2, rev)), col = c("lightgray", '#1E88A8'),
+      xaxt = "n", yaxt = "n")
+axis(1, at = seq(0, 1, length.out = ncol(treatment_variation)),
+        labels = str_remove(colnames(treatment_variation), "year"),
+        las = 2, cex.axis = 0.8, tick = FALSE, mgp = c(0, 0, 0.2))
+axis(2, at = seq(0, 1, length.out = nrow(treatment_variation)),
+        labels = rownames(treatment_variation),
+        las = 2, cex.axis = 0.65, tick = FALSE, mgp = c(0, 0, 0.2))
+diff_h <- min(diff(seq(0, 1, length.out = nrow(treatment_variation))))
+diff_v <- min(diff(seq(0, 1, length.out = ncol(treatment_variation))))
+abline(h = seq(0, 1, length.out = nrow(treatment_variation)) + diff_h/2, lty = 1, col = 'white', lwd = 0.3)
+abline(v = seq(0, 1, length.out = ncol(treatment_variation)) + diff_v/ 2, lty = 1, col = 'white', lwd = 0.3)
+legend("topright", legend = c("Treated", "Control"), fill = c('#1E88A8', 'lightgray'), bg = 'white', cex = 0.8)
+box(lwd = 1.1)
+
+```
+
+```{r sa_estimation}
 ## estimate
 set.seed(1234)
 fit_sa <- did(
@@ -141,6 +187,8 @@ fit_sa <- did(
   design  = "sa",
   option  = list(n_boot = 20, lead = 0:5, thres = 2, parallel = FALSE)
 )
+```
 
+```{r sa_summary}
 summary(fit_sa)
 ```
