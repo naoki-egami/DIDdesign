@@ -157,7 +157,7 @@ require(tibble)
 
 ## format dataset
 paglayan2019 <- paglayan2019 %>%
-    filter(!(state %in% c("WI", "DC"))) %>%
+  filter(!(state %in% c("WI", "DC"))) %>%
   mutate(id_time = year,
          id_subject = as.numeric(as.factor(state)),
          log_expenditure = log(pupil_expenditure + 1),
