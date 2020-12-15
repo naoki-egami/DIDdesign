@@ -2,22 +2,22 @@
 #'
 #' @param dat_panel A class of \code{panelr} object.
 #' @importFrom rlang sym !!
-#' @importFrom dplyr %>% select mutate case_when
+#' @importFrom dplyr %>% select mutate case_when group_by ungroup
 #' @importFrom tidyr pivot_wider
 #' @keywords internal
 create_Gmat <- function(dat_panel, treatment) {
   Gmat <- dat_panel %>%
-    group_by(id_subject) %>%
-    mutate(g_sum = max(id_time) - sum(!!sym(treatment)) + 1) %>%
+    group_by(.data$id_subject) %>%
+    mutate(g_sum = max(.data$id_time) - sum(!!sym(treatment)) + 1) %>%
     mutate(g = case_when(
-      g_sum > id_time ~ 0,
-      g_sum == id_time ~ 1,
-      g_sum < id_time ~ -1
+      .data$g_sum > .data$id_time ~ 0,
+      .data$g_sum == .data$id_time ~ 1,
+      .data$g_sum < .data$id_time ~ -1
     )) %>%
-    select(g, id_subject, id_time) %>%
-    pivot_wider(id_cols = id_subject, names_from = id_time, values_from = g) %>%
+    select(.data$g, .data$id_subject, .data$id_time) %>%
+    pivot_wider(id_cols = .data$id_subject, names_from = .data$id_time, values_from = .data$g) %>%
     ungroup() %>%
-    select(-id_subject) %>%
+    select(-.data$id_subject) %>%
     data.matrix()
 
   return(Gmat)
