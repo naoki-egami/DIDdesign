@@ -28,7 +28,7 @@ did_panel_data <- function(
     select(all_of(var_select)) %>%
     rename(outcome = !!sym(var_outcome), treatment = !!sym(var_treat),
            id_unit = !!sym(id_unit), id_time = !!sym(id_time)) %>%
-    mutate(id_time = as.numeric(as.factor(id_time)))
+    mutate(id_time = as.numeric(as.factor(.data$id_time)))
 
 
   ## treatment info

@@ -142,7 +142,6 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
 
 #' Estimate DID and sDID
 #' @keywords internal
-#' @importFrom plm plm
 #' @importFrom dplyr lag bind_rows filter select left_join
 #' @importFrom rlang !! sym
 #' @importFrom purrr map_dbl
@@ -167,22 +166,22 @@ compute_did <- function(fm_prep, dat_panel, outcome, treatment,
       ## -------------------------------
       ## subset the data
       dat_use <- dat_panel %>%
-        filter(id_subject %in% id_subj_use[[i]]) %>%
-        filter(id_time == (id_time_use[[i]]) |  ## this part is wrong! Lead only applies to the outcome
-               id_time == id_time_use[[i]]-1 |
-               id_time == id_time_use[[i]]-2)
+        filter(.data$id_subject %in% id_subj_use[[i]]) %>%
+        filter(.data$id_time == (id_time_use[[i]]) |  ## this part is wrong! Lead only applies to the outcome
+               .data$id_time == id_time_use[[i]]-1 |
+               .data$id_time == id_time_use[[i]]-2)
 
       if (max(lead) > 0) {
         ## handle lead cases
         treatment_info <- dat_panel %>%
-          filter(id_subject %in% id_subj_use[[i]]) %>%
-          filter(id_time == id_time_use[[i]]) %>%
-          select(id_subject, !!sym(treatment))
+          filter(.data$id_subject %in% id_subj_use[[i]]) %>%
+          filter(.data$id_time == id_time_use[[i]]) %>%
+          select(.data$id_subject, !!sym(treatment))
 
         outcome_lead <- dat_panel %>%
-          filter(id_subject %in% id_subj_use[[i]]) %>%
-          filter(id_time <= (id_time_use[[i]] + max(lead)) &
-                 id_time >= (id_time_use[[i]] + max(1, min(lead)))) %>%
+          filter(.data$id_subject %in% id_subj_use[[i]]) %>%
+          filter(.data$id_time <= (id_time_use[[i]] + max(lead)) &
+                 .data$id_time >= (id_time_use[[i]] + max(1, min(lead)))) %>%
           select(-!!sym(treatment)) %>%
           left_join(treatment_info, by = 'id_subject')
 

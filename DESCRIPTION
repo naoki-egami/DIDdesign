@@ -18,14 +18,13 @@ RoxygenNote: 7.1.1
 Imports:
     cli,
     crayon,
-    Formula,
     dplyr,
-    plm,
-    tidyr,
-    rlang,
+    Formula,
     future,
     future.apply,
     purrr,
+    tidyr,
+    rlang,
     tibble
 Suggests:
     testthat,
