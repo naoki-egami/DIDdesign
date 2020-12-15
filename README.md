@@ -13,9 +13,8 @@ Authors:
 
 Reference:
 
-  - Egami and Yamauchi (2019) “How to Improve the
-    Difference-in-Differences Design with Multiple Pre-treatment
-    Periods.”
+  - Egami and Yamauchi (2019) “Using Multiple Pre-treatment Periods to
+    Improve Difference-in-Differences and Staggered Adoption Designs.”
 
 ## Installation Instructions:
 
@@ -107,19 +106,41 @@ summary(fit_panel)
 
 ### Repeated Cross-sectional Data
 
+Sometimes, each period consists of different units, instead of repeated
+observations of the same units. `did()` can handle such “repeated
+cross-sectional” data by setting `is_panel = FALSE`. As an example, we
+analyze `malesky2014` dataset (see `?malesky2014` for more details on
+this dataset).
+
 ``` r
+## load data
 data(malesky2014)
 
+## estimate ATT
 set.seed(1234)
 ff_rcs <- did(
- formula = transport ~ treatment + post_treat | factor(city),
- data    = malesky2014,
- id_time = 'year',
- is_panel= FALSE,
- option  = list(n_boot = 20, parallel = TRUE, id_cluster = "tinh", lead = 0)
+  formula = transport ~ treatment + post_treat | factor(city),
+  data    = malesky2014,
+  id_time = 'year',
+  is_panel= FALSE,
+  option  = list(n_boot = 20, parallel = FALSE, id_cluster = "tinh", lead = 0)
 )
+```
 
+  - `formula` now includes `treatment` variable as well as the
+    post-treatment time indicator.
+  - `id_cluster`: A variable used to cluster the standard errors.
+
+<!-- end list -->
+
+``` r
 summary(ff_rcs)
+#> # A tibble: 3 x 7
+#>   estimator   lead estimate std.error statistic p_value ddid_weight
+#>   <chr>      <dbl>    <dbl>     <dbl>     <dbl>   <dbl>       <dbl>
+#> 1 Double-DID     0    0.228    0.0773      2.95 0.00320      NA    
+#> 2 DID            0    0.101    0.0880      1.14 0.253        -0.871
+#> 3 sDID           0    0.169    0.119       1.42 0.156         1.87
 ```
 
 ## Staggered Adoption Design
@@ -137,7 +158,7 @@ require(tibble)
 ## format dataset
 paglayan2019 <- paglayan2019 %>%
     filter(!(state %in% c("WI", "DC"))) %>%
-    mutate(id_time = year,
+  mutate(id_time = year,
          id_subject = as.numeric(as.factor(state)),
          log_expenditure = log(pupil_expenditure + 1),
          log_salary      = log(teacher_salary + 1))
