@@ -243,7 +243,7 @@ As we can see in the above plot, states receive the treatment at different years
 
 ## Step 1: Assess the pre-treatment parallel trends
 
-```{r}
+```{r sa_check}
 set.seed(1234)
 check_sa <- did_check(
   formula = log_expenditure ~ treatment,
@@ -254,13 +254,16 @@ check_sa <- did_check(
   option  = list(n_boot = 200, parallel = TRUE, thres = 1, lag = 1:5)
 )
 
+## view estimates
 check_sa$estimate
 ```
 
 
-```{r dpi=250, fig.height = 3.5, fig.width = 5, fig.align="center", out.width="70%"}
+
+```{r dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
 plot(check_sa)
 ```
+
 
 ## Step 2: Estimate staggered-adoption average treatment effect
 

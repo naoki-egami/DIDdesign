@@ -72,8 +72,9 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
   ## --------------------------------------
   ## plot
   ## --------------------------------------
-  gg <- did_sad_plot(estimates)
-  return(list(est = estimates, plot = list(gg)))
+  p1 <- did_sad_plot(estimates)
+  p2 <- did_sad_pattern(dat_panel, treatment, attr(did_placebo_est, "Gmat"))
+  return(list(est = estimates, plot = list(p1, p2)))
 }
 
 
@@ -122,6 +123,7 @@ did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
     estimates[i] <- sum( tmp * (w_use / sum(w_use)) )
   }
   names(estimates) <- option$lag
+  attr(estimates, "Gmat") <- Gmat
   return(estimates)
 }
 
@@ -158,4 +160,27 @@ did_sad_plot <- function(data) {
   }
 
   return(list(plot = gg, dat_plot = dat_plot))
+}
+
+
+#' Generate a pattern plot
+#' @importFrom ggplot2 ggplot aes geom_tile scale_fill_manual theme_bw labs theme element_blank element_text
+#' @importFrom dplyr %>% mutate
+#' @importFrom rlang !! sym
+#' @keywords internal
+did_sad_pattern <- function(data, treatment, Gmat) {
+  treat_timing <- order(apply(Gmat, 1, function(x) ifelse(sum(x == 1) >= 1, which(x == 1), Inf)),
+                        decreasing = TRUE)
+  data <- data %>%
+    mutate(id_subject = factor(.data$id_subject, levels = treat_timing),
+           treatment  = ifelse(.data$treatment == 1, "treated", "control"))
+  gg <- ggplot(data, aes(x = id_time, y = id_subject, fill = !!sym(treatment))) +
+    geom_tile() +
+    scale_fill_manual(values = c("gray50", '#1E88A8')) +
+    theme_bw() +
+    theme(axis.text.x = element_blank(), axis.text.y = element_blank(),
+           axis.title.x = element_text(vjust = -5),  axis.ticks.x = element_blank()) +
+    labs(x = "Time", y = "Unit", fill = "Status")
+
+  return(list(plot = gg, dat_plot = data))
 }

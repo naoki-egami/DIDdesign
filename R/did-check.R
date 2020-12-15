@@ -45,17 +45,16 @@ did_check <- function(
 
 
 
-#' Plot
+#' Plot output from did_check 
 #' @export
 #' @import patchwork
 #' @importFrom ggplot2 theme
 plot.DIDdesign_check <- function(obj) {
-
+  p1 <- obj$plot[[1]]$plot + theme(aspect.ratio=1)
+  p2 <- obj$plot[[2]]$plot + theme(aspect.ratio=1)
   if (attr(obj, "design") == "sa") {
-    pp <- obj$plot[[1]]$plot + theme(aspect.ratio=1)
+    pp <- p1 + p2
   } else {
-    p1 <- obj$plot[[1]]$plot + theme(aspect.ratio=1)
-    p2 <- obj$plot[[2]]$plot + theme(aspect.ratio=1)
     pp <- p2 + p1
   }
   return(pp)

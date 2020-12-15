@@ -2,10 +2,10 @@
 % Please edit documentation in R/did-check.R
 \name{plot.DIDdesign_check}
 \alias{plot.DIDdesign_check}
-\title{Plot}
+\title{Plot output from did_check}
 \usage{
 \method{plot}{DIDdesign_check}(obj)
 }
 \description{
-Plot
+Plot output from did_check
 }

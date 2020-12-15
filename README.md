@@ -246,6 +246,7 @@ check_sa <- did_check(
   option  = list(n_boot = 200, parallel = TRUE, thres = 1, lag = 1:5)
 )
 
+## view estimates
 check_sa$estimate
 #> # A tibble: 5 x 5
 #>   estimate   lag std.error EqCI95_LB EqCI95_UB
@@ -261,7 +262,7 @@ check_sa$estimate
 plot(check_sa)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## Step 2: Estimate staggered-adoption average treatment effect
 
@@ -306,4 +307,4 @@ head(summary(fit_sa))
 #> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332      0.773
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="80%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="80%" />
