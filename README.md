@@ -202,4 +202,4 @@ summary(fit_sa)
 #> 18 SA-sDID           5 -0.00421     0.0161   -0.261   0.794       0.593
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="50%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />

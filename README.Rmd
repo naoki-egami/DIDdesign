@@ -206,7 +206,7 @@ summary(fit_sa)
 ```
 
 
-```{r echo=FALSE, out.width="50%", dpi=250}
+```{r echo=FALSE, out.width="100%", dpi=250}
 require(ggplot2)
 
 ggplot(as_tibble(summary(fit_sa)) %>% filter(estimator == "SA-Double-DID"),
