@@ -233,7 +233,7 @@ plot(plot_dat$lead, plot_dat$estimate, type = 'o', pch = 16,
      xaxt = "n", ylim = c(-0.1, 0.1), las = 1
    )
 abline(h = 0, col = 'gray', lty = 3, lwd = 1.5)
-axis(1, at = plot_dat$lead, labels = paste0("t = ", plot_dat$lead), cex.axis = 0.9)
+axis(1, at = plot_dat$lead, labels = paste0("t=", plot_dat$lead), cex.axis = 0.9)
 polygon(
   c(plot_dat$lead, rev(plot_dat$lead)),
   c(plot_dat$CI90_UB, rev(plot_dat$CI90_LB)),
