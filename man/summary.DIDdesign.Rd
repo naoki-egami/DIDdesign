@@ -4,10 +4,10 @@
 \alias{summary.DIDdesign}
 \title{Summarize DIDdesign output}
 \usage{
-\method{summary}{DIDdesign}(object)
+\method{summary}{DIDdesign}(object, ...)
 }
 \arguments{
-\item{object}{}
+\item{object}{An object of \code{DIDdesign} class.}
 }
 \description{
 Summarize DIDdesign output

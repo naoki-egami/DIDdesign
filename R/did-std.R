@@ -80,6 +80,8 @@ ddid_fit <- function(formula, data, lead = 0) {
 #' @importFrom future.apply future_lapply
 #' @importFrom future plan multicore sequential
 #' @importFrom purrr map
+#' @importFrom dplyr pull
+#' @importFrom rlang !! sym
 #' @keywords internal
 did_compute_weights <- function(
   fm_prep, dat_did, var_cluster, is_panel, option
@@ -89,12 +91,12 @@ did_compute_weights <- function(
   if (is.null(var_cluster)) {
     id_cluster_vec <- 1:nrow(dat_did)
   } else {
-    id_cluster_vec <- pull(dat_did, !!sym(var_cluster)) %>% unique()
+    id_cluster_vec <- unique(pull(dat_did, !!sym(var_cluster)))
   }
 
-  ##
+  ## --------------------------------------------
   ## bootstrap to compute weights
-  ##
+  ## --------------------------------------------
 
   ## setup worker
   if (isTRUE(option$parallel)) {
@@ -103,13 +105,17 @@ did_compute_weights <- function(
     plan(sequential)
   }
 
-  ## point estimates
   ## use future_lapply to implement the bootstrap parallel
   est_boot <- future_lapply(1:option$n_boot, function(i) {
-    ddid_boot(fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead)
+    tryCatch({
+      ddid_boot(fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead)
+    }, error = function(e) {
+      NULL
+    })
   }, future.seed = TRUE)
+  est_boot <- est_boot[lengths(est_boot) != 0]
 
-
+  ## convert VCVO to weights
   weights_save <- vector("list", length = length(option$lead))
   for (ll in 1:length(option$lead)) {
     tmp <- do.call(rbind, map(est_boot, ~.x[[ll]]))
