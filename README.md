@@ -62,7 +62,7 @@ fit_panel <- did(
         for units who are treated. See the example for how the treatment
         variable should be coded.
       - `covariates` can be omitted as `outcome ~ treatment`.
-  - `data`: A data frame. This can be either `data.frame` or `tibble`/
+  - `data`: A data frame. This can be either `data.frame` or `tibble`.
   - `id_unit`: A variable name in the data that uniquely identifies
     units (e.g., individuals or states).
   - `id_time`: A variable name in the data that uniquely identifies time
