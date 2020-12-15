@@ -6,9 +6,9 @@
 
 
 #' Summarize DIDdesign output
-#' @param object 
+#' @param object An object of \code{DIDdesign} class.
 #' @export
-summary.DIDdesign <- function(object) {
+summary.DIDdesign <- function(object, ...) {
 
   if (!("DIDdesign" %in% class(object))) stop("object should the output of did funciton.")
   out <- object$estimates
