@@ -34,4 +34,4 @@ VignetteBuilder: knitr
 BugReports: https://github.com/naoki-egami/DIDdesign/issues
 URL: https://github.com/naoki-egami/DIDdesign
 Depends:
-    R (>= 2.10)
+    R (>= 3.5.0)

@@ -45,12 +45,12 @@ Reference:
 	install_github("naoki-egami/DIDdesign", dependencies = TRUE)
 	```
 
-## The Standard Difference-in-Differences Design
+## The Standard Difference-in-Differences Design with Panel Data
 
 
 
 
-### Panel Data
+
 
 
 ```{r, message=FALSE,warning=FALSE}
@@ -62,7 +62,26 @@ data(anzia2012)
 ```
 
 
+### Step 1: Assess the parallel trends assumption
 
+```{r}
+set.seed(1234)
+check_panel <- did_check(
+  formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
+                       ami_pc + asian_pc + black_pc + hisp_pc,
+  data    = anzia2012,
+  id_unit = "district",
+  id_time = "year",
+  option  = list(n_boot = 200, parallel = TRUE, lag = 1:3)
+)
+
+check_panel$estimate
+check_panel$plot + ggplot2::theme_bw()
+```
+
+
+
+### Step 2: Estimate the treatment effect with the double DID estimator
 
 ```{r panel}
 ## estimate treatment effect
@@ -108,18 +127,32 @@ summary(fit_panel)
 
 
 
-### Repeated Cross-sectional Data
+## The Standard Difference-in-Differences Design with Repeated Cross-sectional Data
 
 Sometimes, each period consists of different units, instead of repeated observations of the same units.
 `did()` can handle such "repeated cross-sectional" data by setting `is_panel = FALSE`.
 As an example, we analyze `malesky2014` dataset (see `?malesky2014` for more details on this dataset).
 
-```{r, rcs, eval=TRUE}
+```{r, rcs}
 ## load data
 data(malesky2014)
 
-## estimate ATT
 set.seed(1234)
+check_rcs <- did_check(
+  formula = transport ~ treatment + post_treat | factor(city),
+  data    = malesky2014,
+  id_time = 'year',
+  is_panel= FALSE,
+  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lag = 1)
+)
+
+check_rcs$estimate
+check_rcs$plot
+```
+
+
+```{r rcs_estimate}
+## estimate ATT
 ff_rcs <- did(
   formula = transport ~ treatment + post_treat | factor(city),
   data    = malesky2014,
