@@ -149,7 +149,6 @@ did_sad_plot <- function(data) {
   gg <- ggplot(dat_plot, aes(x = time_to_treat, y = estimate)) +
     geom_hline(yintercept = 0, color = 'gray50', linetype = 'dotted') +
     geom_errorbar(aes(ymin = EqCI95_LB, ymax = EqCI95_UB), width = 0.05, color = '#1E88A8') +
-    geom_point(color = '#1E88A8') +
     theme_bw() +
     labs(x = "Time relative to treatment assignment", y = "Test Statistic (95% Equivalence CI)")
 

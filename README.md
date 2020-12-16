@@ -127,18 +127,18 @@ fit_panel <- did(
 ``` r
 ## view the estimates
 summary(fit_panel)
-#> # A tibble: 9 x 7
-#>   estimator   lead estimate std.error statistic p_value ddid_weight
-#>   <chr>      <int>    <dbl>     <dbl>     <dbl>   <dbl>       <dbl>
-#> 1 Double-DID     0 -0.00412   0.00261    -1.58  0.115        NA    
-#> 2 DID            0 -0.00620   0.00265    -2.34  0.0194       -0.153
-#> 3 sDID           0 -0.00439   0.00440    -0.999 0.318         1.15 
-#> 4 Double-DID     1 -0.00674   0.00323    -2.09  0.0370       NA    
-#> 5 DID            1 -0.0115    0.00365    -3.16  0.00160       0.431
-#> 6 sDID           1 -0.00313   0.00393    -0.796 0.426         0.569
-#> 7 Double-DID     2 -0.00508   0.00430    -1.18  0.238        NA    
-#> 8 DID            2 -0.0115    0.00492    -2.33  0.0196        0.505
-#> 9 sDID           2  0.00145   0.00490     0.297 0.766         0.495
+#> # A tibble: 9 x 6
+#>   estimator   lead estimate std.error statistic p_value
+#>   <chr>      <int>    <dbl>     <dbl>     <dbl>   <dbl>
+#> 1 Double-DID     0 -0.00412   0.00261    -1.58  0.115  
+#> 2 DID            0 -0.00620   0.00265    -2.34  0.0194 
+#> 3 sDID           0 -0.00439   0.00440    -0.999 0.318  
+#> 4 Double-DID     1 -0.00674   0.00323    -2.09  0.0370 
+#> 5 DID            1 -0.0115    0.00365    -3.16  0.00160
+#> 6 sDID           1 -0.00313   0.00393    -0.796 0.426  
+#> 7 Double-DID     2 -0.00508   0.00430    -1.18  0.238  
+#> 8 DID            2 -0.0115    0.00492    -2.33  0.0196 
+#> 9 sDID           2  0.00145   0.00490     0.297 0.766
 ```
 
 `summary()` function can be used to view estimates.
@@ -198,12 +198,12 @@ ff_rcs <- did(
 
 ``` r
 summary(ff_rcs)
-#> # A tibble: 3 x 7
-#>   estimator   lead estimate std.error statistic p_value ddid_weight
-#>   <chr>      <dbl>    <dbl>     <dbl>     <dbl>   <dbl>       <dbl>
-#> 1 Double-DID     0    0.239    0.0909     2.63  0.00842       NA   
-#> 2 DID            0    0.101    0.105      0.957 0.338         -1.04
-#> 3 sDID           0    0.169    0.138      1.22  0.221          2.04
+#> # A tibble: 3 x 6
+#>   estimator   lead estimate std.error statistic p_value
+#>   <chr>      <dbl>    <dbl>     <dbl>     <dbl>   <dbl>
+#> 1 Double-DID     0    0.239    0.0909     2.63  0.00842
+#> 2 DID            0    0.101    0.105      0.957 0.338  
+#> 3 sDID           0    0.169    0.138      1.22  0.221
 ```
 
 ## Staggered Adoption Design
@@ -296,15 +296,15 @@ additional argument specific to the staggered adoption design.
 
 ``` r
 head(summary(fit_sa))
-#> # A tibble: 6 x 7
-#>   estimator      lead  estimate std.error statistic p_value ddid_weight
-#>   <chr>         <int>     <dbl>     <dbl>     <dbl>   <dbl>       <dbl>
-#> 1 SA-Double-DID     0  0.00869     0.0206    0.422    0.673     NA     
-#> 2 SA-DID            0  0.0149      0.0162    0.921    0.357     -0.0563
-#> 3 SA-sDID           0  0.00903     0.0195    0.463    0.643      1.06  
-#> 4 SA-Double-DID     1 -0.0152      0.0163   -0.936    0.349     NA     
-#> 5 SA-DID            1  0.000916    0.0151    0.0606   0.952      0.227 
-#> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332      0.773
+#> # A tibble: 6 x 6
+#>   estimator      lead  estimate std.error statistic p_value
+#>   <chr>         <int>     <dbl>     <dbl>     <dbl>   <dbl>
+#> 1 SA-Double-DID     0  0.00869     0.0206    0.422    0.673
+#> 2 SA-DID            0  0.0149      0.0162    0.921    0.357
+#> 3 SA-sDID           0  0.00903     0.0195    0.463    0.643
+#> 4 SA-Double-DID     1 -0.0152      0.0163   -0.936    0.349
+#> 5 SA-DID            1  0.000916    0.0151    0.0606   0.952
+#> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="80%" />
