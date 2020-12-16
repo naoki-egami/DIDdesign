@@ -107,7 +107,7 @@ did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
     )
 
     ## fit placebo regression
-    tmp <- did_std_placebo(fm_prep$fm_did[[1]], dat_did, option$lag)
+    tmp <- did_std_placebo(fm_prep$fm_did[[1]], dat_did, option$lag, option$stdz)
     est_did[[i]][seq_along(option$lag) %in% as.numeric(names(tmp))] <- tmp
   }
 

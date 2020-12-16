@@ -9,6 +9,7 @@ set_option <- function(option) {
   if (!exists('lead', option)) option$lead <- 0
   if (!exists('thres', option)) option$thres <- 2
   if (!exists('lag', option)) option$lag <- 1
+  if (!exists('stdz', option)) option$stdz <- TRUE
   return(option)
 }
 
