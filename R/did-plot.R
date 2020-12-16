@@ -6,7 +6,10 @@
 #' @export
 #' @importFrom dplyr %>% as_tibble bind_rows mutate select arrange
 #' @importFrom ggplot2 ggplot aes geom_hline geom_errorbar geom_ribbon geom_point xlim scale_x_continuous theme_bw labs
-plot.DIDdesign <- function(x, check_fit = NULL, ...) {
+#' @param x An output from \code{did} function.
+#' @param check_fit An output from \code{did_check} function.
+#' @param band A boolean argument. If \code{TRUE}, confidence intervals are shown with \code{geom_ribbon} function.
+plot.DIDdesign <- function(x, check_fit = NULL, band = FALSE, ...) {
 
   if (!is.null(check_fit)) {
     id_use <- ifelse(attr(check_fit, "design") == "sa", 1, 2)
@@ -25,7 +28,7 @@ plot.DIDdesign <- function(x, check_fit = NULL, ...) {
       select(estimate, std.error, time = lead) %>% arrange(time)
   }
 
-  if (length(unique(dat_plot$time)) >= 5) {
+  if (isTRUE(band)) {
   gg <- dat_plot  %>%
     mutate(CI90_LB = estimate - qnorm(0.95) * std.error,
            CI90_UB = estimate + qnorm(0.95) * std.error) %>%
@@ -34,7 +37,7 @@ plot.DIDdesign <- function(x, check_fit = NULL, ...) {
       geom_ribbon(aes(ymin = CI90_LB, ymax = CI90_UB), fill = 'gray', alpha = 0.5) +
       geom_line() +
       geom_point() +
-      scale_x_continuous(breaks = unique(dat_plot$time)) + 
+      scale_x_continuous(breaks = unique(dat_plot$time)) +
       labs(x = "Time", y = "Estimates (90% CI)") +
       theme_bw()
   } else {

@@ -4,7 +4,14 @@
 \alias{plot.DIDdesign}
 \title{Plot output from did function}
 \usage{
-\method{plot}{DIDdesign}(x, check_fit = NULL, ...)
+\method{plot}{DIDdesign}(x, check_fit = NULL, band = FALSE, ...)
+}
+\arguments{
+\item{x}{An output from \code{did} function.}
+
+\item{check_fit}{An output from \code{did_check} function.}
+
+\item{band}{A boolean argument. If \code{TRUE}, confidence intervals are shown with \code{geom_ribbon} function.}
 }
 \description{
 Plot output from did function

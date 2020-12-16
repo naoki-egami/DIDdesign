@@ -28,7 +28,8 @@ Reference:
 
 ## Table of Contents
 
-1.  Basic DID design with Panel Data
+1.  [Basic DID design with Panel
+    Data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
 2.  Basic DID design with Repeated Cross-Section Data
 3.  Staggered adoption design
 
@@ -254,7 +255,7 @@ As we can see in the above plot, states receive the treatment at
 different years ranging from 1965 at earliest to 1987 at latest (and
 some of the states never receive the treatment).
 
-## Step 1: Assess the pre-treatment parallel trends
+### Step 1: Assess the pre-treatment parallel trends
 
 ``` r
 set.seed(1234)
@@ -285,7 +286,7 @@ plot(check_sa)
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
 
-## Step 2: Estimate staggered-adoption average treatment effect
+### Step 2: Estimate staggered-adoption average treatment effect
 
 `did()` function can handle the staggered adoption design by setting the
 `design` argument to `design = "sa"`.
@@ -330,7 +331,7 @@ head(summary(fit_sa))
 
 ``` r
 ## plot treatment effects + assessment statistic
-sa_plot <- plot(fit_sa, check_sa)
+sa_plot <- plot(fit_sa, check_sa, band = TRUE)
 
 ## show plot
 sa_plot +
