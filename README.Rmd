@@ -142,8 +142,18 @@ check_panel$estimate
 plot(check_panel)
 ```
 
-If a user wish to create custom figures, data used to generate the above plot are available via
-`check_panel$plot[[1]]$dat_plot` and `check_panel$plot[[2]]$dat_plot`.
+- Data used to generate the above plot are available via
+
+  ```{r}
+  check_panel$plot[[1]]$dat_plot
+  check_panel$plot[[2]]$dat_plot
+  ```
+- Individual plots are also avaialbe via
+
+  ```r
+  check_panel$plot[[1]]$plot
+  check_panel$plot[[2]]$plot
+  ```
 
 ### Step 2: Estimate the treatment effect with the double DID estimator
 

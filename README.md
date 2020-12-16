@@ -31,7 +31,7 @@ Reference:
 1.  [Basic DID design with Panel
     Data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
 2.  [Basic DID design with Repeated Cross-Section
-    Data](#The-Standard-DID-Design-with%20Repeated%20Cross-sectional-Data)
+    Data](#The-Standard-DID-Design-with-Repeated%20Cross-sectional-Data)
 3.  [Staggered adoption design](#Staggered-Adoption-Design)
 
 ## The Basic Difference-in-Differences Design with Panel Data
@@ -119,9 +119,42 @@ plot(check_panel)
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;" />
 
-If a user wish to create custom figures, data used to generate the above
-plot are available via `check_panel$plot[[1]]$dat_plot` and
-`check_panel$plot[[2]]$dat_plot`.
+  - Data used to generate the above plot are available via
+    
+    ``` r
+    check_panel$plot[[1]]$dat_plot
+    #> # A tibble: 14 x 6
+    #>    group   time_to_treat outcome_mean std.error CI90_UB CI90_LB
+    #>    <chr>           <dbl>        <dbl>     <dbl>   <dbl>   <dbl>
+    #>  1 Control            -4         10.7    0.0727    10.8    10.6
+    #>  2 Treated            -4         10.7    0.0775    10.8    10.5
+    #>  3 Control            -3         10.7    0.0762    10.8    10.5
+    #>  4 Treated            -3         10.6    0.0819    10.8    10.5
+    #>  5 Control            -2         10.6    0.0780    10.8    10.5
+    #>  6 Treated            -2         10.6    0.0879    10.8    10.5
+    #>  7 Control            -1         10.7    0.0713    10.8    10.6
+    #>  8 Treated            -1         10.7    0.0817    10.8    10.5
+    #>  9 Control             0         10.7    0.0774    10.8    10.5
+    #> 10 Treated             0         10.6    0.0881    10.8    10.5
+    #> 11 Control             1         10.7    0.0845    10.8    10.5
+    #> 12 Treated             1         10.6    0.0936    10.8    10.5
+    #> 13 Control             2         10.7    0.0879    10.8    10.5
+    #> 14 Treated             2         10.7    0.0902    10.8    10.5
+    check_panel$plot[[2]]$dat_plot
+    #> # A tibble: 3 x 5
+    #>    estimate std.error time_to_treat EqCI95_LB EqCI95_UB
+    #>       <dbl>     <dbl>         <int>     <dbl>     <dbl>
+    #> 1 -0.00361    0.00265            -1  -0.00796   0.00796
+    #> 2  0.00326    0.00231            -2  -0.00705   0.00705
+    #> 3 -0.000434   0.00271            -3  -0.00489   0.00489
+    ```
+
+  - Individual plots are also avaialbe via
+    
+    ``` r
+    check_panel$plot[[1]]$plot
+    check_panel$plot[[2]]$plot
+    ```
 
 ### Step 2: Estimate the treatment effect with the double DID estimator
 
@@ -184,7 +217,7 @@ require(patchwork)
   ggplot2::labs(title = "Pre- and Post-Treatment"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## The Standard DID Design with Repeated Cross-sectional Data
 
@@ -222,7 +255,7 @@ check_rcs$estimate
 plot(check_rcs)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Step 2: Estimate causal effects
 
@@ -309,7 +342,7 @@ check_sa$estimate
 plot(check_sa)
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Step 2: Estimate staggered-adoption average treatment effect
 
@@ -364,4 +397,4 @@ sa_plot +
   ggplot2::geom_vline(xintercept = 0, color = 'red', linetype = 'dotted')
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="80%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="80%" />
