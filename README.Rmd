@@ -72,6 +72,7 @@ basic_did <- anzia2012 %>%
   arrange(desc(year2007)) %>%
   data.matrix()
 
+basic_did <- basic_did[c(1:20, 300:350), ]
 
 ## plot
 par(mar = c(2, 2, 0.5, 0.5))
@@ -83,6 +84,7 @@ axis(1, at = seq(0, 1, length.out = ncol(basic_did)),
 # axis(2, at = seq(0, 1, length.out = nrow(basic_did)),
 #         labels = rownames(basic_did),
 #         las = 2, cex.axis = 0.65, tick = FALSE, mgp = c(0, 0, 0.2))
+title(ylab = "District", line = 1)
 diff_h <- min(diff(seq(0, 1, length.out = nrow(basic_did))))
 diff_v <- min(diff(seq(0, 1, length.out = ncol(basic_did))))
 abline(h = seq(0, 1, length.out = nrow(basic_did)) + diff_h/2, lty = 1, col = 'white', lwd = 0.3)
