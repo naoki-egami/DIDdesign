@@ -34,3 +34,20 @@ print.summary.DIDdesign <- function(x, ...) {
   print(x)
   invisible(x)
 }
+
+
+
+#' Summary did_check Output
+#' @export
+summary.DIDdesign_check <- function(object, ...) {
+  return(object$estimate)
+}
+
+#' Print
+#' @export
+#' @importFrom cli cat_rule
+print.summary.DIDdesign_check <- function(x, ...) {
+  cat_rule(left = crayon::bold("Estimates"))
+  print(x)
+  invisible(x)
+}

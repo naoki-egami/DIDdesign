@@ -254,7 +254,7 @@ check_rcs <- did_check(
 )
 
 ## summary
-check_rcs$estimate
+summary(check_rcs)
 #> # A tibble: 1 x 5
 #>   estimate   lag std.error EqCI95_LB EqCI95_UB
 #>      <dbl> <dbl>     <dbl>     <dbl>     <dbl>

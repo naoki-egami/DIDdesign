@@ -241,7 +241,7 @@ check_rcs <- did_check(
 )
 
 ## summary
-check_rcs$estimate
+summary(check_rcs)
 ```
 
 ```{r dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
