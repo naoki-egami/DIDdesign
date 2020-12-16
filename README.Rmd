@@ -133,12 +133,9 @@ summary(fit_panel)
 
 
 
-```{r dpi=250, fig.height = 3.8, fig.width = 4, out.width="80%", fig.align="center"}
-plot(fit_panel)
-```
-
-```{r dpi=250, fig.height = 3.8, fig.width = 4, out.width="80%", fig.align="center"}
-plot(fit_panel, check_panel)
+```{r dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
+require(patchwork)
+plot(fit_panel) + plot(fit_panel, check_panel)
 ```
 
 
