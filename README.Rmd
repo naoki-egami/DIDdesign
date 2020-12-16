@@ -312,11 +312,12 @@ In addition to options described in the previous section, there is one additiona
 head(summary(fit_sa))
 ```
 
-```{r echo=FALSE, out.width="80%", dpi=250}
+```{r out.width="80%", dpi=250}
 ## plot treatment effects + assessment statistic
 sa_plot <- plot(fit_sa, check_sa)
 
 ## show plot
 sa_plot +
-  ggplot2::ylim(-0.1, 0.1)
+  ggplot2::ylim(-0.1, 0.1) +
+  ggplot2::geom_vline(xintercept = 0, color = 'red', linetype = 'dotted')
 ```

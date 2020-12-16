@@ -328,4 +328,14 @@ head(summary(fit_sa))
 #> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332
 ```
 
+``` r
+## plot treatment effects + assessment statistic
+sa_plot <- plot(fit_sa, check_sa)
+
+## show plot
+sa_plot +
+  ggplot2::ylim(-0.1, 0.1) +
+  ggplot2::geom_vline(xintercept = 0, color = 'red', linetype = 'dotted')
+```
+
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="80%" />
