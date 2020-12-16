@@ -122,6 +122,7 @@ plot(check_panel)
   - Data used to generate the above plot are available via
     
     ``` r
+    ## data for the trend-plot
     check_panel$plot[[1]]$dat_plot
     #> # A tibble: 14 x 6
     #>    group   time_to_treat outcome_mean std.error CI90_UB CI90_LB
@@ -140,6 +141,8 @@ plot(check_panel)
     #> 12 Treated             1         10.6    0.0936    10.8    10.5
     #> 13 Control             2         10.7    0.0879    10.8    10.5
     #> 14 Treated             2         10.7    0.0902    10.8    10.5
+    
+    ## data for the equivalence plot
     check_panel$plot[[2]]$dat_plot
     #> # A tibble: 3 x 5
     #>    estimate std.error time_to_treat EqCI95_LB EqCI95_UB
@@ -149,10 +152,13 @@ plot(check_panel)
     #> 3 -0.000434   0.00271            -3  -0.00489   0.00489
     ```
 
-  - Individual plots are also avaialbe via
+  - Individual plots are also available via
     
     ``` r
+    ## trend plot
     check_panel$plot[[1]]$plot
+    
+    ## equivalence plot
     check_panel$plot[[2]]$plot
     ```
 
@@ -173,11 +179,15 @@ fit_panel <- did(
 )
 ```
 
-`did()` function inherits most of the arguments in `did_check()`. -
-`option`: - `lead`: A vector of non-negative lead parameter. For
-example, when `lead = c(0, 1)`, treatment effect when the treatment is
-assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will
-be estimated. Default is `lead = 0`.
+`did()` function inherits most of the arguments in `did_check()`.
+
+  - `option`:
+      - `lead`: A vector of non-negative lead parameter. For example,
+        when `lead = c(0, 1)`, treatment effect when the treatment is
+        assigned (`lead = 0`) as well as one-time ahead effect (`lead
+        = 1`) will be estimated. Default is `lead = 0`.
+
+<!-- end list -->
 
 ``` r
 ## view the estimates
@@ -238,7 +248,7 @@ set.seed(1234)
 check_rcs <- did_check(
   formula = transport ~ treatment + post_treat | factor(city),
   data    = malesky2014,
-  id_time = 'year',
+  id_time = "year",
   is_panel= FALSE,
   option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lag = 1)
 )

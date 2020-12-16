@@ -145,13 +145,19 @@ plot(check_panel)
 - Data used to generate the above plot are available via
 
   ```{r}
+  ## data for the trend-plot
   check_panel$plot[[1]]$dat_plot
+
+  ## data for the equivalence plot
   check_panel$plot[[2]]$dat_plot
   ```
-- Individual plots are also avaialbe via
+- Individual plots are also available via
 
   ```r
+  ## trend plot
   check_panel$plot[[1]]$plot
+
+  ## equivalence plot
   check_panel$plot[[2]]$plot
   ```
 
@@ -174,6 +180,7 @@ fit_panel <- did(
 
 
 `did()` function inherits most of the arguments in `did_check()`.
+
 - `option`:
    - `lead`: A vector of non-negative lead parameter. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`.
 
@@ -228,7 +235,7 @@ set.seed(1234)
 check_rcs <- did_check(
   formula = transport ~ treatment + post_treat | factor(city),
   data    = malesky2014,
-  id_time = 'year',
+  id_time = "year",
   is_panel= FALSE,
   option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lag = 1)
 )
