@@ -63,6 +63,33 @@ require(DIDdesign)
 data(anzia2012)
 ```
 
+```{r basic_did_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE}
+basic_did <- anzia2012 %>%
+  select(district, year, oncycle) %>%
+  pivot_wider(id_cols = "district", names_prefix = "year",
+              names_from = year, values_from = oncycle) %>%
+  column_to_rownames(var = "district") %>%
+  arrange(desc(year2007)) %>%
+  data.matrix()
+
+
+## plot
+par(mar = c(2, 2, 0.5, 0.5))
+image(t(apply(basic_did, 2, rev)), col = c("lightgray", '#1E88A8'),
+      xaxt = "n", yaxt = "n")
+axis(1, at = seq(0, 1, length.out = ncol(basic_did)),
+        labels = str_remove(colnames(basic_did), "year"),
+        las = 1, cex.axis = 0.8, tick = FALSE, mgp = c(0, 0, 0.2))
+# axis(2, at = seq(0, 1, length.out = nrow(basic_did)),
+#         labels = rownames(basic_did),
+#         las = 2, cex.axis = 0.65, tick = FALSE, mgp = c(0, 0, 0.2))
+diff_h <- min(diff(seq(0, 1, length.out = nrow(basic_did))))
+diff_v <- min(diff(seq(0, 1, length.out = ncol(basic_did))))
+abline(h = seq(0, 1, length.out = nrow(basic_did)) + diff_h/2, lty = 1, col = 'white', lwd = 0.3)
+abline(v = seq(0, 1, length.out = ncol(basic_did)) + diff_v/ 2, lty = 1, col = 'white', lwd = 0.3)
+legend("topright", legend = c("Treated", "Control"), fill = c('#1E88A8', 'lightgray'), bg = 'white', cex = 0.8)
+box(lwd = 1.1)
+```
 
 ### Step 1: Assess the parallel trends assumption
 

@@ -43,6 +43,8 @@ require(DIDdesign)
 data(anzia2012)
 ```
 
+<img src="man/figures/README-basic_did_plot-1.png" width="100%" />
+
 ### Step 1: Assess the parallel trends assumption
 
 ``` r
