@@ -47,13 +47,13 @@ Reference:
 
 ## Table of Contents
 
-1. Standard DID with Panel Data
-2. Standard DID with Repeated Cross-Section Data
-3. Staggered Adoption Design
+1. Basic DID design with Panel Data
+2. Basic DID design with Repeated Cross-Section Data
+3. Staggered adoption design
 
 
 
-## The Standard Difference-in-Differences Design with Panel Data
+## The Basic Difference-in-Differences Design with Panel Data
 
 ```{r, message=FALSE,warning=FALSE}
 ## load package
@@ -130,6 +130,16 @@ summary(fit_panel)
 
 
 `summary()` function can be used to view estimates.
+
+
+
+```{r dpi=250, fig.height = 3.8, fig.width = 4, out.width="80%", fig.align="center"}
+plot(fit_panel)
+```
+
+```{r dpi=250, fig.height = 3.8, fig.width = 4, out.width="80%", fig.align="center"}
+plot(fit_panel, check_panel)
+```
 
 
 
@@ -267,7 +277,7 @@ plot(check_sa)
 
 ## Step 2: Estimate staggered-adoption average treatment effect
 
-`did()` function can handle the staggered adoption design by setting the `design` argument to `design = "SA"`.
+`did()` function can handle the staggered adoption design by setting the `design` argument to `design = "sa"`.
 
 ```{r sa_estimation}
 ## estimate time-weighted SA-ATE

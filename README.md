@@ -28,11 +28,11 @@ Reference:
 
 ## Table of Contents
 
-1.  Standard DID with Panel Data
-2.  Standard DID with Repeated Cross-Section Data
-3.  Staggered Adoption Design
+1.  Basic DID design with Panel Data
+2.  Basic DID design with Repeated Cross-Section Data
+3.  Staggered adoption design
 
-## The Standard Difference-in-Differences Design with Panel Data
+## The Basic Difference-in-Differences Design with Panel Data
 
 ``` r
 ## load package
@@ -143,6 +143,18 @@ summary(fit_panel)
 
 `summary()` function can be used to view estimates.
 
+``` r
+plot(fit_panel)
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="80%" style="display: block; margin: auto;" />
+
+``` r
+plot(fit_panel, check_panel)
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="80%" style="display: block; margin: auto;" />
+
 ## The Standard DID Design with Repeated Cross-sectional Data
 
 Sometimes, each period consists of different units, instead of repeated
@@ -177,7 +189,7 @@ check_rcs$estimate
 plot(check_rcs)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 ## estimate ATT
@@ -262,12 +274,12 @@ check_sa$estimate
 plot(check_sa)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## Step 2: Estimate staggered-adoption average treatment effect
 
 `did()` function can handle the staggered adoption design by setting the
-`design` argument to `design = "SA"`.
+`design` argument to `design = "sa"`.
 
 ``` r
 ## estimate time-weighted SA-ATE
@@ -307,4 +319,4 @@ head(summary(fit_sa))
 #> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="80%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="80%" />
