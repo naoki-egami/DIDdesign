@@ -40,7 +40,9 @@ print.summary.DIDdesign <- function(x, ...) {
 #' Summary did_check Output
 #' @export
 summary.DIDdesign_check <- function(object, ...) {
-  return(object$estimate)
+  tmp <- object$estimate
+  tmp <- tmp[,c("estimate", "lag", "std.error", "EqCI95_LB", "EqCI95_UB")]
+  return(tmp)
 }
 
 #' Print

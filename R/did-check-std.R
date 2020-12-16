@@ -40,7 +40,7 @@ did_check_std <- function(
   ## --------------------------------------------
   ## estimate placebo test statistics
   ## --------------------------------------------
-  did_placebo_est <- did_std_placebo(fm_prep$fm_did[[1]], dat_did, option$lag, option$stdz)
+  did_placebo_est <- did_std_placebo(fm_prep$fm_did[[1]], dat_did, option$lag)
 
   ## --------------------------------------------
   ## compute std.error via bootstrap
@@ -61,8 +61,7 @@ did_check_std <- function(
   ## use future_lapply to implement the bootstrap parallel
   est_boot <- future_lapply(1:option$n_boot, function(i) {
     tryCatch({
-      did_std_placebo_boot(fm_prep, dat_did, id_cluster_vec, var_cluster,
-        is_panel, option$lag, option$stdz)
+      did_std_placebo_boot(fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, option$lag)
     }, error = function(e) {
       NULL
     })
@@ -72,15 +71,18 @@ did_check_std <- function(
   ## --------------------------------------------
   ## summarize results
   ## --------------------------------------------
-  est_boot <- do.call(rbind, est_boot)
+  est_boot_std <- do.call(rbind, map(est_boot, ~.x$est_std))
+  est_boot <- do.call(rbind, map(est_boot, ~.x$est))
 
 
   estimates <- vector("list", length = length(option$lag))
   for (i in 1:length(option$lag)) {
     estimates[[i]] <- data.frame(
-      estimate  = did_placebo_est$est[i],
+      estimate  = did_placebo_est$est_std[i],
       lag       = option$lag[i],
-      std.error = sd(est_boot[,i])
+      std.error = sd(est_boot_std[,i]),
+      estimate_orig = did_placebo_est$est[i],
+      std.error_orig = sd(est_boot[,i])
     )
   }
 
@@ -89,7 +91,7 @@ did_check_std <- function(
   ## generate a DID plot
   ## --------------------------------------------
   p1 <- did_std_plot(dat_did)
-  p2 <- did_sad_plot(estimates, option$stdz)
+  p2 <- did_sad_plot(estimates)
 
   return(list(est = estimates, plot = list(p1, p2)))
 }
@@ -123,7 +125,8 @@ did_std_placebo <- function(formula, data, lags) {
       filter(.data$It == 0 & .data$Gi == 0) %>%
       pull(.data$outcome)
     dat_use$outcome <- (dat_use$outcome - mean(ct_outcome, na.rm = TRUE)) / sd(ct_outcome, na.rm = TRUE)
-    est_std[i] <- lm(formula, data = dat_use)$coef['Gi:It']
+    fit_std <- lm(formula, data = dat_use)
+    est_std[i] <- fit_std$coef['Gi:It']
   }
 
   names(est) <- names(est_std) <- lags

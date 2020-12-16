@@ -56,13 +56,17 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
   ## --------------------------------------
   ## Summarize results
   ## --------------------------------------
-  est_boot <- do.call(rbind, est_boot)
+  est_boot_std <- do.call(rbind, purrr::map(est_boot, ~.x[,1]))
+  est_boot <- do.call(rbind, purrr::map(est_boot, ~.x[,2]))
+
   estimates <- vector("list", length = length(option$lag))
   for (i in 1:length(option$lag)) {
     estimates[[i]] <- data.frame(
-      estimate  = did_placebo_est[i],
-      lag       = option$lag[i],
-      std.error = sd(est_boot[,i])
+      estimate      = did_placebo_est[i,1],
+      lag           = option$lag[i],
+      std.error     = sd(est_boot_std[,i]),
+      estimate_orig = did_placebo_est[i,2],
+      std.error_orig= sd(est_boot[,i])
     )
   }
 
@@ -72,12 +76,15 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
   ## --------------------------------------
   ## plot
   ## --------------------------------------
-  p1 <- did_sad_plot(estimates, option$stdz)
+  p1 <- did_sad_plot(estimates)
   p2 <- did_sad_pattern(dat_panel, treatment, attr(did_placebo_est, "Gmat"))
   return(list(est = estimates, plot = list(p1, p2)))
 }
 
 
+#' SA Placebo Regression
+#' @keywords internal
+#' @importFrom purrr map
 did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
   ## --------------------------------------
   ## Prepare inputs
@@ -91,9 +98,9 @@ did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
   ## -------------------------------
   ## Run placebo regression
   ## -------------------------------
-  est_did <- list()
+  est_did <- est_did_std <- list()
   for (i in 1:length(id_time_use)) {
-    est_did[[i]] <- rep(NA, length(option$lag))
+    est_did[[i]] <- est_did_std[[i]] <- rep(NA, length(option$lag))
 
     ## subset the data
     dat_use <- dat_panel %>%
@@ -107,22 +114,26 @@ did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
     )
 
     ## fit placebo regression
-    tmp <- did_std_placebo(fm_prep$fm_did[[1]], dat_did, option$lag, option$stdz)
-    est_did[[i]][seq_along(option$lag) %in% as.numeric(names(tmp))] <- tmp
+    tmp <- did_std_placebo(fm_prep$fm_did[[1]], dat_did, option$lag)
+    est_did[[i]][seq_along(option$lag) %in% as.numeric(names(tmp$est))] <- tmp$est
+    est_did_std[[i]][seq_along(option$lag) %in% as.numeric(names(tmp$est))] <- tmp$est_std
   }
 
   est_did <- do.call(rbind, est_did)
+  est_did_std <- do.call(rbind, est_did_std)
 
   ## -------------------------------
   ## Take weighted time average
   ## -------------------------------
-  estimates <- rep(NA, length(option$lag))
+  estimates <- matrix(NA, nrow = length(option$lag), ncol = 2)
   for (i in 1:length(option$lag)) {
     tmp <- est_did[,i]
+    tmp_std <- est_did_std[,i]
     w_use <- time_weight[!is.na(tmp)]
-    estimates[i] <- sum( tmp * (w_use / sum(w_use)) )
+    estimates[i,1] <- sum( tmp_std * (w_use / sum(w_use)) )
+    estimates[i,2] <- sum( tmp * (w_use / sum(w_use)) )
   }
-  names(estimates) <- option$lag
+  rownames(estimates) <- option$lag
   attr(estimates, "Gmat") <- Gmat
   return(estimates)
 }
@@ -133,7 +144,7 @@ did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
 #' @return A ggplot object
 #' @importFrom ggplot2 ggplot geom_hline geom_point aes geom_errorbar labs theme_bw scale_x_continuous xlim
 #' @importFrom dplyr %>% across group_by summarise mutate ungroup select
-did_sad_plot <- function(data, stdz) {
+did_sad_plot <- function(data) {
   dat_plot <- data %>%
   mutate(
     CI90_UB_ab = abs(.data$estimate + qnorm(0.95) * .data$std.error),
@@ -144,14 +155,14 @@ did_sad_plot <- function(data, stdz) {
     EqCI95_LB = -pmax(.data$CI90_UB_ab, .data$CI90_LB_ab),
     EqCI95_UB = pmax(.data$CI90_UB_ab, .data$CI90_LB_ab)
   ) %>%
-  select(-.data$CI90_UB_ab, -.data$CI90_LB_ab, -.data$lag)
+  select(.data$estimate, .data$time_to_treat, .data$std.error,
+         .data$EqCI95_LB, .data$EqCI95_UB)
 
-  y_lab <- ifelse(isTRUE(stdz), "95% Standardized Equivalence CI", "95% Equivalence CI")
   gg <- ggplot(dat_plot, aes(x = time_to_treat, y = estimate)) +
     geom_hline(yintercept = 0, color = 'gray50', linetype = 'dotted') +
     geom_errorbar(aes(ymin = EqCI95_LB, ymax = EqCI95_UB), width = 0.05, color = '#1E88A8') +
     theme_bw() +
-    labs(x = "Time relative to treatment assignment", y = y_lab)
+    labs(x = "Time relative to treatment assignment", y = "95% Standardized Equivalence CI")
 
   if (length(unique(dat_plot$time_to_treat)) == 1) {
     tt <- abs(unique(dat_plot$time_to_treat))
