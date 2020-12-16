@@ -148,9 +148,9 @@ summary(fit_panel)
 post_plot <- plot(fit_panel)
 
 # plot treatment effects + pre-treatment assessment
-pre_post_plot <- plot(fit_panel, check_panel)
+pre_post_plot <- plot(fit_panel, check_fit = check_panel)
 
-## show the plot side-by-side
+## show the plots side-by-side
 require(patchwork)
 (post_plot +
   ggplot2::theme(aspect.ratio=1) +
@@ -328,4 +328,10 @@ head(summary(fit_sa))
 #> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="80%" />
+``` r
+plot(fit_sa, check_sa)
+```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="80%" />
