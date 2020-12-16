@@ -48,8 +48,8 @@ Reference:
 ## Table of Contents
 
 1. [Basic DID design with Panel Data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
-2. Basic DID design with Repeated Cross-Section Data
-3. Staggered adoption design
+2. [Basic DID design with Repeated Cross-Section Data](#The-Standard-DID-Design-with Repeated Cross-sectional-Data)
+3. [Staggered adoption design](#Staggered-Adoption-Design)
 
 
 
@@ -62,6 +62,9 @@ require(DIDdesign)
 ## load data
 data(anzia2012)
 ```
+
+In the basic DID design, units receive the treatment at the same time.
+In `anzia2012` dataset, the treatment assignment happens in 2017.
 
 ```{r basic_did_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE}
 basic_did <- anzia2012 %>%
@@ -95,6 +98,11 @@ box(lwd = 1.1)
 
 ### Step 1: Assess the parallel trends assumption
 
+
+As the first step of the double DID method, users can check if the parallel trends assumption is plausible in the pre-treatment periods.
+`did_check()` function estimates statistics for testing the parallel trends
+and computes the equivalence confidence intervals.
+
 ```{r}
 ## check parallel trends
 set.seed(1234)
@@ -106,11 +114,31 @@ check_panel <- did_check(
   id_time = "year",
   option  = list(n_boot = 200, parallel = TRUE, lag = 1:3)
 )
+```
 
+`did_check()` function takes the following arguments:
+
+- `formula`: A formula specifying variables. It should follow the form of `outcome ~ treatment | covariates`.
+   - `treatment` should be time-varying, that is, `treatment` takes zero for everyone before the treatment assignment, and takes 1 for units who are treated. See the example for how the treatment variable should be coded.
+   - `covariates` can be omitted as `outcome ~ treatment`.
+- `data`: A data frame. This can be either `data.frame` or `tibble`.
+- `id_unit`: A variable name in the data that uniquely identifies units (e.g., individuals or states).
+- `id_time`: A variable name in the data that uniquely identifies time (e.g., year).
+- `design`: Design option. It should be `"did"` when the standard DID design is used.
+- `is_panel`: A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeately overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data.
+- `option`: A list of options.
+   - `n_boot`: Number of bootstrap iterations to estimate weighting matrix.
+   - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package.
+   - `lag`: A vector of non-negative lead parameter. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`.
+
+
+```{r}
+## view estimates
 check_panel$estimate
 ```
 
 ```{r dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
+## visualize the estimates
 plot(check_panel)
 ```
 
@@ -135,19 +163,8 @@ fit_panel <- did(
 ```
 
 
-`did()` function takes the following arguments:
-
-- `formula`: A formula specifying variables. It should follow the form of `outcome ~ treatment | covariates`.
-   - `treatment` should be time-varying, that is, `treatment` takes zero for everyone before the treatment assignment, and takes 1 for units who are treated. See the example for how the treatment variable should be coded.
-   - `covariates` can be omitted as `outcome ~ treatment`.
-- `data`: A data frame. This can be either `data.frame` or `tibble`.
-- `id_unit`: A variable name in the data that uniquely identifies units (e.g., individuals or states).
-- `id_time`: A variable name in the data that uniquely identifies time (e.g., year).
-- `design`: Design option. It should be `"did"` when the standard DID design is used.
-- `is_panel`: A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeately overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data.
-- `option`: A list of options.
-   - `n_boot`: Number of bootstrap iterations to estimate weighting matrix.
-   - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package.
+`did()` function inherits most of the arguments in `did_check()`.
+- `option`:
    - `lead`: A vector of non-negative lead parameter. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`.
 
 
@@ -190,6 +207,8 @@ Sometimes, each period consists of different units, instead of repeated observat
 `did()` can handle such "repeated cross-sectional" data by setting `is_panel = FALSE`.
 As an example, we analyze `malesky2014` dataset (see `?malesky2014` for more details on this dataset).
 
+### Step 1: Assess the pre-treatment parallel trends
+
 ```{r, rcs}
 ## load data
 data(malesky2014)
@@ -213,6 +232,7 @@ plot(check_rcs)
 ```
 
 
+### Step 2: Estimate causal effects
 
 ```{r rcs_estimate}
 ## estimate ATT

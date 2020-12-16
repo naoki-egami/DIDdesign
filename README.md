@@ -30,8 +30,9 @@ Reference:
 
 1.  [Basic DID design with Panel
     Data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
-2.  Basic DID design with Repeated Cross-Section Data
-3.  Staggered adoption design
+2.  [Basic DID design with Repeated Cross-Section
+    Data](#The-Standard-DID-Design-with%20Repeated%20Cross-sectional-Data)
+3.  [Staggered adoption design](#Staggered-Adoption-Design)
 
 ## The Basic Difference-in-Differences Design with Panel Data
 
@@ -43,9 +44,17 @@ require(DIDdesign)
 data(anzia2012)
 ```
 
+In the basic DID design, units receive the treatment at the same time.
+In `anzia2012` dataset, the treatment assignment happens in 2017.
+
 <img src="man/figures/README-basic_did_plot-1.png" width="100%" />
 
 ### Step 1: Assess the parallel trends assumption
+
+As the first step of the double DID method, users can check if the
+parallel trends assumption is plausible in the pre-treatment periods.
+`did_check()` function estimates statistics for testing the parallel
+trends and computes the equivalence confidence intervals.
 
 ``` r
 ## check parallel trends
@@ -58,44 +67,9 @@ check_panel <- did_check(
   id_time = "year",
   option  = list(n_boot = 200, parallel = TRUE, lag = 1:3)
 )
-
-check_panel$estimate
-#> # A tibble: 3 x 5
-#>    estimate   lag std.error EqCI95_LB EqCI95_UB
-#>       <dbl> <int>     <dbl>     <dbl>     <dbl>
-#> 1 -0.00361      1   0.00265  -0.00796   0.00796
-#> 2  0.00326      2   0.00231  -0.00705   0.00705
-#> 3 -0.000434     3   0.00271  -0.00489   0.00489
 ```
 
-``` r
-plot(check_panel)
-```
-
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" style="display: block; margin: auto;" />
-
-If a user wish to create custom figures, data used to generate the above
-plot are available via `check_panel$plot[[1]]$dat_plot` and
-`check_panel$plot[[2]]$dat_plot`.
-
-### Step 2: Estimate the treatment effect with the double DID estimator
-
-``` r
-## estimate treatment effect
-set.seed(1234)
-fit_panel <- did(
-  formula  = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
-                                          ami_pc + asian_pc + black_pc + hisp_pc,
-  data     = anzia2012,
-  id_unit  = "district",
-  id_time  = "year",
-  design   = "did",
-  is_panel = TRUE,
-  option   = list(n_boot = 200, parallel = TRUE, lead = 0:2)
-)
-```
-
-`did()` function takes the following arguments:
+`did_check()` function takes the following arguments:
 
   - `formula`: A formula specifying variables. It should follow the form
     of `outcome ~ treatment | covariates`.
@@ -120,12 +94,57 @@ fit_panel <- did(
         matrix.
       - `parallel`: A boolean argument. If `TRUE`, bootstrap is
         conducted in parallel using `future` package.
-      - `lead`: A vector of non-negative lead parameter. For example,
+      - `lag`: A vector of non-negative lead parameter. For example,
         when `lead = c(0, 1)`, treatment effect when the treatment is
         assigned (`lead = 0`) as well as one-time ahead effect (`lead
         = 1`) will be estimated. Default is `lead = 0`.
 
 <!-- end list -->
+
+``` r
+## view estimates
+check_panel$estimate
+#> # A tibble: 3 x 5
+#>    estimate   lag std.error EqCI95_LB EqCI95_UB
+#>       <dbl> <int>     <dbl>     <dbl>     <dbl>
+#> 1 -0.00361      1   0.00265  -0.00796   0.00796
+#> 2  0.00326      2   0.00231  -0.00705   0.00705
+#> 3 -0.000434     3   0.00271  -0.00489   0.00489
+```
+
+``` r
+## visualize the estimates
+plot(check_panel)
+```
+
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;" />
+
+If a user wish to create custom figures, data used to generate the above
+plot are available via `check_panel$plot[[1]]$dat_plot` and
+`check_panel$plot[[2]]$dat_plot`.
+
+### Step 2: Estimate the treatment effect with the double DID estimator
+
+``` r
+## estimate treatment effect
+set.seed(1234)
+fit_panel <- did(
+  formula  = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
+                                          ami_pc + asian_pc + black_pc + hisp_pc,
+  data     = anzia2012,
+  id_unit  = "district",
+  id_time  = "year",
+  design   = "did",
+  is_panel = TRUE,
+  option   = list(n_boot = 200, parallel = TRUE, lead = 0:2)
+)
+```
+
+`did()` function inherits most of the arguments in `did_check()`. -
+`option`: - `lead`: A vector of non-negative lead parameter. For
+example, when `lead = c(0, 1)`, treatment effect when the treatment is
+assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will
+be estimated. Default is `lead = 0`.
 
 ``` r
 ## view the estimates
@@ -165,7 +184,7 @@ require(patchwork)
   ggplot2::labs(title = "Pre- and Post-Treatment"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## The Standard DID Design with Repeated Cross-sectional Data
 
@@ -174,6 +193,8 @@ observations of the same units. `did()` can handle such “repeated
 cross-sectional” data by setting `is_panel = FALSE`. As an example, we
 analyze `malesky2014` dataset (see `?malesky2014` for more details on
 this dataset).
+
+### Step 1: Assess the pre-treatment parallel trends
 
 ``` r
 ## load data
@@ -201,7 +222,9 @@ check_rcs$estimate
 plot(check_rcs)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
+
+### Step 2: Estimate causal effects
 
 ``` r
 ## estimate ATT
@@ -286,7 +309,7 @@ check_sa$estimate
 plot(check_sa)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Step 2: Estimate staggered-adoption average treatment effect
 
@@ -341,4 +364,4 @@ sa_plot +
   ggplot2::geom_vline(xintercept = 0, color = 'red', linetype = 'dotted')
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="80%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="80%" />
