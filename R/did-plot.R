@@ -14,9 +14,9 @@ plot.DIDdesign <- function(x, check_fit = NULL, band = FALSE, ...) {
   if (!is.null(check_fit)) {
     id_use <- ifelse(attr(check_fit, "design") == "sa", 1, 2)
     dat_plot <- bind_rows(
-      check_fit$plot[[id_use]]$dat_plot %>%
-        mutate(time = time_to_treat) %>%
-        select(estimate, std.error, time),
+      check_fit$estimate %>%
+        mutate(time = -lag) %>%
+        select(estimate = estimate_orig, std.error = std.error_orig, time),
       as_tibble(x$estimate) %>%
         filter(estimator == "SA-Double-DID" | estimator == "Double-DID") %>%
         select(estimate, std.error, time = lead)
