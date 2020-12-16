@@ -144,8 +144,16 @@ summary(fit_panel)
 `summary()` function can be used to view estimates.
 
 ``` r
+# plot only treatment effects
+post_plot <- plot(fit_panel)
+
+# plot treatment effects + pre-treatment assessment
+pre_post_plot <- plot(fit_panel, check_panel)
+
+## show the plot side-by-side
 require(patchwork)
-plot(fit_panel) + plot(fit_panel, check_panel)
+(post_plot + ggplot2::theme(aspect.ratio=1)) +
+(pre_post_plot + ggplot2::theme(aspect.ratio=1))
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;" />

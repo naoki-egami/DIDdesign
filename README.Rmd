@@ -134,8 +134,16 @@ summary(fit_panel)
 
 
 ```{r dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
+# plot only treatment effects
+post_plot <- plot(fit_panel)
+
+# plot treatment effects + pre-treatment assessment
+pre_post_plot <- plot(fit_panel, check_panel)
+
+## show the plot side-by-side
 require(patchwork)
-plot(fit_panel) + plot(fit_panel, check_panel)
+(post_plot + ggplot2::theme(aspect.ratio=1)) +
+(pre_post_plot + ggplot2::theme(aspect.ratio=1))
 ```
 
 
