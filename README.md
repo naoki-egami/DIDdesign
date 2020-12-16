@@ -328,10 +328,4 @@ head(summary(fit_sa))
 #> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332
 ```
 
-``` r
-plot(fit_sa, check_sa)
-```
-
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
-
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="80%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="80%" />

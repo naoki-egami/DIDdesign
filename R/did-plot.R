@@ -5,7 +5,7 @@
 #' Plot output from did function
 #' @export
 #' @importFrom dplyr %>% as_tibble bind_rows mutate select arrange
-#' @importFrom ggplot2 ggplot aes geom_hline geom_errorbar geom_point xlim theme_bw labs
+#' @importFrom ggplot2 ggplot aes geom_hline geom_errorbar geom_ribbon geom_point xlim scale_x_continuous theme_bw labs
 plot.DIDdesign <- function(x, check_fit = NULL, ...) {
 
   if (!is.null(check_fit)) {
@@ -17,23 +17,38 @@ plot.DIDdesign <- function(x, check_fit = NULL, ...) {
       as_tibble(x$estimate) %>%
         filter(estimator == "SA-Double-DID" | estimator == "Double-DID") %>%
         select(estimate, std.error, time = lead)
-    )
+    ) %>% arrange(time)
 
   } else {
     dat_plot <- as_tibble(x$estimate)  %>%
       filter(estimator == "SA-Double-DID" | estimator == "Double-DID") %>%
-      select(estimate, std.error, time = lead)
+      select(estimate, std.error, time = lead) %>% arrange(time)
   }
 
-  gg <- dat_plot %>% arrange(time) %>%
+  if (length(unique(dat_plot$time)) >= 5) {
+  gg <- dat_plot  %>%
     mutate(CI90_LB = estimate - qnorm(0.95) * std.error,
            CI90_UB = estimate + qnorm(0.95) * std.error) %>%
     ggplot(aes(x = time, y = estimate)) +
       geom_hline(yintercept = 0, color = 'gray', linetype = 'dashed') +
-      geom_errorbar(aes(ymin = CI90_LB, ymax = CI90_UB), width = 0.05) +
+      geom_ribbon(aes(ymin = CI90_LB, ymax = CI90_UB), fill = 'gray', alpha = 0.5) +
+      geom_line() +
       geom_point() +
+      scale_x_continuous(breaks = unique(dat_plot$time)) + 
       labs(x = "Time", y = "Estimates (90% CI)") +
       theme_bw()
+  } else {
+    gg <- dat_plot  %>%
+      mutate(CI90_LB = estimate - qnorm(0.95) * std.error,
+             CI90_UB = estimate + qnorm(0.95) * std.error) %>%
+      ggplot(aes(x = time, y = estimate)) +
+        geom_hline(yintercept = 0, color = 'gray', linetype = 'dashed') +
+        geom_errorbar(aes(ymin = CI90_LB, ymax = CI90_UB), width = 0.05) +
+        geom_point() +
+        labs(x = "Time", y = "Estimates (90% CI)") +
+        theme_bw()
+
+  }
 
   if (length(unique(dat_plot$time)) == 1) {
     tt <- unique(dat_plot$time)

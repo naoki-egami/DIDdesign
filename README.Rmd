@@ -312,28 +312,11 @@ In addition to options described in the previous section, there is one additiona
 head(summary(fit_sa))
 ```
 
-```{r}
-plot(fit_sa, check_sa)
-```
-
 ```{r echo=FALSE, out.width="80%", dpi=250}
-## plot data   
-plot_dat <- as_tibble(summary(fit_sa)) %>%
-  filter(estimator == "SA-Double-DID") %>%
-  mutate(CI90_UB = estimate + qnorm(0.95) * std.error,
-         CI90_LB = estimate - qnorm(0.95) * std.error)
+## plot treatment effects + assessment statistic
+sa_plot <- plot(fit_sa, check_sa)
 
-## plot
-par(mar = c(3.8, 4, 3, 1), pty = 's')
-plot(plot_dat$lead, plot_dat$estimate, type = 'o', pch = 16,
-     xlab = "Time", ylab = "SA-ATT", main = "Double DID Estimates",
-     xaxt = "n", ylim = c(-0.1, 0.1), las = 1
-   )
-abline(h = 0, col = 'gray', lty = 3, lwd = 1.5)
-axis(1, at = plot_dat$lead, labels = paste0("t=", plot_dat$lead), cex.axis = 0.9)
-polygon(
-  c(plot_dat$lead, rev(plot_dat$lead)),
-  c(plot_dat$CI90_UB, rev(plot_dat$CI90_LB)),
-  border = NA, col = rgb(128,128,128, maxColorValue = 255, alpha = 50)
-)
+## show plot
+sa_plot +
+  ggplot2::ylim(-0.1, 0.1)
 ```
