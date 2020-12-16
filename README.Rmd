@@ -47,8 +47,8 @@ Reference:
 
 ## Table of Contents
 
-1. [Basic DID design with Panel Data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
-2. [Basic DID design with Repeated Cross-Section Data](#The-Standard-DID-Design-with-Repeated Cross-sectional-Data)
+1. [Basic DID design with panel data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
+2. [Basic DID design with repeated cross-section data](#The-Standard-DID-Design-with-Repeated Cross-sectional-Data)
 3. [Staggered adoption design](#Staggered-Adoption-Design)
 
 
@@ -64,7 +64,7 @@ data(anzia2012)
 ```
 
 In the basic DID design, units receive the treatment at the same time.
-In `anzia2012` dataset, the treatment assignment happens in 2017.
+In `anzia2012` dataset, the treatment assignment happens in 2007.
 
 ```{r basic_did_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE}
 basic_did <- anzia2012 %>%
@@ -342,9 +342,12 @@ check_sa <- did_check(
 )
 
 ## view estimates
-check_sa$estimate
+summary(check_sa)
 ```
 
+In addition to options described in the previous section, there is one additional argument specific to the staggered adoption design.
+
+- `thres` parameter in the option control the minimum number of treated units for a particular time to be included in the treatment effect estimation. For example if `thres = 2`, the effect for Tennessee will be removed from the time-average effect because it's the only unit who received the treatment in 1972 (i.e., the number of treated units in 1972 is less than the threshold).
 
 
 ```{r dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
@@ -369,9 +372,6 @@ fit_sa <- did(
 )
 ```
 
-In addition to options described in the previous section, there is one additional argument specific to the staggered adoption design.
-
-- `thres` parameter in the option control the minimum number of treated units for a particular time to be included in the treatment effect estimation. For example if `thres = 2`, the effect for Tennessee will be removed from the time-average effect because it's the only unit who received the treatment in 1972 (i.e., the number of treated units in 1972 is less than the threshold).
 
 
 ```{r sa_summary}

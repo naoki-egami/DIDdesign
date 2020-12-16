@@ -337,7 +337,7 @@ check_sa <- did_check(
 )
 
 ## view estimates
-check_sa$estimate
+summary(check_sa)
 #> # A tibble: 5 x 5
 #>   estimate   lag std.error EqCI95_LB EqCI95_UB
 #>      <dbl> <int>     <dbl>     <dbl>     <dbl>
@@ -347,6 +347,18 @@ check_sa$estimate
 #> 4 -0.00758     4   0.0119    -0.0271    0.0271
 #> 5 -0.0107      5   0.00894   -0.0254    0.0254
 ```
+
+In addition to options described in the previous section, there is one
+additional argument specific to the staggered adoption design.
+
+  - `thres` parameter in the option control the minimum number of
+    treated units for a particular time to be included in the treatment
+    effect estimation. For example if `thres = 2`, the effect for
+    Tennessee will be removed from the time-average effect because it’s
+    the only unit who received the treatment in 1972 (i.e., the number
+    of treated units in 1972 is less than the threshold).
+
+<!-- end list -->
 
 ``` r
 plot(check_sa)
@@ -371,18 +383,6 @@ fit_sa <- did(
   option  = list(n_boot = 200, lead = 0:9, thres = 2, parallel = TRUE)
 )
 ```
-
-In addition to options described in the previous section, there is one
-additional argument specific to the staggered adoption design.
-
-  - `thres` parameter in the option control the minimum number of
-    treated units for a particular time to be included in the treatment
-    effect estimation. For example if `thres = 2`, the effect for
-    Tennessee will be removed from the time-average effect because it’s
-    the only unit who received the treatment in 1972 (i.e., the number
-    of treated units in 1972 is less than the threshold).
-
-<!-- end list -->
 
 ``` r
 head(summary(fit_sa))
