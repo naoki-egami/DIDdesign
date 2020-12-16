@@ -155,11 +155,11 @@ require(patchwork)
 (post_plot +
   ggplot2::theme(aspect.ratio=1) +
   ggplot2::ylim(-0.015, 0.01) +
-  ggplot2::labs(title = "Treatment Effects (Post-Treatment)")) +
+  ggplot2::labs(title = "Post-Treatment")) +
 (pre_post_plot +
   ggplot2::theme(aspect.ratio=1) +
   ggplot2::ylim(-0.015, 0.01) +
-  ggplot2::labs(title = "Treatment Effects (Pre- and Post-Treatment)"))
+  ggplot2::labs(title = "Pre- and Post-Treatment"))
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;" />
