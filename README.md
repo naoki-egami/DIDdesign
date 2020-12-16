@@ -103,7 +103,7 @@ check_panel <- did_check(
 
 ``` r
 ## view estimates
-check_panel$estimate
+summary(check_panel)
 #> # A tibble: 3 x 5
 #>    estimate   lag std.error EqCI95_LB EqCI95_UB
 #>       <dbl> <int>     <dbl>     <dbl>     <dbl>
