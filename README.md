@@ -147,11 +147,11 @@ plot(check_panel)
     ## data for the equivalence plot
     check_panel$plot[[2]]$dat_plot
     #> # A tibble: 3 x 5
-    #>   estimate std.error time_to_treat EqCI95_LB EqCI95_UB
-    #>      <dbl>     <dbl>         <int>     <dbl>     <dbl>
-    #> 1 -0.0463     0.0337            -1   -0.102     0.102 
-    #> 2  0.0429     0.0303            -2   -0.0926    0.0926
-    #> 3 -0.00597    0.0373            -3   -0.0674    0.0674
+    #>   estimate time_to_treat std.error EqCI95_LB EqCI95_UB
+    #>      <dbl>         <int>     <dbl>     <dbl>     <dbl>
+    #> 1 -0.0463             -1    0.0337   -0.102     0.102 
+    #> 2  0.0429             -2    0.0303   -0.0926    0.0926
+    #> 3 -0.00597            -3    0.0373   -0.0674    0.0674
     ```
 
   - Individual plots are also available via
