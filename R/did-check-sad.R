@@ -72,7 +72,7 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
   ## --------------------------------------
   ## plot
   ## --------------------------------------
-  p1 <- did_sad_plot(estimates)
+  p1 <- did_sad_plot(estimates, option$stdz)
   p2 <- did_sad_pattern(dat_panel, treatment, attr(did_placebo_est, "Gmat"))
   return(list(est = estimates, plot = list(p1, p2)))
 }
@@ -133,7 +133,7 @@ did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
 #' @return A ggplot object
 #' @importFrom ggplot2 ggplot geom_hline geom_point aes geom_errorbar labs theme_bw scale_x_continuous xlim
 #' @importFrom dplyr %>% across group_by summarise mutate ungroup select
-did_sad_plot <- function(data) {
+did_sad_plot <- function(data, stdz) {
   dat_plot <- data %>%
   mutate(
     CI90_UB_ab = abs(.data$estimate + qnorm(0.95) * .data$std.error),
@@ -146,11 +146,12 @@ did_sad_plot <- function(data) {
   ) %>%
   select(-.data$CI90_UB_ab, -.data$CI90_LB_ab, -.data$lag)
 
+  y_lab <- ifelse(isTRUE(stdz), "95% Standardized Equivalence CI", "95% Equivalence CI")
   gg <- ggplot(dat_plot, aes(x = time_to_treat, y = estimate)) +
     geom_hline(yintercept = 0, color = 'gray50', linetype = 'dotted') +
     geom_errorbar(aes(ymin = EqCI95_LB, ymax = EqCI95_UB), width = 0.05, color = '#1E88A8') +
     theme_bw() +
-    labs(x = "Time relative to treatment assignment", y = "Test Statistic (95% Equivalence CI)")
+    labs(x = "Time relative to treatment assignment", y = y_lab)
 
   if (length(unique(dat_plot$time_to_treat)) == 1) {
     tt <- abs(unique(dat_plot$time_to_treat))

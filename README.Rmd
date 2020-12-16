@@ -58,6 +58,8 @@ Reference:
 ```{r, message=FALSE,warning=FALSE}
 ## load package
 require(DIDdesign)
+require(tidyverse)
+
 
 ## load data
 data(anzia2012)
