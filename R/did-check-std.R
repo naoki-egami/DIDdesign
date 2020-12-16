@@ -73,10 +73,12 @@ did_check_std <- function(
   ## summarize results
   ## --------------------------------------------
   est_boot <- do.call(rbind, est_boot)
+
+
   estimates <- vector("list", length = length(option$lag))
   for (i in 1:length(option$lag)) {
     estimates[[i]] <- data.frame(
-      estimate  = did_placebo_est[i],
+      estimate  = did_placebo_est$est[i],
       lag       = option$lag[i],
       std.error = sd(est_boot[,i])
     )
@@ -99,39 +101,38 @@ did_check_std <- function(
 #' @param data An output from \code{did_panel_data} or \code{did_rcs_data} function.
 #' @param A vector of non-negative lag parameters.
 #' @importFrom dplyr %>% mutate filter pull
-did_std_placebo <- function(formula, data, lags, stdz) {
+did_std_placebo <- function(formula, data, lags) {
   ## remove all infeasible lag values
   lags <- abs(lags)
   max_lag <- abs(min(data$id_time_std))
   lags <- lags[lags < max_lag]
 
   ## run placebo regression
-  est <- rep(NA, length(lags))
+  est <- est_std <- rep(NA, length(lags))
   for (i in 1:length(lags)) {
     time_use <- c(-lags[i], -lags[i]-1)
     dat_use <- data %>%
                 mutate(It = ifelse(.data$id_time_std >= -lags[i], 1, 0)) %>%
                 filter(.data$id_time_std %in% time_use)
-
-    if (isTRUE(stdz)) {
-      ## normalize by the control group mean and sd
-      ct_outcome <- dat_use %>%
-        filter(.data$It == 0 & .data$Gi == 0) %>%
-        pull(.data$outcome)
-      dat_use$outcome <- (dat_use$outcome - mean(ct_outcome, na.rm = TRUE)) / sd(ct_outcome, na.rm = TRUE)
-    }
-
     fit <- lm(formula, data = dat_use)
     est[i] <- fit$coef['Gi:It']
 
+    ## compute the std version
+    ## normalize by the control group mean and sd
+    ct_outcome <- dat_use %>%
+      filter(.data$It == 0 & .data$Gi == 0) %>%
+      pull(.data$outcome)
+    dat_use$outcome <- (dat_use$outcome - mean(ct_outcome, na.rm = TRUE)) / sd(ct_outcome, na.rm = TRUE)
+    est_std[i] <- lm(formula, data = dat_use)$coef['Gi:It']
   }
-  names(est) <- lags
-  return(est)
+
+  names(est) <- names(est_std) <- lags
+  return(list(est = est, est_std = est_std))
 }
 
 
 did_std_placebo_boot <- function(
-  fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, lag, stdz
+  fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, lag
 ) {
   ## sample index
   id_boot <- sample(id_cluster_vec,
@@ -166,7 +167,7 @@ did_std_placebo_boot <- function(
   }
 
   ## fit DID and sDID
-  est <- did_std_placebo(fm_prep$fm_did[[1]], dat_boot, lag, stdz)
+  est <- did_std_placebo(fm_prep$fm_did[[1]], dat_boot, lag)
   return(est)
 }
 
