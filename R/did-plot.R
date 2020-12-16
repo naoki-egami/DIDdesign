@@ -29,7 +29,7 @@ plot.DIDdesign <- function(x, check_fit = NULL, ...) {
            CI90_UB = estimate + qnorm(0.95) * std.error) %>%
     ggplot(aes(x = time, y = estimate)) +
       geom_hline(yintercept = 0, color = 'gray', linetype = 'dashed') +
-      geom_errorbar(aes(ymin = CI90_LB, ymax = CI90_UB), width = 0.03) +
+      geom_errorbar(aes(ymin = CI90_LB, ymax = CI90_UB), width = 0.05) +
       geom_point() +
       labs(x = "Time", y = "Estimates (90% CI)") +
       theme_bw()

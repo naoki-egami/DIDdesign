@@ -142,8 +142,11 @@ pre_post_plot <- plot(fit_panel, check_panel)
 
 ## show the plot side-by-side
 require(patchwork)
-(post_plot + ggplot2::theme(aspect.ratio=1)) +
-(pre_post_plot + ggplot2::theme(aspect.ratio=1))
+(post_plot + ggplot2::theme(aspect.ratio=1) +
+  ggplot2::ylim(-0.015, 0.01) + ggplot2::labs(title = "Treatment Effects")) +
+(pre_post_plot + ggplot2::theme(aspect.ratio=1) +
+  ggplot2::ylim(-0.015, 0.01) +
+  ggplot2::labs(title = "Treatment Effects and Pre-Treatment Tests"))
 ```
 
 
