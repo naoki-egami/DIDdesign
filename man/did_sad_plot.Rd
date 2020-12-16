@@ -4,7 +4,7 @@
 \alias{did_sad_plot}
 \title{Create a did plot for standard design}
 \usage{
-did_sad_plot(data)
+did_sad_plot(data, stdz)
 }
 \value{
 A ggplot object

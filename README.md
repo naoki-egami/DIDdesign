@@ -28,10 +28,10 @@ Reference:
 
 ## Table of Contents
 
-1.  [Basic DID design with Panel
-    Data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
-2.  [Basic DID design with Repeated Cross-Section
-    Data](#The-Standard-DID-Design-with-Repeated%20Cross-sectional-Data)
+1.  [Basic DID design with panel
+    data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
+2.  [Basic DID design with repeated cross-section
+    data](#The-Standard-DID-Design-with-Repeated%20Cross-sectional-Data)
 3.  [Staggered adoption design](#Staggered-Adoption-Design)
 
 ## The Basic Difference-in-Differences Design with Panel Data
@@ -39,13 +39,15 @@ Reference:
 ``` r
 ## load package
 require(DIDdesign)
+require(tidyverse)
+
 
 ## load data
 data(anzia2012)
 ```
 
 In the basic DID design, units receive the treatment at the same time.
-In `anzia2012` dataset, the treatment assignment happens in 2017.
+In `anzia2012` dataset, the treatment assignment happens in 2007.
 
 <img src="man/figures/README-basic_did_plot-1.png" width="100%" />
 
@@ -105,11 +107,11 @@ check_panel <- did_check(
 ## view estimates
 summary(check_panel)
 #> # A tibble: 3 x 5
-#>    estimate   lag std.error EqCI95_LB EqCI95_UB
-#>       <dbl> <int>     <dbl>     <dbl>     <dbl>
-#> 1 -0.00361      1   0.00265  -0.00796   0.00796
-#> 2  0.00326      2   0.00231  -0.00705   0.00705
-#> 3 -0.000434     3   0.00271  -0.00489   0.00489
+#>   estimate   lag std.error EqCI95_LB EqCI95_UB
+#>      <dbl> <int>     <dbl>     <dbl>     <dbl>
+#> 1 -0.0463      1    0.0337   -0.102     0.102 
+#> 2  0.0429      2    0.0303   -0.0926    0.0926
+#> 3 -0.00597     3    0.0373   -0.0674    0.0674
 ```
 
 ``` r
@@ -145,11 +147,11 @@ plot(check_panel)
     ## data for the equivalence plot
     check_panel$plot[[2]]$dat_plot
     #> # A tibble: 3 x 5
-    #>    estimate std.error time_to_treat EqCI95_LB EqCI95_UB
-    #>       <dbl>     <dbl>         <int>     <dbl>     <dbl>
-    #> 1 -0.00361    0.00265            -1  -0.00796   0.00796
-    #> 2  0.00326    0.00231            -2  -0.00705   0.00705
-    #> 3 -0.000434   0.00271            -3  -0.00489   0.00489
+    #>   estimate std.error time_to_treat EqCI95_LB EqCI95_UB
+    #>      <dbl>     <dbl>         <int>     <dbl>     <dbl>
+    #> 1 -0.0463     0.0337            -1   -0.102     0.102 
+    #> 2  0.0429     0.0303            -2   -0.0926    0.0926
+    #> 3 -0.00597    0.0373            -3   -0.0674    0.0674
     ```
 
   - Individual plots are also available via
@@ -258,7 +260,7 @@ summary(check_rcs)
 #> # A tibble: 1 x 5
 #>   estimate   lag std.error EqCI95_LB EqCI95_UB
 #>      <dbl> <dbl>     <dbl>     <dbl>     <dbl>
-#> 1  -0.0609     1    0.0485    -0.141     0.141
+#> 1   -0.150     1     0.120    -0.347     0.347
 ```
 
 ``` r
@@ -341,11 +343,11 @@ summary(check_sa)
 #> # A tibble: 5 x 5
 #>   estimate   lag std.error EqCI95_LB EqCI95_UB
 #>      <dbl> <int>     <dbl>     <dbl>     <dbl>
-#> 1 -0.00267     1   0.00864   -0.0169    0.0169
-#> 2 -0.0124      2   0.00886   -0.0270    0.0270
-#> 3  0.00227     3   0.0110    -0.0204    0.0204
-#> 4 -0.00758     4   0.0119    -0.0271    0.0271
-#> 5 -0.0107      5   0.00894   -0.0254    0.0254
+#> 1  -0.0197     1    0.0540    -0.109     0.109
+#> 2  -0.0691     2    0.0566    -0.162     0.162
+#> 3   0.0163     3    0.0647    -0.123     0.123
+#> 4  -0.0447     4    0.0677    -0.156     0.156
+#> 5  -0.0488     5    0.0458    -0.124     0.124
 ```
 
 In addition to options described in the previous section, there is one
