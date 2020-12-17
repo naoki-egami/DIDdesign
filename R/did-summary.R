@@ -20,7 +20,7 @@ summary.DIDdesign <- function(object, ...) {
   # weights <- c(NA, object$weights$weight_did, object$weights$weight_sdid)
   # out$ddid_weights <- weights
 
-  class(out) <- c(class(out), "summary.DIDdesign.")
+  class(out) <- c("summary.DIDdesign", class(out))
   return(out)
 }
 
@@ -30,9 +30,13 @@ summary.DIDdesign <- function(object, ...) {
 #' @importFrom cli cat_rule
 #' @param x An object of \code{summary.DIDdesign} class. This is typically an output of \code{summary.DIDdesign()} function.
 print.summary.DIDdesign <- function(x, ...) {
-  cat_rule(left = crayon::bold("Estimates"))
-  print(x)
+  cat_rule(left = crayon::bold("ATT Estimates"))
+  print(as.data.frame(x), digits = 2)
+  # x_out <- data.frame(x)
+  # rownames(x_out) <- 1:nrow(x_out)
+  # print.default(x_out, digits = 3)
   invisible(x)
+  x
 }
 
 
