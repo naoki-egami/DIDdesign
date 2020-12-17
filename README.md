@@ -106,12 +106,11 @@ check_panel <- did_check(
 ``` r
 ## view estimates
 summary(check_panel)
-#> # A tibble: 3 x 5
-#>   estimate   lag std.error EqCI95_LB EqCI95_UB
-#>      <dbl> <int>     <dbl>     <dbl>     <dbl>
-#> 1 -0.0463      1    0.0337   -0.102     0.102 
-#> 2  0.0429      2    0.0303   -0.0926    0.0926
-#> 3 -0.00597     3    0.0373   -0.0674    0.0674
+#> ── Standardized Estimates ──────────────────────────────────────────────────────
+#>   estimate lag std.error EqCI95_LB EqCI95_UB
+#> 1 -0.04632   1    0.0337   -0.1018    0.1018
+#> 2  0.04285   2    0.0303   -0.0926    0.0926
+#> 3 -0.00597   3    0.0373   -0.0674    0.0674
 ```
 
 ``` r
@@ -257,10 +256,9 @@ check_rcs <- did_check(
 
 ## summary
 summary(check_rcs)
-#> # A tibble: 1 x 5
-#>   estimate   lag std.error EqCI95_LB EqCI95_UB
-#>      <dbl> <dbl>     <dbl>     <dbl>     <dbl>
-#> 1   -0.150     1     0.120    -0.347     0.347
+#> ── Standardized Estimates ──────────────────────────────────────────────────────
+#>   estimate lag std.error EqCI95_LB EqCI95_UB
+#> 1    -0.15   1      0.12    -0.347     0.347
 ```
 
 ``` r
@@ -340,14 +338,13 @@ check_sa <- did_check(
 
 ## view estimates
 summary(check_sa)
-#> # A tibble: 5 x 5
-#>   estimate   lag std.error EqCI95_LB EqCI95_UB
-#>      <dbl> <int>     <dbl>     <dbl>     <dbl>
-#> 1  -0.0197     1    0.0540    -0.109     0.109
-#> 2  -0.0691     2    0.0566    -0.162     0.162
-#> 3   0.0163     3    0.0647    -0.123     0.123
-#> 4  -0.0447     4    0.0677    -0.156     0.156
-#> 5  -0.0488     5    0.0458    -0.124     0.124
+#> ── Standardized Estimates ──────────────────────────────────────────────────────
+#>   estimate lag std.error EqCI95_LB EqCI95_UB
+#> 1  -0.0197   1    0.0540    -0.109     0.109
+#> 2  -0.0691   2    0.0566    -0.162     0.162
+#> 3   0.0163   3    0.0647    -0.123     0.123
+#> 4  -0.0447   4    0.0677    -0.156     0.156
+#> 5  -0.0488   5    0.0458    -0.124     0.124
 ```
 
 In addition to options described in the previous section, there is one

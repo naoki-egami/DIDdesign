@@ -42,6 +42,7 @@ print.summary.DIDdesign <- function(x, ...) {
 summary.DIDdesign_check <- function(object, ...) {
   tmp <- object$estimate
   tmp <- tmp[,c("estimate", "lag", "std.error", "EqCI95_LB", "EqCI95_UB")]
+  class(tmp) <- c("summary.DIDdesign_check", class(tmp))
   return(tmp)
 }
 
@@ -49,7 +50,9 @@ summary.DIDdesign_check <- function(object, ...) {
 #' @export
 #' @importFrom cli cat_rule
 print.summary.DIDdesign_check <- function(x, ...) {
-  cat_rule(left = crayon::bold("Estimates"))
-  print(x)
+  cat_rule(left = crayon::bold("Standardized Estimates"))
+  x_out <- data.matrix(x)
+  rownames(x_out) <- 1:nrow(x_out)
+  print.default(x_out, quote = FALSE, right = TRUE, digits = 3)
   invisible(x)
 }
