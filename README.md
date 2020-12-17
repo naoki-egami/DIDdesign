@@ -49,7 +49,7 @@ data(anzia2012)
 In the basic DID design, units receive the treatment at the same time.
 In `anzia2012` dataset, the treatment assignment happens in 2007.
 
-<img src="man/figures/README-basic_did_plot-1.png" width="100%" />
+<img src="man/figures/README-basic_did_plot-1.png" width="85%" />
 
 ### Step 1: Assess the parallel trends assumption
 
@@ -106,7 +106,7 @@ check_panel <- did_check(
 ``` r
 ## view estimates
 summary(check_panel)
-#> ── [1mStandardized Estimates[22m ──────────────────────────────────────────────────────
+#> ── Standardized Estimates ──────────────────────────────────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
 #> 1 -0.04632   1    0.0337   -0.1018    0.1018
 #> 2  0.04285   2    0.0303   -0.0926    0.0926
@@ -125,32 +125,9 @@ plot(check_panel)
     ``` r
     ## data for the trend-plot
     check_panel$plot[[1]]$dat_plot
-    #> [90m# A tibble: 14 x 6[39m
-    #>    group   time_to_treat outcome_mean std.error CI90_UB CI90_LB
-    #>    [3m[90m<chr>[39m[23m           [3m[90m<dbl>[39m[23m        [3m[90m<dbl>[39m[23m     [3m[90m<dbl>[39m[23m   [3m[90m<dbl>[39m[23m   [3m[90m<dbl>[39m[23m
-    #> [90m 1[39m Control            -[31m4[39m         10.7    0.072[4m7[24m    10.8    10.6
-    #> [90m 2[39m Treated            -[31m4[39m         10.7    0.077[4m5[24m    10.8    10.5
-    #> [90m 3[39m Control            -[31m3[39m         10.7    0.076[4m2[24m    10.8    10.5
-    #> [90m 4[39m Treated            -[31m3[39m         10.6    0.081[4m9[24m    10.8    10.5
-    #> [90m 5[39m Control            -[31m2[39m         10.6    0.078[4m0[24m    10.8    10.5
-    #> [90m 6[39m Treated            -[31m2[39m         10.6    0.087[4m9[24m    10.8    10.5
-    #> [90m 7[39m Control            -[31m1[39m         10.7    0.071[4m3[24m    10.8    10.6
-    #> [90m 8[39m Treated            -[31m1[39m         10.7    0.081[4m7[24m    10.8    10.5
-    #> [90m 9[39m Control             0         10.7    0.077[4m4[24m    10.8    10.5
-    #> [90m10[39m Treated             0         10.6    0.088[4m1[24m    10.8    10.5
-    #> [90m11[39m Control             1         10.7    0.084[4m5[24m    10.8    10.5
-    #> [90m12[39m Treated             1         10.6    0.093[4m6[24m    10.8    10.5
-    #> [90m13[39m Control             2         10.7    0.087[4m9[24m    10.8    10.5
-    #> [90m14[39m Treated             2         10.7    0.090[4m2[24m    10.8    10.5
     
     ## data for the equivalence plot
     check_panel$plot[[2]]$dat_plot
-    #> [90m# A tibble: 3 x 5[39m
-    #>   estimate time_to_treat std.error EqCI95_LB EqCI95_UB
-    #>      [3m[90m<dbl>[39m[23m         [3m[90m<int>[39m[23m     [3m[90m<dbl>[39m[23m     [3m[90m<dbl>[39m[23m     [3m[90m<dbl>[39m[23m
-    #> [90m1[39m -[31m0[39m[31m.[39m[31m0[39m[31m46[4m3[24m[39m             -[31m1[39m    0.033[4m7[24m   -[31m0[39m[31m.[39m[31m102[39m     0.102 
-    #> [90m2[39m  0.042[4m9[24m             -[31m2[39m    0.030[4m3[24m   -[31m0[39m[31m.[39m[31m0[39m[31m92[4m6[24m[39m    0.092[4m6[24m
-    #> [90m3[39m -[31m0[39m[31m.[39m[31m00[39m[31m5[4m9[24m[4m7[24m[39m            -[31m3[39m    0.037[4m3[24m   -[31m0[39m[31m.[39m[31m0[39m[31m67[4m4[24m[39m    0.067[4m4[24m
     ```
 
   - Individual plots are also available via
@@ -193,7 +170,7 @@ fit_panel <- did(
 ``` r
 ## view the estimates
 summary(fit_panel)
-#> ── [1mATT Estimates[22m ───────────────────────────────────────────────────────────────
+#> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>    estimator lead estimate std.error statistic p_value
 #> 1 Double-DID    0  -0.0041    0.0026      -1.6  0.1149
 #> 2        DID    0  -0.0062    0.0027      -2.3  0.0194
@@ -227,7 +204,7 @@ require(patchwork)
   ggplot2::labs(title = "Pre- and Post-Treatment"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## The Standard DID Design with Repeated Cross-sectional Data
 
@@ -255,7 +232,7 @@ check_rcs <- did_check(
 
 ## summary
 summary(check_rcs)
-#> ── [1mStandardized Estimates[22m ──────────────────────────────────────────────────────
+#> ── Standardized Estimates ──────────────────────────────────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
 #> 1    -0.15   1      0.12    -0.347     0.347
 ```
@@ -264,7 +241,7 @@ summary(check_rcs)
 plot(check_rcs)
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Step 2: Estimate causal effects
 
@@ -287,7 +264,7 @@ ff_rcs <- did(
 
 ``` r
 summary(ff_rcs)
-#> ── [1mATT Estimates[22m ───────────────────────────────────────────────────────────────
+#> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>    estimator lead estimate std.error statistic p_value
 #> 1 Double-DID    0     0.24     0.091      2.63  0.0084
 #> 2        DID    0     0.10     0.105      0.96  0.3384
@@ -336,7 +313,7 @@ check_sa <- did_check(
 
 ## view estimates
 summary(check_sa)
-#> ── [1mStandardized Estimates[22m ──────────────────────────────────────────────────────
+#> ── Standardized Estimates ──────────────────────────────────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
 #> 1  -0.0197   1    0.0540    -0.109     0.109
 #> 2  -0.0691   2    0.0566    -0.162     0.162
@@ -361,7 +338,7 @@ additional argument specific to the staggered adoption design.
 plot(check_sa)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Step 2: Estimate staggered-adoption average treatment effect
 
@@ -383,7 +360,7 @@ fit_sa <- did(
 
 ``` r
 head(summary(fit_sa))
-#> ── [1mATT Estimates[22m ───────────────────────────────────────────────────────────────
+#> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>       estimator lead estimate std.error statistic p_value
 #> 1 SA-Double-DID    0  0.00869     0.021     0.422    0.67
 #> 2        SA-DID    0  0.01495     0.016     0.921    0.36
@@ -403,4 +380,4 @@ sa_plot +
   ggplot2::geom_vline(xintercept = 0, color = 'red', linetype = 'dotted')
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="80%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="80%" />
