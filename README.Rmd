@@ -68,7 +68,7 @@ data(anzia2012)
 In the basic DID design, units receive the treatment at the same time.
 In `anzia2012` dataset, the treatment assignment happens in 2007.
 
-```{r basic_did_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE}
+```{r basic_did_plot, echo=FALSE, dpi=250, warning=FALSE, out.width="85%", message=FALSE}
 basic_did <- anzia2012 %>%
   select(district, year, oncycle) %>%
   pivot_wider(id_cols = "district", names_prefix = "year",
@@ -146,7 +146,7 @@ plot(check_panel)
 
 - Data used to generate the above plot are available via
 
-  ```{r}
+  ```r
   ## data for the trend-plot
   check_panel$plot[[1]]$dat_plot
 

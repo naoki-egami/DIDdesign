@@ -31,7 +31,7 @@ summary.DIDdesign <- function(object, ...) {
 #' @importFrom cli cat_rule
 #' @param x An object of \code{summary.DIDdesign} class. This is typically an output of \code{summary.DIDdesign()} function.
 print.summary.DIDdesign <- function(x, ...) {
-  cat_rule(left = crayon::bold("ATT Estimates"))
+  cat_rule(left = "ATT Estimates")
   print(as.data.frame(x), digits = 2)
   # x_out <- data.frame(x)
   # rownames(x_out) <- 1:nrow(x_out)
@@ -56,7 +56,7 @@ summary.DIDdesign_check <- function(object, ...) {
 #' @export
 #' @importFrom cli cat_rule
 print.summary.DIDdesign_check <- function(x, ...) {
-  cat_rule(left = crayon::bold("Standardized Estimates"))
+  cat_rule(left = "Standardized Estimates")
   x_out <- data.matrix(x)
   rownames(x_out) <- 1:nrow(x_out)
   print.default(x_out, quote = FALSE, right = TRUE, digits = 3)
