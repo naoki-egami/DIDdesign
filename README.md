@@ -31,7 +31,7 @@ Reference:
 1.  [Basic DID design with panel
     data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
 2.  [Basic DID design with repeated cross-section
-    data](#The-Standard-DID-Design-with-Repeated%20Cross-sectional-Data)
+    data](#The-Standard-DID-Design-with-Repeated-Cross-sectional-Data)
 3.  [Staggered adoption design](#Staggered-Adoption-Design)
 
 ## The Basic Difference-in-Differences Design with Panel Data
@@ -106,7 +106,7 @@ check_panel <- did_check(
 ``` r
 ## view estimates
 summary(check_panel)
-#> ── Standardized Estimates ──────────────────────────────────────────────────────
+#> ── [1mStandardized Estimates[22m ──────────────────────────────────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
 #> 1 -0.04632   1    0.0337   -0.1018    0.1018
 #> 2  0.04285   2    0.0303   -0.0926    0.0926
@@ -125,32 +125,32 @@ plot(check_panel)
     ``` r
     ## data for the trend-plot
     check_panel$plot[[1]]$dat_plot
-    #> # A tibble: 14 x 6
+    #> [90m# A tibble: 14 x 6[39m
     #>    group   time_to_treat outcome_mean std.error CI90_UB CI90_LB
-    #>    <chr>           <dbl>        <dbl>     <dbl>   <dbl>   <dbl>
-    #>  1 Control            -4         10.7    0.0727    10.8    10.6
-    #>  2 Treated            -4         10.7    0.0775    10.8    10.5
-    #>  3 Control            -3         10.7    0.0762    10.8    10.5
-    #>  4 Treated            -3         10.6    0.0819    10.8    10.5
-    #>  5 Control            -2         10.6    0.0780    10.8    10.5
-    #>  6 Treated            -2         10.6    0.0879    10.8    10.5
-    #>  7 Control            -1         10.7    0.0713    10.8    10.6
-    #>  8 Treated            -1         10.7    0.0817    10.8    10.5
-    #>  9 Control             0         10.7    0.0774    10.8    10.5
-    #> 10 Treated             0         10.6    0.0881    10.8    10.5
-    #> 11 Control             1         10.7    0.0845    10.8    10.5
-    #> 12 Treated             1         10.6    0.0936    10.8    10.5
-    #> 13 Control             2         10.7    0.0879    10.8    10.5
-    #> 14 Treated             2         10.7    0.0902    10.8    10.5
+    #>    [3m[90m<chr>[39m[23m           [3m[90m<dbl>[39m[23m        [3m[90m<dbl>[39m[23m     [3m[90m<dbl>[39m[23m   [3m[90m<dbl>[39m[23m   [3m[90m<dbl>[39m[23m
+    #> [90m 1[39m Control            -[31m4[39m         10.7    0.072[4m7[24m    10.8    10.6
+    #> [90m 2[39m Treated            -[31m4[39m         10.7    0.077[4m5[24m    10.8    10.5
+    #> [90m 3[39m Control            -[31m3[39m         10.7    0.076[4m2[24m    10.8    10.5
+    #> [90m 4[39m Treated            -[31m3[39m         10.6    0.081[4m9[24m    10.8    10.5
+    #> [90m 5[39m Control            -[31m2[39m         10.6    0.078[4m0[24m    10.8    10.5
+    #> [90m 6[39m Treated            -[31m2[39m         10.6    0.087[4m9[24m    10.8    10.5
+    #> [90m 7[39m Control            -[31m1[39m         10.7    0.071[4m3[24m    10.8    10.6
+    #> [90m 8[39m Treated            -[31m1[39m         10.7    0.081[4m7[24m    10.8    10.5
+    #> [90m 9[39m Control             0         10.7    0.077[4m4[24m    10.8    10.5
+    #> [90m10[39m Treated             0         10.6    0.088[4m1[24m    10.8    10.5
+    #> [90m11[39m Control             1         10.7    0.084[4m5[24m    10.8    10.5
+    #> [90m12[39m Treated             1         10.6    0.093[4m6[24m    10.8    10.5
+    #> [90m13[39m Control             2         10.7    0.087[4m9[24m    10.8    10.5
+    #> [90m14[39m Treated             2         10.7    0.090[4m2[24m    10.8    10.5
     
     ## data for the equivalence plot
     check_panel$plot[[2]]$dat_plot
-    #> # A tibble: 3 x 5
+    #> [90m# A tibble: 3 x 5[39m
     #>   estimate time_to_treat std.error EqCI95_LB EqCI95_UB
-    #>      <dbl>         <int>     <dbl>     <dbl>     <dbl>
-    #> 1 -0.0463             -1    0.0337   -0.102     0.102 
-    #> 2  0.0429             -2    0.0303   -0.0926    0.0926
-    #> 3 -0.00597            -3    0.0373   -0.0674    0.0674
+    #>      [3m[90m<dbl>[39m[23m         [3m[90m<int>[39m[23m     [3m[90m<dbl>[39m[23m     [3m[90m<dbl>[39m[23m     [3m[90m<dbl>[39m[23m
+    #> [90m1[39m -[31m0[39m[31m.[39m[31m0[39m[31m46[4m3[24m[39m             -[31m1[39m    0.033[4m7[24m   -[31m0[39m[31m.[39m[31m102[39m     0.102 
+    #> [90m2[39m  0.042[4m9[24m             -[31m2[39m    0.030[4m3[24m   -[31m0[39m[31m.[39m[31m0[39m[31m92[4m6[24m[39m    0.092[4m6[24m
+    #> [90m3[39m -[31m0[39m[31m.[39m[31m00[39m[31m5[4m9[24m[4m7[24m[39m            -[31m3[39m    0.037[4m3[24m   -[31m0[39m[31m.[39m[31m0[39m[31m67[4m4[24m[39m    0.067[4m4[24m
     ```
 
   - Individual plots are also available via
@@ -193,18 +193,17 @@ fit_panel <- did(
 ``` r
 ## view the estimates
 summary(fit_panel)
-#> # A tibble: 9 x 6
-#>   estimator   lead estimate std.error statistic p_value
-#>   <chr>      <int>    <dbl>     <dbl>     <dbl>   <dbl>
-#> 1 Double-DID     0 -0.00412   0.00261    -1.58  0.115  
-#> 2 DID            0 -0.00620   0.00265    -2.34  0.0194 
-#> 3 sDID           0 -0.00439   0.00440    -0.999 0.318  
-#> 4 Double-DID     1 -0.00674   0.00323    -2.09  0.0370 
-#> 5 DID            1 -0.0115    0.00365    -3.16  0.00160
-#> 6 sDID           1 -0.00313   0.00393    -0.796 0.426  
-#> 7 Double-DID     2 -0.00508   0.00430    -1.18  0.238  
-#> 8 DID            2 -0.0115    0.00492    -2.33  0.0196 
-#> 9 sDID           2  0.00145   0.00490     0.297 0.766
+#> ── [1mATT Estimates[22m ───────────────────────────────────────────────────────────────
+#>    estimator lead estimate std.error statistic p_value
+#> 1 Double-DID    0  -0.0041    0.0026      -1.6  0.1149
+#> 2        DID    0  -0.0062    0.0027      -2.3  0.0194
+#> 3       sDID    0  -0.0044    0.0044      -1.0  0.3179
+#> 4 Double-DID    1  -0.0067    0.0032      -2.1  0.0370
+#> 5        DID    1  -0.0115    0.0036      -3.2  0.0016
+#> 6       sDID    1  -0.0031    0.0039      -0.8  0.4260
+#> 7 Double-DID    2  -0.0051    0.0043      -1.2  0.2376
+#> 8        DID    2  -0.0115    0.0049      -2.3  0.0196
+#> 9       sDID    2   0.0015    0.0049       0.3  0.7664
 ```
 
 `summary()` function can be used to view estimates.
@@ -256,7 +255,7 @@ check_rcs <- did_check(
 
 ## summary
 summary(check_rcs)
-#> ── Standardized Estimates ──────────────────────────────────────────────────────
+#> ── [1mStandardized Estimates[22m ──────────────────────────────────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
 #> 1    -0.15   1      0.12    -0.347     0.347
 ```
@@ -288,12 +287,11 @@ ff_rcs <- did(
 
 ``` r
 summary(ff_rcs)
-#> # A tibble: 3 x 6
-#>   estimator   lead estimate std.error statistic p_value
-#>   <chr>      <dbl>    <dbl>     <dbl>     <dbl>   <dbl>
-#> 1 Double-DID     0    0.239    0.0909     2.63  0.00842
-#> 2 DID            0    0.101    0.105      0.957 0.338  
-#> 3 sDID           0    0.169    0.138      1.22  0.221
+#> ── [1mATT Estimates[22m ───────────────────────────────────────────────────────────────
+#>    estimator lead estimate std.error statistic p_value
+#> 1 Double-DID    0     0.24     0.091      2.63  0.0084
+#> 2        DID    0     0.10     0.105      0.96  0.3384
+#> 3       sDID    0     0.17     0.138      1.22  0.2210
 ```
 
 ## Staggered Adoption Design
@@ -338,7 +336,7 @@ check_sa <- did_check(
 
 ## view estimates
 summary(check_sa)
-#> ── Standardized Estimates ──────────────────────────────────────────────────────
+#> ── [1mStandardized Estimates[22m ──────────────────────────────────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
 #> 1  -0.0197   1    0.0540    -0.109     0.109
 #> 2  -0.0691   2    0.0566    -0.162     0.162
@@ -385,15 +383,14 @@ fit_sa <- did(
 
 ``` r
 head(summary(fit_sa))
-#> # A tibble: 6 x 6
-#>   estimator      lead  estimate std.error statistic p_value
-#>   <chr>         <int>     <dbl>     <dbl>     <dbl>   <dbl>
-#> 1 SA-Double-DID     0  0.00869     0.0206    0.422    0.673
-#> 2 SA-DID            0  0.0149      0.0162    0.921    0.357
-#> 3 SA-sDID           0  0.00903     0.0195    0.463    0.643
-#> 4 SA-Double-DID     1 -0.0152      0.0163   -0.936    0.349
-#> 5 SA-DID            1  0.000916    0.0151    0.0606   0.952
-#> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332
+#> ── [1mATT Estimates[22m ───────────────────────────────────────────────────────────────
+#>       estimator lead estimate std.error statistic p_value
+#> 1 SA-Double-DID    0  0.00869     0.021     0.422    0.67
+#> 2        SA-DID    0  0.01495     0.016     0.921    0.36
+#> 3       SA-sDID    0  0.00903     0.019     0.463    0.64
+#> 4 SA-Double-DID    1 -0.01521     0.016    -0.936    0.35
+#> 5        SA-DID    1  0.00092     0.015     0.061    0.95
+#> 6       SA-sDID    1 -0.01995     0.021    -0.970    0.33
 ```
 
 ``` r
