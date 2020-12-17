@@ -48,7 +48,7 @@ Reference:
 ## Table of Contents
 
 1. [Basic DID design with panel data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
-2. [Basic DID design with repeated cross-section data](#The-Standard-DID-Design-with-Repeated Cross-sectional-Data)
+2. [Basic DID design with repeated cross-section data](#The-Standard-DID-Design-with-Repeated-Cross-sectional-Data)
 3. [Staggered adoption design](#Staggered-Adoption-Design)
 
 
