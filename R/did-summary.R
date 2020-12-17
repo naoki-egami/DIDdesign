@@ -16,6 +16,7 @@ summary.DIDdesign <- function(object, ...) {
   out$p_value   <- 2 * pnorm(abs(out$statistic), lower.tail = FALSE)
 
   out <- out[, c("estimator", "lead", "estimate", "std.error", "statistic", "p_value")]
+
   # ## add weights
   # weights <- c(NA, object$weights$weight_did, object$weights$weight_sdid)
   # out$ddid_weights <- weights
@@ -44,6 +45,7 @@ print.summary.DIDdesign <- function(x, ...) {
 #' Summary did_check Output
 #' @export
 summary.DIDdesign_check <- function(object, ...) {
+  if (!("DIDdesign_check" %in% class(object))) stop("object should the output of did_check funciton.")
   tmp <- object$estimate
   tmp <- tmp[,c("estimate", "lag", "std.error", "EqCI95_LB", "EqCI95_UB")]
   class(tmp) <- c("summary.DIDdesign_check", class(tmp))
