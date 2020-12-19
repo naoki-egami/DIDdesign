@@ -294,7 +294,7 @@ paglayan2019 <- paglayan2019 %>%
          log_salary      = log(teacher_salary + 1))
 ```
 
-```{r sa_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE, out.width="80%"}
+```{r sa_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE, out.width="85%"}
 require(tidyr)
 require(stringr)
 

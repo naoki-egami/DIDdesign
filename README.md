@@ -295,7 +295,7 @@ paglayan2019 <- paglayan2019 %>%
          log_salary      = log(teacher_salary + 1))
 ```
 
-<img src="man/figures/README-sa_plot-1.png" width="80%" />
+<img src="man/figures/README-sa_plot-1.png" width="85%" />
 
 As we can see in the above plot, states receive the treatment at
 different years ranging from 1965 at earliest to 1987 at latest (and
