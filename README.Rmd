@@ -76,7 +76,6 @@ basic_did <- anzia2012 %>%
   column_to_rownames(var = "district") %>%
   arrange(desc(year2007)) %>%
   data.matrix()
-
 basic_did <- basic_did[c(1:20, 300:350), ]
 
 ## plot
