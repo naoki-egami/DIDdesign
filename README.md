@@ -118,7 +118,7 @@ summary(check_panel)
 plot(check_panel)
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-panel_check_plot-1.png" width="100%" style="display: block; margin: auto;" />
 
   - Data used to generate the above plot are available via
     
@@ -204,7 +204,7 @@ require(patchwork)
   ggplot2::labs(title = "Pre- and Post-Treatment"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-panel_fit_plot-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## The Standard DID Design with Repeated Cross-sectional Data
 
@@ -229,7 +229,9 @@ check_rcs <- did_check(
   is_panel= FALSE,
   option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lag = 1)
 )
+```
 
+``` r
 ## summary
 summary(check_rcs)
 #> ── Standardized Estimates ──────────────────────────────────────────────────────
@@ -241,7 +243,7 @@ summary(check_rcs)
 plot(check_rcs)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-rcs_check_plot-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Step 2: Estimate causal effects
 
@@ -264,12 +266,11 @@ ff_rcs <- did(
 
 ``` r
 summary(ff_rcs)
-#> # A tibble: 3 x 6
-#>   estimator   lead estimate std.error statistic p_value
-#>   <chr>      <dbl>    <dbl>     <dbl>     <dbl>   <dbl>
-#> 1 Double-DID     0    0.239    0.0909     2.63  0.00842
-#> 2 DID            0    0.101    0.105      0.957 0.338  
-#> 3 sDID           0    0.169    0.138      1.22  0.221
+#> ── ATT Estimates ───────────────────────────────────────────────────────────────
+#>    estimator lead estimate std.error statistic p_value
+#> 1 Double-DID    0     0.24     0.091      2.63  0.0084
+#> 2        DID    0     0.10     0.105      0.96  0.3384
+#> 3       sDID    0     0.17     0.138      1.22  0.2210
 ```
 
 ## Staggered Adoption Design
@@ -339,7 +340,7 @@ additional argument specific to the staggered adoption design.
 plot(check_sa)
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-sa_check_plot-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Step 2: Estimate staggered-adoption average treatment effect
 
@@ -361,15 +362,14 @@ fit_sa <- did(
 
 ``` r
 head(summary(fit_sa))
-#> # A tibble: 6 x 6
-#>   estimator      lead  estimate std.error statistic p_value
-#>   <chr>         <int>     <dbl>     <dbl>     <dbl>   <dbl>
-#> 1 SA-Double-DID     0  0.00869     0.0206    0.422    0.673
-#> 2 SA-DID            0  0.0149      0.0162    0.921    0.357
-#> 3 SA-sDID           0  0.00903     0.0195    0.463    0.643
-#> 4 SA-Double-DID     1 -0.0152      0.0163   -0.936    0.349
-#> 5 SA-DID            1  0.000916    0.0151    0.0606   0.952
-#> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332
+#> ── ATT Estimates ───────────────────────────────────────────────────────────────
+#>       estimator lead estimate std.error statistic p_value
+#> 1 SA-Double-DID    0  0.00869     0.021     0.422    0.67
+#> 2        SA-DID    0  0.01495     0.016     0.921    0.36
+#> 3       SA-sDID    0  0.00903     0.019     0.463    0.64
+#> 4 SA-Double-DID    1 -0.01521     0.016    -0.936    0.35
+#> 5        SA-DID    1  0.00092     0.015     0.061    0.95
+#> 6       SA-sDID    1 -0.01995     0.021    -0.970    0.33
 ```
 
 ``` r
@@ -382,4 +382,4 @@ sa_plot +
   ggplot2::geom_vline(xintercept = 0, color = 'red', linetype = 'dotted')
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-sa_fit_plot-1.png" width="100%" style="display: block; margin: auto;" />
