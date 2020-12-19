@@ -295,7 +295,7 @@ paglayan2019 <- paglayan2019 %>%
          log_salary      = log(teacher_salary + 1))
 ```
 
-```{r sa_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE}
+```{r sa_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE, out.width="80%"}
 require(tidyr)
 require(stringr)
 
@@ -382,7 +382,7 @@ fit_sa <- did(
 head(summary(fit_sa))
 ```
 
-```{r sa_fit_plot, dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
+```{r sa_fit_plot, dpi=250, fig.height = 4, fig.width = 7, out.width="90%", fig.align="center"}
 ## plot treatment effects + assessment statistic
 sa_plot <- plot(fit_sa, check_sa, band = TRUE)
 

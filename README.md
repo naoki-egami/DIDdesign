@@ -295,7 +295,7 @@ paglayan2019 <- paglayan2019 %>%
          log_salary      = log(teacher_salary + 1))
 ```
 
-<img src="man/figures/README-sa_plot-1.png" width="100%" />
+<img src="man/figures/README-sa_plot-1.png" width="80%" />
 
 As we can see in the above plot, states receive the treatment at
 different years ranging from 1965 at earliest to 1987 at latest (and
@@ -384,4 +384,4 @@ sa_plot +
   ggplot2::geom_vline(xintercept = 0, color = 'red', linetype = 'dotted')
 ```
 
-<img src="man/figures/README-sa_fit_plot-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-sa_fit_plot-1.png" width="90%" style="display: block; margin: auto;" />
