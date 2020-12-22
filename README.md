@@ -73,29 +73,10 @@ check_panel <- did_check(
 
 `did_check()` function takes the following arguments:
 
-| Argument  | Description                                                                                       |
-| :-------- | :------------------------------------------------------------------------------------------------ |
-| `formula` | A formula specifying variables. It should follow the form of `outcome ~ treatment \| covariates`. |
-
-| |
-
-<ul>
-
-<li>
-
-`treatment` should be time-varying, that is, `treatment` takes zero for
-everyone before the treatment assignment, and takes 1 for units who are
-treated. See the example for how the treatment variable should be coded.
-
-</li>
-
-<li>
-
-`covariates` can be omitted as `outcome ~ treatment`.
-
-</li>
-
-</ul>
+| Argument                                                                                                                                                                                                                                                                                  | Description                                                                                       |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| `formula`                                                                                                                                                                                                                                                                                 | A formula specifying variables. It should follow the form of `outcome ~ treatment \| covariates`. |
+| <br />`treatment` should be time-varying, that is, `treatment` takes zero for everyone before the treatment assignment, and takes 1 for units who are treated. See the example for how the treatment variable should be coded.<br />`covariates` can be omitted as `outcome ~ treatment`. |                                                                                                   |
 
   - `data`: A data frame. This can be either `data.frame` or `tibble`.
   - `id_unit`: A variable name in the data that uniquely identifies
