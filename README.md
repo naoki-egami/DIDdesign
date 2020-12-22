@@ -73,13 +73,30 @@ check_panel <- did_check(
 
 `did_check()` function takes the following arguments:
 
-  - `formula`: A formula specifying variables. It should follow the form
-    of `outcome ~ treatment | covariates`.
-      - `treatment` should be time-varying, that is, `treatment` takes
-        zero for everyone before the treatment assignment, and takes 1
-        for units who are treated. See the example for how the treatment
-        variable should be coded.
-      - `covariates` can be omitted as `outcome ~ treatment`.
+| Argument  | Description                                                                                       |
+| :-------- | :------------------------------------------------------------------------------------------------ |
+| `formula` | A formula specifying variables. It should follow the form of `outcome ~ treatment \| covariates`. |
+
+| |
+
+<ul>
+
+<li>
+
+`treatment` should be time-varying, that is, `treatment` takes zero for
+everyone before the treatment assignment, and takes 1 for units who are
+treated. See the example for how the treatment variable should be coded.
+
+</li>
+
+<li>
+
+`covariates` can be omitted as `outcome ~ treatment`.
+
+</li>
+
+</ul>
+
   - `data`: A data frame. This can be either `data.frame` or `tibble`.
   - `id_unit`: A variable name in the data that uniquely identifies
     units (e.g., individuals or states).
