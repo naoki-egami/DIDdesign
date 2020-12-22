@@ -368,6 +368,9 @@ summary(check_sa)
 #> 5  -0.0488   5    0.0458    -0.124     0.124
 ```
 
+`plot()` function behaves slight differently from the basic DID design.
+By default, it plots the treatment variation plot on the right.
+
 ``` r
 plot(check_sa)
 ```

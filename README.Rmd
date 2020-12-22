@@ -401,6 +401,9 @@ There are a few additional arguments specific to the staggered adoption design.
 summary(check_sa)
 ```
 
+`plot()` function behaves slight differently from the basic DID design.
+By default, it plots the treatment variation plot on the right.
+
 ```{r sa_check_plot, dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
 plot(check_sa)
 ```
