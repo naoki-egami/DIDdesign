@@ -73,32 +73,15 @@ check_panel <- did_check(
 
 `did_check()` function takes the following arguments:
 
-| Argument  | Description                                                                                                                                                                                                                                                                                                                                                                                     |
-| :-------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `formula` | A formula specifying variables. It should follow the form of `outcome ~ treatment \| covariates`. <br /> ⋅`treatment` should be time-varying, that is, `treatment` takes zero for everyone before the treatment assignment, and takes 1 for units who are treated. See the example for how the treatment variable should be coded.<br /> ⋅`covariates` can be omitted as `outcome ~ treatment`. |
-
-  - `data`: A data frame. This can be either `data.frame` or `tibble`.
-  - `id_unit`: A variable name in the data that uniquely identifies
-    units (e.g., individuals or states).
-  - `id_time`: A variable name in the data that uniquely identifies time
-    (e.g., year).
-  - `design`: Design option. It should be `"did"` when the standard DID
-    design is used.
-  - `is_panel`: A boolean argument to indicate the type of the data.
-    When the dataset is panel (i.e., same observations are measured
-    repeately overtime), it should take `TRUE`. See the next section for
-    how to analyze the repeated cross-section data.
-  - `option`: A list of options.
-      - `n_boot`: Number of bootstrap iterations to estimate weighting
-        matrix.
-      - `parallel`: A boolean argument. If `TRUE`, bootstrap is
-        conducted in parallel using `future` package.
-      - `lag`: A vector of non-negative lead parameter. For example,
-        when `lead = c(0, 1)`, treatment effect when the treatment is
-        assigned (`lead = 0`) as well as one-time ahead effect (`lead
-        = 1`) will be estimated. Default is `lead = 0`.
-
-<!-- end list -->
+| Argument   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| :--------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `formula`  | A formula specifying variables. It should follow the form of `outcome ~ treatment \| covariates`. <br /> -`treatment` should be time-varying, that is, `treatment` takes zero for everyone before the treatment assignment, and takes 1 for units who are treated. See the example for how the treatment variable should be coded.<br /> -`covariates` can be omitted as `outcome ~ treatment`.                                                                     |
+| `data`     | A data frame. This can be either `data.frame` or `tibble`.                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `id_unit`  | A variable name in the data that uniquely identifies units (e.g., individuals or states)                                                                                                                                                                                                                                                                                                                                                                            |
+| `id_time`  | A variable name in the data that uniquely identifies time (e.g., year).                                                                                                                                                                                                                                                                                                                                                                                             |
+| `design`   | Design option. It should be `"did"` when the standard DID design is used.                                                                                                                                                                                                                                                                                                                                                                                           |
+| `is_panel` | A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeately overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data.                                                                                                                                                                                                                           |
+| `option`   | A list of options. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package. <br /> - `lag`: A vector of non-negative lead parameter. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`. |
 
 ``` r
 ## view estimates
