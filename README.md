@@ -31,7 +31,7 @@ Reference:
 1.  [Basic DID design with panel
     data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
 2.  [Basic DID design with repeated cross-section
-    data](#The-Standard-DID-Design-with-Repeated-Cross-sectional-Data)
+    data](#The-Basic-DID-Design-with-Repeated-Cross-sectional-Data)
 3.  [Staggered adoption design](#Staggered-Adoption-Design)
 
 ## The Basic Difference-in-Differences Design with Panel Data
@@ -79,7 +79,7 @@ check_panel <- did_check(
 | `data`     | A data frame. This can be either `data.frame` or `tibble`.                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `id_unit`  | A variable name in the data that uniquely identifies units (e.g., individuals or states)                                                                                                                                                                                                                                                                                                                                                                            |
 | `id_time`  | A variable name in the data that uniquely identifies time (e.g., year).                                                                                                                                                                                                                                                                                                                                                                                             |
-| `design`   | Design option. It should be `"did"` when the standard DID design is used.                                                                                                                                                                                                                                                                                                                                                                                           |
+| `design`   | Design option. It should be `"did"` when the basic DID design is used.                                                                                                                                                                                                                                                                                                                                                                                              |
 | `is_panel` | A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeately overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data.                                                                                                                                                                                                                           |
 | `option`   | A list of options. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package. <br /> - `lag`: A vector of non-negative lead parameter. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`. |
 
@@ -138,14 +138,12 @@ fit_panel <- did(
 ```
 
 `did()` function inherits most of the arguments in `did_check()`.
+Different from `did_check()`, `did()` takes `lead` parameter in the
+option argument.
 
-  - `option`:
-      - `lead`: A vector of non-negative lead parameter. For example,
-        when `lead = c(0, 1)`, treatment effect when the treatment is
-        assigned (`lead = 0`) as well as one-time ahead effect (`lead
-        = 1`) will be estimated. Default is `lead = 0`.
-
-<!-- end list -->
+| Argument | Description                                                                                                                                                                                                                                                                   |
+| :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lead`   | A parameter in `option` argument. It should be a vector of non-negative lead values. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`. |
 
 ``` r
 ## view the estimates
@@ -186,7 +184,7 @@ require(patchwork)
 
 <img src="man/figures/README-panel_fit_plot-1.png" width="100%" style="display: block; margin: auto;" />
 
-## The Standard DID Design with Repeated Cross-sectional Data
+## The Basic DID Design with Repeated Cross-sectional Data
 
 Sometimes, each period consists of different units, instead of repeated
 observations of the same units. `did()` can handle such “repeated
@@ -210,6 +208,15 @@ check_rcs <- did_check(
   option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lag = 1)
 )
 ```
+
+`did_check()` and `did()` for repeated cross-sectional data accept a
+slightly different argument from the case of panel data.
+
+| Argument     | Description                                                                                                                                            |
+| :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `formula`    | It should include the post-treatment indicator, in addition to the time-invariant `treatment` variable. Covariates are supported as in the panel case. |
+| `is_panel`   | It should be `FALSE` to indicate that the data is in the repeated cross-sectional format.                                                              |
+| `id_cluster` | A parameter for `option` argument. It should be a variable name used to cluster the standard errors.                                                   |
 
 ``` r
 ## summary
@@ -237,12 +244,6 @@ ff_rcs <- did(
   option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lead = 0)
 )
 ```
-
-  - `formula` now includes `treatment` variable as well as the
-    post-treatment time indicator.
-  - `id_cluster`: A variable used to cluster the standard errors.
-
-<!-- end list -->
 
 ``` r
 summary(ff_rcs)
@@ -293,7 +294,9 @@ check_sa <- did_check(
   design  = "sa",
   option  = list(n_boot = 200, parallel = TRUE, thres = 1, lag = 1:5)
 )
+```
 
+``` r
 ## view estimates
 summary(check_sa)
 #> ── Standardized Estimates ──────────────────────────────────────────────────────
@@ -337,21 +340,20 @@ fit_sa <- did(
   id_unit = "id_subject",
   id_time = "id_time",
   design  = "sa",
-  option  = list(n_boot = 200, lead = 0:9, thres = 2, parallel = TRUE)
+  option  = list(n_boot = 200, parallel = TRUE, thres = 1, lead = 0:9)
 )
 ```
 
 ``` r
 head(summary(fit_sa))
-#> # A tibble: 6 x 6
-#>   estimator      lead  estimate std.error statistic p_value
-#>   <chr>         <int>     <dbl>     <dbl>     <dbl>   <dbl>
-#> 1 SA-Double-DID     0  0.00869     0.0206    0.422    0.673
-#> 2 SA-DID            0  0.0149      0.0162    0.921    0.357
-#> 3 SA-sDID           0  0.00903     0.0195    0.463    0.643
-#> 4 SA-Double-DID     1 -0.0152      0.0163   -0.936    0.349
-#> 5 SA-DID            1  0.000916    0.0151    0.0606   0.952
-#> 6 SA-sDID           1 -0.0199      0.0206   -0.970    0.332
+#> ── ATT Estimates ───────────────────────────────────────────────────────────────
+#>       estimator lead estimate std.error statistic p_value
+#> 1 SA-Double-DID    0  0.00869     0.021     0.422    0.67
+#> 2        SA-DID    0  0.01495     0.016     0.921    0.36
+#> 3       SA-sDID    0  0.00903     0.019     0.463    0.64
+#> 4 SA-Double-DID    1 -0.01521     0.016    -0.936    0.35
+#> 5        SA-DID    1  0.00092     0.015     0.061    0.95
+#> 6       SA-sDID    1 -0.01995     0.021    -0.970    0.33
 ```
 
 ``` r
