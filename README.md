@@ -28,11 +28,21 @@ Reference:
 
 ## Table of Contents
 
-1.  [Basic DID design with panel
+1.  [Overview](#Overview-and-Workflow-in-%60DIDdesign%60)
+2.  [Basic DID design with panel
     data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
-2.  [Basic DID design with repeated cross-section
+3.  [Basic DID design with repeated cross-section
     data](#The-Basic-DID-Design-with-Repeated-Cross-sectional-Data)
-3.  [Staggered adoption design](#Staggered-Adoption-Design)
+4.  [Staggered adoption design](#Staggered-Adoption-Design)
+
+## Overview and Workflow in `DIDdesign`
+
+### Workflow
+
+  - **Step 1**: Assessing the underlying assumption via `did_check()`
+      - View and visualize the output via `plot()` and `summary()`
+  - **Step 2**: Estimating the treatment effects via `did()`
+      - View and visualize the output via `plot()` and `summary()`
 
 ## The Basic Difference-in-Differences Design with Panel Data
 
@@ -255,7 +265,7 @@ summary(ff_rcs)
 #> 3 sDID           0    0.169    0.138      1.22  0.221
 ```
 
-## Staggered Adoption Design
+## The Staggered Adoption Design
 
 `DIDdesign` supports the staggered adoption design where units receive
 the treatment at different periods of time. As an example, we analyze

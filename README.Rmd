@@ -47,9 +47,21 @@ Reference:
 
 ## Table of Contents
 
-1. [Basic DID design with panel data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
-2. [Basic DID design with repeated cross-section data](#The-Basic-DID-Design-with-Repeated-Cross-sectional-Data)
-3. [Staggered adoption design](#Staggered-Adoption-Design)
+1. [Overview](#Overview-and-Workflow-in-`DIDdesign`)
+2. [Basic DID design with panel data](#The-Basic-Difference-in-Differences-Design-with-Panel-Data)
+3. [Basic DID design with repeated cross-section data](#The-Basic-DID-Design-with-Repeated-Cross-sectional-Data)
+4. [Staggered adoption design](#Staggered-Adoption-Design)
+
+
+## Overview and Workflow in `DIDdesign`
+
+
+### Workflow
+
+- **Step 1**: Assessing the underlying assumption via `did_check()`
+  - View and visualize the output via `plot()` and `summary()`
+- **Step 2**: Estimating the treatment effects via `did()`
+  - View and visualize the output via `plot()` and `summary()`
 
 
 
@@ -281,7 +293,7 @@ summary(ff_rcs)
 ```
 
 
-## Staggered Adoption Design
+## The Staggered Adoption Design
 
 `DIDdesign` supports the staggered adoption design where units receive the treatment at different periods of time.
 As an example, we analyze `paglayan2019` dataset in the package (see `?paglayan2019` for more details about this dataset).
