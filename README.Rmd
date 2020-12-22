@@ -152,9 +152,8 @@ summary(check_panel)
 ```
 
 - `estimate` shows the DID estimates on the pre-treatment periods. Deviation from zero suggests the possible violation of the parallel trends assumption.
-- `lag`
-- `std.error` shows the standard errors for the estimates reported in `estimate` column.
--
+- `std.error` shows the standard errors for the estimates reported on the `estimate` column.
+- `EqCI95_LB` and `EqCI95_UB` show the upper and lower bound on the 95% standardized equivalence confidence intervals. Values are standardized such that they can be interpreted as the standard deviation from the mean of the baseline control group. For example, `EqCI95_LB` for `lag = 1` can be interpreted as `EqCI95_LB` standard deviation away from the mean of the control group at time `t - 2` (`lag = 1` corresponds to the parallel trends check between time `t-2` and `t-1`). Wider intervals suggests the possible violation of the parallel trends assumption.
 
 
 
