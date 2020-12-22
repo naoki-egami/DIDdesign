@@ -125,7 +125,11 @@ summary(check_panel)
     `t-2` and `t-1`). Wider intervals suggests the possible violation of
     the parallel trends assumption.
 
-<!-- end list -->
+The output can be also visualized by `plot()` function. By default, it
+shows a plot for the 95% standardized equivalence confidence intervals
+on the left, and a plot of the observed trends on the right. The
+generated plots are in `ggplot` object, thus users can add additional
+attributes using functions from `ggplot2`.
 
 ``` r
 ## visualize the estimates
@@ -156,6 +160,10 @@ plot(check_panel)
 
 ### Step 2: Estimate the treatment effect with the double DID estimator
 
+After assessing the parallel trends assumption with `did_check()`, we
+can estimate the average treatment effect on the treated (ATT) via
+`did()`.
+
 ``` r
 ## estimate treatment effect
 set.seed(1234)
@@ -179,6 +187,10 @@ option argument.
 | :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `lead`   | A parameter in `option` argument. It should be a vector of non-negative lead values. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`. |
 
+#### Assessing the output from `did()`
+
+Users can obtain the estimates via `summary()` function.
+
 ``` r
 ## view the estimates
 summary(fit_panel)
@@ -195,7 +207,12 @@ summary(fit_panel)
 #> 9       sDID    2   0.0015    0.0049       0.3  0.7664
 ```
 
-`summary()` function can be used to view estimates.
+`plot()` function for the output from `did()` can be used in two ways.
+First, it generates a treatment effect plot when the function is
+provided an output from `did()`. Second, it generates a plot that adds
+the pre-treatment trend check in addition to the treatment effect
+estimates when the function is provided an output from `did()` as well
+as `did_check()`.
 
 ``` r
 # plot only treatment effects
@@ -330,6 +347,15 @@ check_sa <- did_check(
 )
 ```
 
+Most of the arguments are common to the case of the basic DID design.
+There are a few additional arguments specific to the staggered adoption
+design.
+
+| Argument | Description                                                                                                                                                                                                                                                                                                                                                                                            |
+| :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `design` | A design argument. It should take `design = "sa"` for the staggered adoption design                                                                                                                                                                                                                                                                                                                    |
+| `thres`  | A parameter in the `option` argument. It controls the minimum number of treated units for a particular time to be included in the treatment effect estimation. For example if `thres = 2`, the effect for Tennessee will be removed from the time-average effect because it’s the only unit who received the treatment in 1972 (i.e., the number of treated units in 1972 is less than the threshold). |
+
 ``` r
 ## view estimates
 summary(check_sa)
@@ -341,18 +367,6 @@ summary(check_sa)
 #> 4  -0.0447   4    0.0677    -0.156     0.156
 #> 5  -0.0488   5    0.0458    -0.124     0.124
 ```
-
-In addition to options described in the previous section, there is one
-additional argument specific to the staggered adoption design.
-
-  - `thres` parameter in the option control the minimum number of
-    treated units for a particular time to be included in the treatment
-    effect estimation. For example if `thres = 2`, the effect for
-    Tennessee will be removed from the time-average effect because it’s
-    the only unit who received the treatment in 1972 (i.e., the number
-    of treated units in 1972 is less than the threshold).
-
-<!-- end list -->
 
 ``` r
 plot(check_sa)
