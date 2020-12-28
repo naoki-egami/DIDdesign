@@ -73,26 +73,29 @@ did_rcs_data <- function(
   var_covars = NULL, var_cluster = NULL, id_time, data
 ) {
 
-
+  ## time index
   var_year <- pull(data, !!sym(id_time))
 
+  ## outcome, treatment, post-treatment indicator
   var_select <- c(var_outcome, var_treat, var_post)
+
+  ## covariates & variable for clustering
   if (!is.null(var_covars)) var_select <- c(var_select, var_covars)
   if (!is.null(var_cluster)) var_select <- c(var_select, var_cluster)
 
+  ## subset variables and rename
   dat_use <- data %>%
     select(all_of(var_select)) %>%
     rename(Gi = !!sym(var_treat), It = !!sym(var_post),
            outcome = !!sym(var_outcome)) %>%
     mutate(id_time = as.numeric(as.factor(as.character(var_year))))
 
-
   ## treatment info
   treat_info <- dat_use %>% group_by(.data$It) %>%
     summarise(min_year = min(.data$id_time),
               max_year = max(.data$id_time))
 
-  ## treat time
+  ## treat time: standardized the treated time to zero
   treat_year <- treat_info$min_year[2]
   dat_use <- dat_use %>%
     mutate(id_time_std = .data$id_time - treat_year)

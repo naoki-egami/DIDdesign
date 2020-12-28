@@ -188,7 +188,7 @@ double_did_compute <- function(fit, weights, lead, se_boot = FALSE) {
     if (isTRUE(se_boot)) {
       ## V(τ̂) = w^2[did] * Var(τ̂[did]) + w^2[s-did] * Var(τ̂[did]) +
       ##            2 * w[did] * w[s-did] * Cov(τ̂[did], τ̂[s-did])
-      cov_did  <- weights[[ll]]$Vcov[1,2]
+      cov_did  <- weights[[ll]]$vcov[1,2]
       ddid_var <- weights[[ll]]$weights[1]^2 * var_did +
                   weights[[ll]]$weights[2]^2 * var_sdid +
                   2 * cov_did * prod(weights[[ll]]$weights)
