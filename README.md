@@ -207,6 +207,17 @@ summary(fit_panel)
 #> 9       sDID    2   0.0015    0.0049       0.3  0.7664
 ```
 
+  - `estimator`
+      - `Double-DID` shows estimates from the double DID estimator that
+        combines the extended parallel trends assumption. This estimate
+        should be used only when the parallel trends assumption is
+        plausible.
+      - `DID` shows estimates from the standard DID estimator.
+      - `sDID` shows estimates from the sequential DID estimator that
+        requires a weaker parallel trends-in-trends assumption. When the
+        parallel trends assumption is not plausible, this estimator
+        should be used.
+
 `plot()` function for the output from `did()` can be used in two ways.
 First, it generates a treatment effect plot when the function is
 provided an output from `did()`. Second, it generates a plot that adds
