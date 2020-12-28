@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# DIDdesign: Double Difference-in-Differences
+# DIDdesign: Analyzing Difference-in-Differences Design
 
 
 <!-- badges: start -->
@@ -33,7 +33,7 @@ Authors:
 
 Reference:
 
-- Egami and Yamauchi (2019) "Using Multiple Pre-treatment Periods to Improve Difference-in-Differences and Staggered Adoption Designs."
+- Egami and Yamauchi (2019) “[How to Improve the Difference-in-Differences Design with Multiple Pre-treatment Periods.](https://naokiegami.com/paper/double_did.pdf)”
 
 ## Installation Instructions:
 
@@ -228,7 +228,7 @@ summary(fit_panel)
 - `estimator`
   - `Double-DID` shows estimates from the double DID estimator that combines the extended parallel trends assumption. This estimate should be used only when the parallel trends assumption is plausible.
   - `DID` shows estimates from the standard DID estimator.
-  - `sDID` shows estimates from the sequential DID estimator that requires a weaker parallel trends-in-trends assumption. When the parallel trends assumption is not plausible, this estimator should be used. 
+  - `sDID` shows estimates from the sequential DID estimator that requires a weaker parallel trends-in-trends assumption. When the parallel trends assumption is not plausible, this estimator should be used.
 
 `plot()` function for the output from `did()` can be used in two ways.
 First, it generates a treatment effect plot when the function is provided an output from `did()`.
