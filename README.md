@@ -13,8 +13,7 @@ Authors:
 
 Reference:
 
-  - Egami and Yamauchi (2019) “Using Multiple Pre-treatment Periods to
-    Improve Difference-in-Differences and Staggered Adoption Designs.”
+  - Egami and Yamauchi (2019) “How to Improve the Difference-in-Differences Design with Multiple Pre-treatment Periods.” https://naokiegami.com/paper/double_did.pdf
 
 ## Installation Instructions:
 
