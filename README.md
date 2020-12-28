@@ -103,11 +103,11 @@ as well as the 95% standardized equivalence confidence interval.
 ``` r
 ## view estimates
 summary(check_panel)
-#> ── Standardized Estimates ──────────────────────────────────────────────────────
-#>   estimate lag std.error EqCI95_LB EqCI95_UB
-#> 1 -0.04632   1    0.0337   -0.1018    0.1018
-#> 2  0.04285   2    0.0303   -0.0926    0.0926
-#> 3 -0.00597   3    0.0373   -0.0674    0.0674
+#> ── Estimates for assessing parallel trends assumption ──────────────────────────
+#>    estimate lag std.error EqCI95_LB EqCI95_UB
+#> 1 -0.003613   1   0.00265   -0.1018    0.1018
+#> 2  0.003263   2   0.00231   -0.0926    0.0926
+#> 3 -0.000434   3   0.00271   -0.0674    0.0674
 ```
 
   - `estimate` shows the DID estimates on the pre-treatment periods.
@@ -272,9 +272,9 @@ slightly different argument from the case of panel data.
 ``` r
 ## summary
 summary(check_rcs)
-#> ── Standardized Estimates ──────────────────────────────────────────────────────
+#> ── Estimates for assessing parallel trends assumption ──────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
-#> 1    -0.15   1      0.12    -0.347     0.347
+#> 1  -0.0609   1    0.0485    -0.347     0.347
 ```
 
 ``` r
@@ -358,13 +358,13 @@ design.
 ``` r
 ## view estimates
 summary(check_sa)
-#> ── Standardized Estimates ──────────────────────────────────────────────────────
+#> ── Estimates for assessing parallel trends assumption ──────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
-#> 1  -0.0197   1    0.0540    -0.109     0.109
-#> 2  -0.0691   2    0.0566    -0.162     0.162
-#> 3   0.0163   3    0.0647    -0.123     0.123
-#> 4  -0.0447   4    0.0677    -0.156     0.156
-#> 5  -0.0488   5    0.0458    -0.124     0.124
+#> 1 -0.00267   1   0.00864    -0.109     0.109
+#> 2 -0.01245   2   0.00886    -0.162     0.162
+#> 3  0.00227   3   0.01105    -0.123     0.123
+#> 4 -0.00758   4   0.01185    -0.156     0.156
+#> 5 -0.01070   5   0.00894    -0.124     0.124
 ```
 
 `plot()` function behaves slight differently from the basic DID design.
@@ -398,12 +398,12 @@ fit_sa <- did(
 head(summary(fit_sa))
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>       estimator lead estimate std.error statistic p_value
-#> 1 SA-Double-DID    0  0.00869     0.021     0.422    0.67
-#> 2        SA-DID    0  0.01495     0.016     0.921    0.36
-#> 3       SA-sDID    0  0.00903     0.019     0.463    0.64
-#> 4 SA-Double-DID    1 -0.01521     0.016    -0.936    0.35
-#> 5        SA-DID    1  0.00092     0.015     0.061    0.95
-#> 6       SA-sDID    1 -0.01995     0.021    -0.970    0.33
+#> 1 SA-Double-DID    0   0.0137     0.017     0.823    0.41
+#> 2        SA-DID    0   0.0110     0.014     0.792    0.43
+#> 3       SA-sDID    0   0.0137     0.016     0.832    0.41
+#> 4 SA-Double-DID    1  -0.0053     0.014    -0.387    0.70
+#> 5        SA-DID    1   0.0011     0.013     0.084    0.93
+#> 6       SA-sDID    1  -0.0072     0.017    -0.414    0.68
 ```
 
 ``` r
