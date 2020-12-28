@@ -13,7 +13,9 @@ Authors:
 
 Reference:
 
-  - Egami and Yamauchi (2019) “How to Improve the Difference-in-Differences Design with Multiple Pre-treatment Periods.” https://naokiegami.com/paper/double_did.pdf
+  - Egami and Yamauchi (2019) “[How to Improve the
+    Difference-in-Differences Design with Multiple Pre-treatment
+    Periods.](https://naokiegami.com/paper/double_did.pdf)”
 
 ## Installation Instructions:
 
