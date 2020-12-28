@@ -1,4 +1,4 @@
-# DIDdesign: Double Difference-in-Differences
+# DIDdesign: Analyzing Difference-in-Differences Design
 
 <!-- badges: start -->
 
