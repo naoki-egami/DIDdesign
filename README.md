@@ -268,7 +268,7 @@ check_rcs <- did_check(
   data    = malesky2014,
   id_time = "year",
   is_panel= FALSE,
-  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lag = 1)
+  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lag = 1)
 )
 ```
 
@@ -286,7 +286,7 @@ slightly different argument from the case of panel data.
 summary(check_rcs)
 #> ── Estimates for assessing parallel trends assumption ──────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
-#> 1  -0.0609   1    0.0485    -0.347     0.347
+#> 1  -0.0609   1    0.0379    -0.302     0.302
 ```
 
 ``` r
@@ -304,7 +304,7 @@ ff_rcs <- did(
   data    = malesky2014,
   id_time = 'year',
   is_panel= FALSE,
-  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lead = 0)
+  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lead = 0)
 )
 ```
 
@@ -312,9 +312,9 @@ ff_rcs <- did(
 summary(ff_rcs)
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>    estimator lead estimate std.error statistic p_value
-#> 1 Double-DID    0     0.24     0.091      2.63  0.0084
-#> 2        DID    0     0.10     0.105      0.96  0.3384
-#> 3       sDID    0     0.17     0.138      1.22  0.2210
+#> 1 Double-DID    0     0.23     0.050       4.5 5.9e-06
+#> 2        DID    0     0.10     0.059       1.7 8.9e-02
+#> 3       sDID    0     0.17     0.086       2.0 5.0e-02
 ```
 
 ## The Staggered Adoption Design
