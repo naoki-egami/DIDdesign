@@ -272,7 +272,7 @@ data(malesky2014)
 ## check parallel trends
 set.seed(1234)
 check_rcs <- did_check(
-  formula = transport ~ treatment + post_treat | factor(city),
+  formula = vpost ~ treatment + post_treat | factor(city),
   data    = malesky2014,
   id_time = "year",
   is_panel= FALSE,
@@ -306,7 +306,7 @@ plot(check_rcs)
 ```{r rcs_estimate}
 ## estimate ATT
 ff_rcs <- did(
-  formula = transport ~ treatment + post_treat | factor(city),
+  formula = vpost ~ treatment + post_treat | factor(city),
   data    = malesky2014,
   id_time = 'year',
   is_panel= FALSE,

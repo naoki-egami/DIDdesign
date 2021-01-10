@@ -6,10 +6,7 @@ rm(list=ls())
 
 ## load other packages
 require(tidyverse)
-# require(plm)
 require(haven)
-# require(estimatr)
-
 
 ##
 ## load data
