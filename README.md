@@ -264,7 +264,7 @@ data(malesky2014)
 ## check parallel trends
 set.seed(1234)
 check_rcs <- did_check(
-  formula = transport ~ treatment + post_treat | factor(city),
+  formula = vpost ~ treatment + post_treat | factor(city),
   data    = malesky2014,
   id_time = "year",
   is_panel= FALSE,
@@ -286,7 +286,7 @@ slightly different argument from the case of panel data.
 summary(check_rcs)
 #> ── Estimates for assessing parallel trends assumption ──────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
-#> 1  -0.0609   1    0.0379    -0.302     0.302
+#> 1  -0.0143   1    0.0406    -0.176     0.176
 ```
 
 ``` r
@@ -300,7 +300,7 @@ plot(check_rcs)
 ``` r
 ## estimate ATT
 ff_rcs <- did(
-  formula = transport ~ treatment + post_treat | factor(city),
+  formula = vpost ~ treatment + post_treat | factor(city),
   data    = malesky2014,
   id_time = 'year',
   is_panel= FALSE,
@@ -312,9 +312,9 @@ ff_rcs <- did(
 summary(ff_rcs)
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>    estimator lead estimate std.error statistic p_value
-#> 1 Double-DID    0     0.23     0.050       4.5 5.9e-06
-#> 2        DID    0     0.10     0.059       1.7 8.9e-02
-#> 3       sDID    0     0.17     0.086       2.0 5.0e-02
+#> 1 Double-DID    0    0.077     0.050      1.53    0.13
+#> 2        DID    0    0.054     0.055      0.98    0.33
+#> 3       sDID    0    0.068     0.081      0.85    0.40
 ```
 
 ## The Staggered Adoption Design
