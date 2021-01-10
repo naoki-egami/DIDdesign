@@ -6,13 +6,13 @@ rm(list=ls())
 
 ## load other packages
 require(tidyverse)
-require(plm)
+# require(plm)
 require(haven)
-require(estimatr)
+# require(estimatr)
 
 
 ##
-## load data 
+## load data
 ##
 
 dat_2006_2008 <- read_dta("panel_commune_2006_2008.dta")
@@ -21,6 +21,13 @@ dat_2008_2010 <- read_dta("panel_commune_2008_2010.dta")
 dat_2006 <- filter(dat_2006_2008, year == 2006)
 dat_2008 <- filter(dat_2006_2008, year == 2008)
 dat_2010 <- filter(dat_2008_2010, year == 2010)
+
+
+## create district
+dat_2006$id_district <- paste(dat_2006$tinh, dat_2006$huyen, sep = "d")
+dat_2008$id_district <- paste(dat_2008$tinh, dat_2008$huyen, sep = "d")
+dat_2010$id_district <- paste(dat_2010$tinh, dat_2010$huyen, sep = "d")
+
 
 
 share <- intersect(colnames(dat_2008), colnames(dat_2010))
@@ -60,11 +67,11 @@ dat_main <- dat_main[dat_main$reg8 !=6, ]
 
 
 ##
-## subset data for saving 
+## subset data for saving
 ##
-malesky2014 <- dat_main %>% 
-  select(all_of(outcome_list), treatment, 
-          lnarea, lnpopden, city, reg8, rnongnghiep, rcongnghiep, rdichvu, 
-          year, tinh) %>% 
+malesky2014 <- dat_main %>%
+  select(all_of(outcome_list), treatment, id_district,
+          lnarea, lnpopden, city, reg8, rnongnghiep, rcongnghiep, rdichvu,
+          year, tinh) %>%
   mutate(post_treat = ifelse(year == 2010, 1, 0))
 usethis::use_data(malesky2014, overwrite = TRUE)
