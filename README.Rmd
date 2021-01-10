@@ -276,7 +276,7 @@ check_rcs <- did_check(
   data    = malesky2014,
   id_time = "year",
   is_panel= FALSE,
-  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lag = 1)
+  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lag = 1)
 )
 ```
 
@@ -310,7 +310,7 @@ ff_rcs <- did(
   data    = malesky2014,
   id_time = 'year',
   is_panel= FALSE,
-  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "tinh", lead = 0)
+  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lead = 0)
 )
 ```
 
