@@ -290,6 +290,7 @@ summary(check_rcs)
 ```
 
 ``` r
+## view plot
 plot(check_rcs)
 ```
 
@@ -309,6 +310,7 @@ ff_rcs <- did(
 ```
 
 ``` r
+## view summary
 summary(ff_rcs)
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>    estimator lead estimate std.error statistic p_value

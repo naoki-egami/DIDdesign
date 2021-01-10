@@ -297,6 +297,7 @@ summary(check_rcs)
 ```
 
 ```{r rcs_check_plot, dpi=250, fig.height = 4, fig.width = 7, out.width="100%", fig.align="center"}
+## view plot
 plot(check_rcs)
 ```
 
@@ -316,6 +317,7 @@ ff_rcs <- did(
 
 
 ```{r rcs_est_summary}
+## view summary
 summary(ff_rcs)
 ```
 
