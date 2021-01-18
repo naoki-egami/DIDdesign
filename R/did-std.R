@@ -63,6 +63,7 @@ did_std <- function(
 #' @importFrom purrr map_dbl
 #' @importFrom dplyr filter
 #' @importFrom rlang .data
+#' @importFrom stats lm
 #' @return A numeric vector that containts the DID estimate and the sequential DID estimate.
 #' @keywords internal
 ddid_fit <- function(formula, data, lead = 0) {
@@ -82,6 +83,7 @@ ddid_fit <- function(formula, data, lead = 0) {
 #' @importFrom purrr map
 #' @importFrom dplyr pull
 #' @importFrom rlang !! sym
+#' @importFrom stats cov
 #' @keywords internal
 did_compute_weights <- function(
   fm_prep, dat_did, var_cluster, is_panel, option

@@ -68,7 +68,7 @@ The functions `summary` is used to obtain and print a summary of the results.
 Implement the double did estimator and compute the variance via block bootstrap.
 }
 \examples{
-
+\dontrun{
 ## The standard DID design -----------
 ### (1) panel data
 ### (2) repeated cross-section data
@@ -97,7 +97,7 @@ ff_rcs <- did(
   data    = malesky2014,
   id_time = 'year',
   is_panel= FALSE,
-  option  = list(n_boot = 20, id_cluster = "tinh", parallel = FALSE)
+  option  = list(n_boot = 20, id_cluster = "id_district", parallel = FALSE)
 )
 
 summary(ff_rcs)
@@ -126,5 +126,6 @@ fit_sa <- did(
 )
 
 summary(fit_sa)
+}
 
 }

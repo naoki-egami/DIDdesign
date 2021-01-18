@@ -16,6 +16,7 @@ set_option <- function(option) {
 #' Transform formula
 #' @keywords internal
 #' @import Formula
+#' @importFrom stats update
 did_formula <- function(formula, is_panel) {
 
   ## obtain variable names

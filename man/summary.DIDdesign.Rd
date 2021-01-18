@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{An object of \code{DIDdesign} class.}
+
+\item{...}{Other parameters. Currently not supported.}
 }
 \description{
 Summarize DIDdesign output

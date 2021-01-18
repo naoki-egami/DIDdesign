@@ -6,6 +6,11 @@
 \usage{
 \method{summary}{DIDdesign_check}(object, ...)
 }
+\arguments{
+\item{object}{An output of \code{did_check} function.}
+
+\item{...}{Other parameters. Currently not supported.}
+}
 \description{
 Summary did_check Output
 }

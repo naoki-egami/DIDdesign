@@ -2,7 +2,7 @@
 % Please edit documentation in R/did-check-std.R
 \name{did_std_placebo}
 \alias{did_std_placebo}
-\title{Run a placebo regression}
+\title{Run a placebo regression on the pretreatment outcome}
 \usage{
 did_std_placebo(formula, data, lags)
 }
@@ -13,7 +13,11 @@ did_std_placebo(formula, data, lags)
 
 \item{A}{vector of non-negative lag parameters.}
 }
+\value{
+A list of placebo effects (\code{est}),
+  and standardized effects (\code{est_std})
+}
 \description{
-Run a placebo regression
+Run a placebo regression on the pretreatment outcome
 }
 \keyword{internal}

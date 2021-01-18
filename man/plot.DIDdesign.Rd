@@ -12,6 +12,8 @@
 \item{check_fit}{An output from \code{did_check} function.}
 
 \item{band}{A boolean argument. If \code{TRUE}, confidence intervals are shown with \code{geom_ribbon} function.}
+
+\item{...}{Other parameters. Currently not supported.}
 }
 \description{
 Plot output from did function

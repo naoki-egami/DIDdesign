@@ -4,7 +4,12 @@
 \alias{plot.DIDdesign_check}
 \title{Plot output from did_check}
 \usage{
-\method{plot}{DIDdesign_check}(obj)
+\method{plot}{DIDdesign_check}(x, ...)
+}
+\arguments{
+\item{x}{An output from \code{did_check} function.}
+
+\item{...}{Other parameters. Currently not supported.}
 }
 \description{
 Plot output from did_check

@@ -3,6 +3,7 @@
 #' @inheritParams did
 #' @export
 #' @importFrom dplyr mutate select %>%
+#' @importFrom stats qnorm
 did_check <- function(
   formula, data, id_unit, id_time, design = "did",
   is_panel = TRUE, option = list()
@@ -45,14 +46,17 @@ did_check <- function(
 
 
 
-#' Plot output from did_check 
+#' Plot output from did_check
 #' @export
+#' @param x An output from \code{did_check} function.
+#' @param ... Other parameters. Currently not supported.
 #' @import patchwork
 #' @importFrom ggplot2 theme
-plot.DIDdesign_check <- function(obj) {
-  p1 <- obj$plot[[1]]$plot + theme(aspect.ratio=1)
-  p2 <- obj$plot[[2]]$plot + theme(aspect.ratio=1)
-  if (attr(obj, "design") == "sa") {
+plot.DIDdesign_check <- function(x, ...) {
+  args <- rlang::list2(...)
+  p1 <- x$plot[[1]]$plot + theme(aspect.ratio=1)
+  p2 <- x$plot[[2]]$plot + theme(aspect.ratio=1)
+  if (attr(x, "design") == "sa") {
     pp <- p1 + p2
   } else {
     pp <- p2 + p1

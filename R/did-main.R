@@ -41,7 +41,7 @@
 #'   \item{lead}{Lead parameter. Default is 0, which estimate the instantaneous treatment effect.}
 #' }
 #' @examples
-#'
+#' \dontrun{
 #' ## The standard DID design -----------
 #' ### (1) panel data
 #' ### (2) repeated cross-section data
@@ -70,7 +70,7 @@
 #'   data    = malesky2014,
 #'   id_time = 'year',
 #'   is_panel= FALSE,
-#'   option  = list(n_boot = 20, id_cluster = "tinh", parallel = FALSE)
+#'   option  = list(n_boot = 20, id_cluster = "id_district", parallel = FALSE)
 #' )
 #'
 #' summary(ff_rcs)
@@ -99,6 +99,7 @@
 #' )
 #'
 #' summary(fit_sa)
+#' }
 #'
 #' @return \code{did} returns an object of \code{DIDdesign} class, which is a list of following items:
 #' \describe{

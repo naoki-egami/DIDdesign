@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{An object of \code{summary.DIDdesign} class. This is typically an output of \code{summary.DIDdesign()} function.}
+
+\item{...}{Other parameters. Currently not supported.}
 }
 \description{
 Print

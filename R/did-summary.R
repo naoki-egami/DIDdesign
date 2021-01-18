@@ -7,6 +7,8 @@
 
 #' Summarize DIDdesign output
 #' @param object An object of \code{DIDdesign} class.
+#' @param ... Other parameters. Currently not supported.
+#' @importFrom stats pnorm
 #' @export
 summary.DIDdesign <- function(object, ...) {
 
@@ -30,6 +32,7 @@ summary.DIDdesign <- function(object, ...) {
 #' @export
 #' @importFrom cli cat_rule
 #' @param x An object of \code{summary.DIDdesign} class. This is typically an output of \code{summary.DIDdesign()} function.
+#' @param ... Other parameters. Currently not supported.
 print.summary.DIDdesign <- function(x, ...) {
   cat_rule(left = "ATT Estimates")
   print(as.data.frame(x), digits = 2)
@@ -44,6 +47,8 @@ print.summary.DIDdesign <- function(x, ...) {
 
 #' Summary did_check Output
 #' @importFrom dplyr %>% select
+#' @param object An output of \code{did_check} function.
+#' @param ... Other parameters. Currently not supported.
 #' @export
 summary.DIDdesign_check <- function(object, ...) {
   if (!("DIDdesign_check" %in% class(object))) stop("object should the output of did_check funciton.")
@@ -59,6 +64,8 @@ summary.DIDdesign_check <- function(object, ...) {
 
 #' Print
 #' @export
+#' @param x An ouput of \code{summary.DIDdesign_check} function.
+#' @param ... Other parameters. Currently not supported.
 #' @importFrom cli cat_rule
 print.summary.DIDdesign_check <- function(x, ...) {
   cat_rule(left = "Estimates for assessing parallel trends assumption")

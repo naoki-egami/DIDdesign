@@ -1,4 +1,5 @@
 ^data-raw$
+^README_cache$
 ^\.travis\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$

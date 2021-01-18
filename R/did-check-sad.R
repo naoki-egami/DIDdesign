@@ -3,6 +3,7 @@
 
 #' Staggered Adoption Design
 #' @importFrom dplyr %>% as_tibble arrange group_by bind_rows
+#' @importFrom stats as.formula sd
 #' @keywords internal
 did_check_sad <- function(formula, data, id_subject, id_time, option) {
 
@@ -144,6 +145,7 @@ did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
 #' @return A ggplot object
 #' @importFrom ggplot2 ggplot geom_hline geom_point aes geom_errorbar labs theme_bw scale_x_continuous xlim
 #' @importFrom dplyr %>% across group_by summarise mutate ungroup select
+#' @importFrom stats qnorm
 did_sad_plot <- function(data) {
   dat_plot <- data %>%
   mutate(
