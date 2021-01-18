@@ -160,9 +160,10 @@ did_sad_plot <- function(data) {
   select(.data$estimate, .data$time_to_treat, .data$std.error,
          .data$EqCI95_LB, .data$EqCI95_UB)
 
-  gg <- ggplot(dat_plot, aes(x = time_to_treat, y = estimate)) +
+  gg <- ggplot(dat_plot, aes(x = .data$time_to_treat, y = .data$estimate)) +
     geom_hline(yintercept = 0, color = 'gray50', linetype = 'dotted') +
-    geom_errorbar(aes(ymin = EqCI95_LB, ymax = EqCI95_UB), width = 0.05, color = '#1E88A8') +
+    geom_errorbar(aes(ymin = .data$EqCI95_LB, ymax = .data$EqCI95_UB),
+                  width = 0.05, color = '#1E88A8') +
     theme_bw() +
     labs(x = "Time relative to treatment assignment", y = "95% Standardized Equivalence CI")
 
@@ -187,7 +188,7 @@ did_sad_pattern <- function(data, treatment, Gmat) {
   data <- data %>%
     mutate(id_subject = factor(.data$id_subject, levels = treat_timing),
            treatment  = ifelse(.data$treatment == 1, "treated", "control"))
-  gg <- ggplot(data, aes(x = id_time, y = id_subject, fill = !!sym(treatment))) +
+  gg <- ggplot(data, aes(x = .data$id_time, y = .data$id_subject, fill = !!sym(treatment))) +
     geom_tile() +
     scale_fill_manual(values = c("lightgray", '#1E88A8')) +
     theme_bw() +

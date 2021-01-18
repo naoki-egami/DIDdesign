@@ -6,6 +6,12 @@
 \usage{
 sample_panel(panel_dat)
 }
+\arguments{
+\item{panel_dat}{A panel data.}
+}
+\value{
+A panel data, sampled from the input data.
+}
 \description{
 Block Bootstrap used in SA design
 }

@@ -54,8 +54,8 @@ summary.DIDdesign_check <- function(object, ...) {
   if (!("DIDdesign_check" %in% class(object))) stop("object should the output of did_check funciton.")
   tmp <- object$estimate
   tmp <- tmp %>% select(
-    estimate = estimate_orig, lag, std.error = std.error_orig,
-    EqCI95_LB, EqCI95_UB
+    estimate = .data$estimate_orig, .data$lag, std.error = .data$std.error_orig,
+    .data$EqCI95_LB, .data$EqCI95_UB
   )
 
   class(tmp) <- c("summary.DIDdesign_check", class(tmp))

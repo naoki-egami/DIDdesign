@@ -229,6 +229,8 @@ compute_did <- function(fm_prep, dat_panel, outcome, treatment,
 
 
 #' Block Bootstrap used in SA design
+#' @param panel_dat A panel data.
+#' @return A panel data, sampled from the input data.
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr %>% filter mutate select pull
 #' @keywords internal
@@ -242,7 +244,7 @@ sample_panel <- function(panel_dat) {
   tmp <- as.data.frame(panel_dat)
   dat_list <- list()
   for (i in 1:length(id_boot)) {
-    dat_list[[i]] <- filter(tmp, id_subject == id_boot[i]) %>%
+    dat_list[[i]] <- filter(tmp, .data$id_subject == id_boot[i]) %>%
       mutate(id_new = i, id_old = id_boot[i])
   }
 

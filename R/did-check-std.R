@@ -188,15 +188,17 @@ did_std_placebo_boot <- function(
 #' @return A ggplot object
 #' @importFrom ggplot2 ggplot geom_line geom_point aes geom_vline labs theme_bw scale_color_manual
 #' @importFrom dplyr %>% across group_by summarise mutate ungroup select
+#' @importFrom stats qnorm
 did_std_plot <- function(data) {
   dat_plot <- data %>% group_by(.data$id_time_std, .data$Gi) %>%
          summarise(across(.data$outcome, list(mean = mean, sd = sd))) %>%
          mutate(group = ifelse(.data$Gi == 1, "Treated", "Control")) %>%
-         select(group, time_to_treat = id_time_std, outcome_mean, std.error = outcome_sd) %>%
-         mutate(CI90_UB = outcome_mean + qnorm(0.95) * std.error,
-                CI90_LB = outcome_mean - qnorm(0.95) * std.error) %>%
+         select(.data$group, time_to_treat = .data$id_time_std,
+                .data$outcome_mean, std.error = .data$outcome_sd) %>%
+         mutate(CI90_UB = .data$outcome_mean + qnorm(0.95) * .data$std.error,
+                CI90_LB = .data$outcome_mean - qnorm(0.95) * .data$std.error) %>%
          ungroup()
-  gg <- ggplot(dat_plot, aes(x = time_to_treat, y = outcome_mean, color = group)) +
+  gg <- ggplot(dat_plot, aes(x = .data$time_to_treat, y = .data$outcome_mean, color = .data$group)) +
           geom_vline(xintercept = 0, linetype = 'dashed') +  geom_line() + geom_point() +
           labs(x = "Time relative to treatment assignment", y = "Mean Outcome", color = "Group") +
           scale_color_manual(values = c("gray50", '#1E88A8')) +

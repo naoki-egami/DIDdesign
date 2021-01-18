@@ -16,26 +16,29 @@ plot.DIDdesign <- function(x, check_fit = NULL, band = FALSE, ...) {
     id_use <- ifelse(attr(check_fit, "design") == "sa", 1, 2)
     dat_plot <- bind_rows(
       check_fit$estimate %>%
-        mutate(time = -lag) %>%
-        select(estimate = estimate_orig, std.error = std.error_orig, time),
+        mutate(time = -.data$lag) %>%
+        select(estimate = .data$estimate_orig, std.error = .data$std.error_orig,
+               time = .data$time),
       as_tibble(x$estimate) %>%
-        filter(estimator == "SA-Double-DID" | estimator == "Double-DID") %>%
-        select(estimate, std.error, time = lead)
-    ) %>% arrange(time)
+        filter(.data$estimator == "SA-Double-DID" | .data$estimator == "Double-DID") %>%
+        select(.data$estimate, .data$std.error, time = .data$lead)
+    ) %>% arrange(.data$time)
 
   } else {
     dat_plot <- as_tibble(x$estimate)  %>%
-      filter(estimator == "SA-Double-DID" | estimator == "Double-DID") %>%
-      select(estimate, std.error, time = lead) %>% arrange(time)
+      filter(.data$estimator == "SA-Double-DID" | .data$estimator == "Double-DID") %>%
+      select(.data$estimate, .data$std.error, time = .data$lead) %>%
+      arrange(.data$time)
   }
 
   if (isTRUE(band)) {
   gg <- dat_plot  %>%
-    mutate(CI90_LB = estimate - qnorm(0.95) * std.error,
-           CI90_UB = estimate + qnorm(0.95) * std.error) %>%
-    ggplot(aes(x = time, y = estimate)) +
+    mutate(CI90_LB = .data$estimate - qnorm(0.95) * .data$std.error,
+           CI90_UB = .data$estimate + qnorm(0.95) * .data$std.error) %>%
+    ggplot(aes(x = .data$time, y = .data$estimate)) +
       geom_hline(yintercept = 0, color = 'gray', linetype = 'dashed') +
-      geom_ribbon(aes(ymin = CI90_LB, ymax = CI90_UB), fill = 'gray', alpha = 0.5) +
+      geom_ribbon(aes(ymin = .data$CI90_LB, ymax = .data$CI90_UB),
+                  fill = 'gray', alpha = 0.5) +
       geom_line() +
       geom_point() +
       scale_x_continuous(breaks = unique(dat_plot$time)) +
@@ -43,11 +46,11 @@ plot.DIDdesign <- function(x, check_fit = NULL, band = FALSE, ...) {
       theme_bw()
   } else {
     gg <- dat_plot  %>%
-      mutate(CI90_LB = estimate - qnorm(0.95) * std.error,
-             CI90_UB = estimate + qnorm(0.95) * std.error) %>%
-      ggplot(aes(x = time, y = estimate)) +
+      mutate(CI90_LB = .data$estimate - qnorm(0.95) * .data$std.error,
+             CI90_UB = .data$estimate + qnorm(0.95) * .data$std.error) %>%
+      ggplot(aes(x = .data$time, y = .data$estimate)) +
         geom_hline(yintercept = 0, color = 'gray', linetype = 'dashed') +
-        geom_errorbar(aes(ymin = CI90_LB, ymax = CI90_UB), width = 0.05) +
+        geom_errorbar(aes(ymin = .data$CI90_LB, ymax = .data$CI90_UB), width = 0.05) +
         geom_point() +
         labs(x = "Time", y = "Estimates (90% CI)") +
         theme_bw()
