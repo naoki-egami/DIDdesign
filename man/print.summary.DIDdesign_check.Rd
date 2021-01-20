@@ -7,7 +7,7 @@
 \method{print}{summary.DIDdesign_check}(x, ...)
 }
 \arguments{
-\item{x}{An ouput of \code{summary.DIDdesign_check} function.}
+\item{x}{An output of \code{summary.DIDdesign_check} function.}
 
 \item{...}{Other parameters. Currently not supported.}
 }

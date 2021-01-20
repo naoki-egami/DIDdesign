@@ -12,7 +12,7 @@ ddid_fit(formula, data, lead = 0)
 \item{data}{An output of \code{did_panel_data()}.}
 }
 \value{
-A numeric vector that containts the DID estimate and the sequential DID estimate.
+A numeric vector that contains the DID estimate and the sequential DID estimate.
 }
 \description{
 Fit DID and sDID

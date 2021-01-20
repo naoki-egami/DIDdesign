@@ -15,7 +15,7 @@ Dataset from Sances (2015)
 }
 \references{
 Michael W. Sances.
-"The Distributional Impact of Greater Responsivenes."
+"The Distributional Impact of Greater Responsiveness."
  \emph{The Journal of Politics} 78.1 (2016).
  \doi{10.1086/683026}
 }

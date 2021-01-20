@@ -2,7 +2,7 @@
 % Please edit documentation in R/did-sad.R
 \name{did_sad}
 \alias{did_sad}
-\title{Function to implement DDID under the Staggered Adption Design}
+\title{Function to implement DDID under the Staggered Adoption Design}
 \usage{
 did_sad(formula, data, id_subject, id_time, option)
 }
@@ -16,6 +16,6 @@ did_sad(formula, data, id_subject, id_time, option)
 \item{id_time}{A character variable indicating time index.}
 }
 \description{
-Function to implement DDID under the Staggered Adption Design
+Function to implement DDID under the Staggered Adoption Design
 }
 \keyword{internal}

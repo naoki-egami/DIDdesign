@@ -26,7 +26,7 @@ did_check(
    and \code{post_treat} is an indicator that takes 1 if the observations is from the
    post treatment periods and zero otherwise. The order is strict.
 
-   \item Covariates are specified after the vertial bar \code{|}.
+   \item Covariates are specified after the vertical bar \code{|}.
     When there are no covariates, the formula should be given as
     \code{y ~ treatment} for \code{is_panel = TRUE} and
     \code{y ~ treat_group + post_treat} for \code{is_panel = FALSE}.
@@ -43,7 +43,7 @@ When \code{is_panel = FALSE} (i.e., the repeated cross-section data), this can b
 \item{design}{The design to be used: either \code{"did"} (the standard difference-in-differences design) or \code{"sa"} (the staggered adoption design).
 The default is \code{"did"}.}
 
-\item{is_panel}{A boolean argument. This should be \code{TRUE} when the dataset is panel (i.e., the same units are repeately observed over time); This should be \code{FALSE} when the dataset is the repeated cross-section (RCS) where different sets of units are observed at each time point.}
+\item{is_panel}{A boolean argument. This should be \code{TRUE} when the dataset is panel (i.e., the same units are repeatedly observed over time); This should be \code{FALSE} when the dataset is the repeated cross-section (RCS) where different sets of units are observed at each time point.}
 
 \item{option}{A list of the following option parameters:
 \describe{

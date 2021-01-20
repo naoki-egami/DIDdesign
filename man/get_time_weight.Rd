@@ -2,7 +2,7 @@
 % Please edit documentation in R/did-sad-functions.R
 \name{get_time_weight}
 \alias{get_time_weight}
-\title{Compute time-sepcific weights}
+\title{Compute time-specific weights}
 \usage{
 get_time_weight(Gmat, id_time_use)
 }
@@ -12,6 +12,6 @@ get_time_weight(Gmat, id_time_use)
 \item{id_time_use}{A vector of time index (normalized). Output of \code{get_periods}.}
 }
 \description{
-Compute time-sepcific weights
+Compute time-specific weights
 }
 \keyword{internal}

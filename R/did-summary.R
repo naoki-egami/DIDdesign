@@ -1,10 +1,3 @@
-
-
-##
-## ouputs
-##
-
-
 #' Summarize DIDdesign output
 #' @param object An object of \code{DIDdesign} class.
 #' @param ... Other parameters. Currently not supported.
@@ -64,7 +57,7 @@ summary.DIDdesign_check <- function(object, ...) {
 
 #' Print
 #' @export
-#' @param x An ouput of \code{summary.DIDdesign_check} function.
+#' @param x An output of \code{summary.DIDdesign_check} function.
 #' @param ... Other parameters. Currently not supported.
 #' @importFrom cli cat_rule
 print.summary.DIDdesign_check <- function(x, ...) {

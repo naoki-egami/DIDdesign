@@ -27,7 +27,7 @@ create_Gmat <- function(dat_panel, treatment) {
 
 #' Obtain periods used for the analysis
 #' @param Gmat G matrix produced in \code{create_Gmat()}.
-#' @param thres A minimum number of treatd units for the period included in the analysis. Default is 2.
+#' @param thres A minimum number of treated units for the period included in the analysis. Default is 2.
 #' @keywords internal
 get_periods <- function(Gmat, thres = 3) {
   ## check which periods to use
@@ -59,7 +59,7 @@ get_subjects <- function(Gmat, id_time_use) {
 }
 
 
-#' Compute time-sepcific weights
+#' Compute time-specific weights
 #' @param Gmat G matrix.
 #' @param id_time_use A vector of time index (normalized). Output of \code{get_periods}.
 #' @keywords internal

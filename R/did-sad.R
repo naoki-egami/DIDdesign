@@ -1,6 +1,6 @@
 
 
-#' Function to implement DDID under the Staggered Adption Design
+#' Function to implement DDID under the Staggered Adoption Design
 #' @param formula A formula indicating outcome and treatment.
 #' @param data A long form panel data.
 #' @param id_subject A character variable indicating subject index.
