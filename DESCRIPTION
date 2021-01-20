@@ -1,23 +1,22 @@
 Package: DIDdesign
 Type: Package
-Title: R package for analyzing and diagnosing difference-in-differences design
+Title: R Package for Analyzing and Diagnosing Difference-in-Differences Design
 Version: 0.3.2
 Date: 2021-01-18
 Authors@R: c(
-  person("Naoki", "Egami", email = "email@gmail.com", role = c("aut"),
+  person("Naoki", "Egami", email = "naoki.egami5@gmail.com", role = c("aut"),
     comment = c(ORCID = "0000-0002-5491-2174")
   ),
-  person("Soichiro", "Yamauchi", email = "email@gmail.com", role = c("aut", "cre"),
+  person("Soichiro", "Yamauchi", email = "syamauchi@g.harvard.edu", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0003-0554-2717")
   ))
-Description: A package for analyzing and diagnosing difference-in-differences design.
+Description: Statistical tools for analyzing and diagnosing difference-in-differences design.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 Imports:
     cli,
-    crayon,
     dplyr,
     Formula,
     future,
@@ -32,7 +31,6 @@ Suggests:
     testthat,
     knitr,
     rmarkdown
-VignetteBuilder: knitr
 BugReports: https://github.com/naoki-egami/DIDdesign/issues
 URL: https://github.com/naoki-egami/DIDdesign
 Depends:
