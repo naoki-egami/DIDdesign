@@ -10,7 +10,6 @@
 #' \itemize{
 #'   \item When \code{is_panel = TRUE}: \code{y ~ treatment | x1 + x2} where
 #'    \code{treatment} is a time-varying treatment indicator.
-#'    Covariate specifications are allowed only for the standard DID design.
 #'
 #'   \item When \code{is_panel = FALSE}: \code{y ~ treat_group + post_treat | x1 + x2},
 #'    where \code{treat_group} is a time-invariant treatment indicator,
