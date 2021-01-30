@@ -5,7 +5,7 @@
 \title{Estimate DID and sDID}
 \usage{
 compute_did(
-  fm_prep,
+  formula,
   dat_panel,
   outcome,
   treatment,
@@ -16,6 +16,30 @@ compute_did(
   lead,
   var_cluster_pre
 )
+}
+\arguments{
+\item{formula}{A formula.}
+
+\item{dat_panel}{A panel data.}
+
+\item{outcome}{Name of the outcome variable.}
+
+\item{treatment}{Name of the treatment variable.}
+
+\item{id_time_use}{A list of time index.}
+
+\item{id_subj_use}{A list of unit index.}
+
+\item{time_weight}{A vector of time weights.}
+
+\item{min_time}{A threshold value of minimum number of units in the treatment.}
+
+\item{lead}{A vector of lead parameters.}
+
+\item{var_cluster_pre}{A variable name used for clustering.}
+}
+\value{
+A list of DID and sDID estimates.
 }
 \description{
 Estimate DID and sDID

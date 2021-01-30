@@ -10,6 +10,8 @@ ddid_fit(formula, data, lead = 0)
 \item{formula}{A formula of the form \code{y ~ Gi + It + Gi * It + x1 + x2}.}
 
 \item{data}{An output of \code{did_panel_data()}.}
+
+\item{lead}{A value of the lead parameter.}
 }
 \value{
 A numeric vector that contains the DID estimate and the sequential DID estimate.

@@ -6,6 +6,18 @@
 \usage{
 did_check_sad(formula, data, id_subject, id_time, option)
 }
+\arguments{
+\item{formula}{A formula indicating outcome and treatment.}
+
+\item{data}{A long form panel data.}
+
+\item{id_subject}{A character variable indicating subject index.}
+
+\item{id_time}{A character variable indicating time index.}
+}
+\value{
+A list of placebo estimates and plots.
+}
 \description{
 Staggered Adoption Design
 }

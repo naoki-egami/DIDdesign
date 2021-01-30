@@ -6,6 +6,14 @@
 \usage{
 did_formula(formula, is_panel)
 }
+\arguments{
+\item{formula}{Formula.}
+
+\item{is_panel}{A boolean argument to indicate if data is in the panel format.}
+}
+\value{
+A list of working objects.
+}
 \description{
 Transform formula
 }

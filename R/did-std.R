@@ -1,6 +1,13 @@
 
 
 #' Implement the Double DID under the standard design
+#' @param formula Formula.
+#' @param data Panel data.
+#' @param id_unit A variable name for unit index. Required for panel data.
+#' @param id_time A variable name for time index.
+#' @param is_panel A boolean argument. Should be \code{FALSE} for the repeated cross-sectional data.
+#' @param option A list of option parameters.
+#' @return Double DID estimates.
 #' @keywords internal
 did_std <- function(
   formula, data, id_unit, id_time, is_panel = TRUE, option
@@ -35,7 +42,7 @@ did_std <- function(
   } else {
     dat_did <- did_rcs_data(
       fm_prep$var_outcome, fm_prep$var_treat, fm_prep$var_post,
-      fm_prep$var_covars, var_cluster,id_time, data
+      fm_prep$var_covars, var_cluster, id_time, data
     )
   }
 
@@ -60,6 +67,7 @@ did_std <- function(
 #'
 #' @param data An output of \code{did_panel_data()}.
 #' @param formula A formula of the form \code{y ~ Gi + It + Gi * It + x1 + x2}.
+#' @param lead A value of the lead parameter.
 #' @importFrom purrr map_dbl
 #' @importFrom dplyr filter
 #' @importFrom rlang .data
@@ -78,6 +86,12 @@ ddid_fit <- function(formula, data, lead = 0) {
 
 
 #' Compute Weighting Matrix via Bootstrap
+#' @param formula Formula.
+#' @param dat_did Panel data.
+#' @param var_cluster A variable used for clustering standard errors.
+#' @param is_panel A boolean argument to indicate if data is in the panel format or the repeated cross-section format.
+#' @param option A list of options.
+#' @return A list of double DID weights.
 #' @importFrom future.apply future_lapply
 #' @importFrom future plan multicore sequential
 #' @importFrom purrr map
@@ -86,7 +100,7 @@ ddid_fit <- function(formula, data, lead = 0) {
 #' @importFrom stats cov
 #' @keywords internal
 did_compute_weights <- function(
-  fm_prep, dat_did, var_cluster, is_panel, option
+  formula, dat_did, var_cluster, is_panel, option
 ) {
 
   ## setup cluster ID for bootstrap
@@ -110,7 +124,7 @@ did_compute_weights <- function(
   ## use future_lapply to implement the bootstrap parallel
   est_boot <- future_lapply(1:option$n_boot, function(i) {
     tryCatch({
-      ddid_boot(fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead)
+      ddid_boot(formula, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead)
     }, error = function(e) {
       NULL
     })
@@ -131,6 +145,9 @@ did_compute_weights <- function(
 }
 
 #' Bootstrap
+#' @inheritParams did_compute_weights
+#' @param lead A vector of lead parameters.
+#' @return A list of DID and sDID estimates.
 #' @keywords internal
 ddid_boot <- function(
   fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, lead
@@ -174,6 +191,12 @@ ddid_boot <- function(
 
 
 #' Compute Point and Variance Estimates
+#' @param fit A lift of fitted objects.
+#' @param weights A list of double DID weights.
+#' @param lead A vector of lead parameters.
+#' @param se_boot A boolean argument to indicate if standard errors are computed based on the bootstrap-based (i.e., empirical variance),
+#'                 or based on the asymptotic approximation.
+#' @return A list of estimates and weights.
 #' @keywords internal
 #' @importFrom dplyr as_tibble bind_rows
 double_did_compute <- function(fit, weights, lead, se_boot = FALSE) {

@@ -15,6 +15,9 @@ did_sad(formula, data, id_subject, id_time, option)
 
 \item{id_time}{A character variable indicating time index.}
 }
+\value{
+Double DID estimates.
+}
 \description{
 Function to implement DDID under the Staggered Adoption Design
 }

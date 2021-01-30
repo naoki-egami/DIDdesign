@@ -7,6 +7,7 @@
 #' @param id_time A variable name of the unit index.
 #' @param id_time A variable name of the time index.
 #' @param data A data frame.
+#' @return A data frame.
 #' @importFrom dplyr %>% all_of pull group_by select mutate rename summarise ungroup left_join
 #' @importFrom rlang !! sym .data
 #' @keywords internal
@@ -68,6 +69,9 @@ did_panel_data <- function(
 #' @importFrom dplyr %>% pull select all_of rename mutate group_by summarise left_join
 #' @importFrom rlang !! sym
 #' @keywords internal
+#' @inheritParams did_panel_data
+#' @param var_post A name of a variable to indicate if a unit is observed in the post-treatment periods or not.
+#' @return A data frame.
 did_rcs_data <- function(
   var_outcome, var_treat, var_post,
   var_covars = NULL, var_cluster = NULL, id_time, data

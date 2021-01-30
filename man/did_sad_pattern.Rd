@@ -6,6 +6,16 @@
 \usage{
 did_sad_pattern(data, treatment, Gmat)
 }
+\arguments{
+\item{data}{Panel data.}
+
+\item{treatment}{Name of the treatment variable.}
+
+\item{Gmat}{A matrix of treatment patterns.}
+}
+\value{
+A list of the treatment variation plot and the data used to generate the plot.
+}
 \description{
 Generate a pattern plot
 }

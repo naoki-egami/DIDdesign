@@ -14,6 +14,23 @@ did_rcs_data(
   data
 )
 }
+\arguments{
+\item{var_outcome}{A variable name of the outcome.}
+
+\item{var_treat}{A variable name of the time-varying treatment.}
+
+\item{var_post}{A name of a variable to indicate if a unit is observed in the post-treatment periods or not.}
+
+\item{var_covars}{A vector of variables names used as covariates.
+This should be left as \code{NULL} is no covariates are specified in formula.}
+
+\item{id_time}{A variable name of the time index.}
+
+\item{data}{A data frame.}
+}
+\value{
+A data frame.
+}
 \description{
 Prepare data for the DID design with repeated cross-section data
 }

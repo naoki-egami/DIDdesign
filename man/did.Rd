@@ -67,7 +67,7 @@ The functions `summary` is used to obtain and print a summary of the results.
 Implement the double did estimator and compute the variance via block bootstrap.
 }
 \examples{
-\dontrun{
+\donttest{
 ## The standard DID design -----------
 ### (1) panel data
 ### (2) repeated cross-section data

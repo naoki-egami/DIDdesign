@@ -11,6 +11,9 @@ get_periods(Gmat, thres = 3)
 
 \item{thres}{A minimum number of treated units for the period included in the analysis. Default is 2.}
 }
+\value{
+A list of time indices.
+}
 \description{
 Obtain periods used for the analysis
 }

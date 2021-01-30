@@ -6,6 +6,12 @@
 \usage{
 set_option(option)
 }
+\arguments{
+\item{option}{A list of options.}
+}
+\value{
+A list of options.
+}
 \description{
 Set default value of options
 }

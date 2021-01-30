@@ -11,6 +11,9 @@ get_time_weight(Gmat, id_time_use)
 
 \item{id_time_use}{A vector of time index (normalized). Output of \code{get_periods}.}
 }
+\value{
+A vector of time weights.
+}
 \description{
 Compute time-specific weights
 }

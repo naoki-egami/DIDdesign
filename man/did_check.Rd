@@ -55,6 +55,10 @@ The default is \code{"did"}.}
   \item{lead}{Lead parameter. Default is 0, which estimate the instantaneous treatment effect.}
 }}
 }
+\value{
+An object of \code{DIDdesign_check} class.
+ It is a list object consists of placebo estimates and plots for checking the parallel trends assumption.
+}
 \description{
 Assessing Assumptions for Difference-in-differences
 }

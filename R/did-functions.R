@@ -1,4 +1,6 @@
 #' Set default value of options
+#' @param option A list of options.
+#' @return  A list of options.
 #' @keywords internal
 set_option <- function(option) {
 
@@ -14,6 +16,9 @@ set_option <- function(option) {
 }
 
 #' Transform formula
+#' @param formula Formula.
+#' @param is_panel A boolean argument to indicate if data is in the panel format.
+#' @return A list of working objects.
 #' @keywords internal
 #' @import Formula
 #' @importFrom stats update

@@ -40,7 +40,7 @@
 #'   \item{lead}{Lead parameter. Default is 0, which estimate the instantaneous treatment effect.}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ## The standard DID design -----------
 #' ### (1) panel data
 #' ### (2) repeated cross-section data

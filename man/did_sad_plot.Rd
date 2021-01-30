@@ -6,8 +6,11 @@
 \usage{
 did_sad_plot(data)
 }
+\arguments{
+\item{data}{A data frame of double did estimates.}
+}
 \value{
-A ggplot object
+A ggplot2 object
 }
 \description{
 Create a did plot for standard design
