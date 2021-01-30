@@ -6,6 +6,16 @@
 \usage{
 sa_did_to_ddid(obj_point, obj_boot, lead)
 }
+\arguments{
+\item{obj_point}{Point estimates.}
+
+\item{obj_boot}{Bootstrap outputs.}
+
+\item{lead}{A vector of the lead parameter.}
+}
+\value{
+A list of estimates and weights.
+}
 \description{
 Convert estimates into double did
 }

@@ -11,6 +11,9 @@ get_subjects(Gmat, id_time_use)
 
 \item{Gamt}{G matrix created by \code{create_Gmat()}.}
 }
+\value{
+A list of unit indices.
+}
 \description{
 Obtain subject index for each periods
 }

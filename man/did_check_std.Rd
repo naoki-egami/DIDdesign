@@ -6,6 +6,22 @@
 \usage{
 did_check_std(formula, data, id_unit, id_time, is_panel = TRUE, option)
 }
+\arguments{
+\item{formula}{Formula.}
+
+\item{data}{Panel data.}
+
+\item{id_unit}{A variable name for unit index. Required for panel data.}
+
+\item{id_time}{A variable name for time index.}
+
+\item{is_panel}{A boolean argument. Should be \code{FALSE} for the repeated cross-sectional data.}
+
+\item{option}{A list of option parameters.}
+}
+\value{
+A list of placebo estimates and plots.
+}
 \description{
 DID check function for the basic design
 }

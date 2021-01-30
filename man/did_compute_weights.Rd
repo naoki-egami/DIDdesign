@@ -4,7 +4,21 @@
 \alias{did_compute_weights}
 \title{Compute Weighting Matrix via Bootstrap}
 \usage{
-did_compute_weights(fm_prep, dat_did, var_cluster, is_panel, option)
+did_compute_weights(formula, dat_did, var_cluster, is_panel, option)
+}
+\arguments{
+\item{formula}{Formula.}
+
+\item{dat_did}{Panel data.}
+
+\item{var_cluster}{A variable used for clustering standard errors.}
+
+\item{is_panel}{A boolean argument to indicate if data is in the panel format or the repeated cross-section format.}
+
+\item{option}{A list of options.}
+}
+\value{
+A list of double DID weights.
 }
 \description{
 Compute Weighting Matrix via Bootstrap

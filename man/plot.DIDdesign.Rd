@@ -15,6 +15,9 @@
 
 \item{...}{Other parameters. Currently not supported.}
 }
+\value{
+A plot of ggplot2 object.
+}
 \description{
 Plot output from did function
 }

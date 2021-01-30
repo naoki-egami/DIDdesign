@@ -2,6 +2,8 @@
 
 
 #' Staggered Adoption Design
+#' @inheritParams did_sad
+#' @return A list of placebo estimates and plots.
 #' @importFrom dplyr %>% as_tibble arrange group_by bind_rows
 #' @importFrom stats as.formula sd
 #' @keywords internal
@@ -84,9 +86,11 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
 
 
 #' SA Placebo Regression
+#' @inheritParams sa_double_did
+#' @return A matrix of placebo estimates.
 #' @keywords internal
 #' @importFrom purrr map
-did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
+did_sad_placebo <- function(formula, dat_panel, treatment, outcome, option) {
   ## --------------------------------------
   ## Prepare inputs
   ## --------------------------------------
@@ -110,12 +114,12 @@ did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
 
     ## create did data
     dat_did <- did_panel_data(
-      fm_prep$var_outcome, fm_prep$var_treat, fm_prep$var_covars,
+      formula$var_outcome, formula$var_treat, formula$var_covars,
       option$var_cluster_pre, id_unit = "id_subject", id_time = "id_time", dat_use
     )
 
     ## fit placebo regression
-    tmp <- did_std_placebo(fm_prep$fm_did[[1]], dat_did, option$lag)
+    tmp <- did_std_placebo(formula$fm_did[[1]], dat_did, option$lag)
     est_did[[i]][seq_along(option$lag) %in% as.numeric(names(tmp$est))] <- tmp$est
     est_did_std[[i]][seq_along(option$lag) %in% as.numeric(names(tmp$est))] <- tmp$est_std
   }
@@ -142,7 +146,8 @@ did_sad_placebo <- function(fm_prep, dat_panel, treatment, outcome, option) {
 
 #' Create a did plot for standard design
 #' @keywords internal
-#' @return A ggplot object
+#' @param data A data frame of double did estimates.
+#' @return A ggplot2 object
 #' @importFrom ggplot2 ggplot geom_hline geom_point aes geom_errorbar labs theme_bw scale_x_continuous xlim
 #' @importFrom dplyr %>% across group_by summarise mutate ungroup select
 #' @importFrom stats qnorm
@@ -178,6 +183,10 @@ did_sad_plot <- function(data) {
 
 
 #' Generate a pattern plot
+#' @param data Panel data.
+#' @param treatment Name of the treatment variable.
+#' @param Gmat A matrix of treatment patterns.
+#' @return A list of the treatment variation plot and the data used to generate the plot.
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_manual theme_bw labs theme element_blank element_text
 #' @importFrom dplyr %>% mutate
 #' @importFrom rlang !! sym

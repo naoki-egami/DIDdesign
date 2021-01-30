@@ -5,6 +5,7 @@
 #' @param data A long form panel data.
 #' @param id_subject A character variable indicating subject index.
 #' @param id_time A character variable indicating time index.
+#' @return Double DID estimates.
 #' @importFrom dplyr %>% as_tibble group_by arrange
 #' @importFrom tibble tibble
 #' @importFrom future.apply future_lapply
@@ -70,6 +71,11 @@ did_sad <- function(formula, data, id_subject, id_time, option) {
 
 #' Compute the time-weighted DID and sDID
 #' @keywords internal
+#' @param formula A formula.
+#' @param dat_panel A panel data.
+#' @param treatment Name of the treatment variable.
+#' @param outcome Name of the outcome variable.
+#' @param option A list of options.
 #' @return A vector of two elements: Time-weighted DID (the first element) and time-weighted sequential DID (second).
 sa_double_did <- function(formula, dat_panel, treatment, outcome, option) {
   ## create Gmat and index for each design
@@ -87,6 +93,9 @@ sa_double_did <- function(formula, dat_panel, treatment, outcome, option) {
 
 
 #' Compute lead specific variance covariance matrix
+#' @param obj A list of bootstrap outputs.
+#' @param lead A vector of the lead parameter.
+#' @return Estimate of the variance covariance matrix.
 #' @keywords internal
 #' @importFrom purrr map
 sa_calc_cov <- function(obj, lead) {
@@ -98,6 +107,10 @@ sa_calc_cov <- function(obj, lead) {
 
 #' Convert estimates into double did
 #' @keywords internal
+#' @param obj_point Point estimates.
+#' @param obj_boot Bootstrap outputs.
+#' @param lead A vector of the lead parameter.
+#' @return A list of estimates and weights.
 #' @importFrom dplyr as_tibble
 sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
 
@@ -142,10 +155,18 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
 
 #' Estimate DID and sDID
 #' @keywords internal
+#' @inheritParams sa_double_did
+#' @param id_time_use A list of time index.
+#' @param id_subj_use A list of unit index.
+#' @param time_weight A vector of time weights.
+#' @param min_time A threshold value of minimum number of units in the treatment.
+#' @param lead A vector of lead parameters.
+#' @param var_cluster_pre A variable name used for clustering.
+#' @return A list of DID and sDID estimates.
 #' @importFrom dplyr lag bind_rows filter select left_join
 #' @importFrom rlang !! sym
 #' @importFrom purrr map_dbl
-compute_did <- function(fm_prep, dat_panel, outcome, treatment,
+compute_did <- function(formula, dat_panel, outcome, treatment,
   id_time_use, id_subj_use, time_weight, min_time = 3, lead, var_cluster_pre) {
 
   est_did <- list()
@@ -193,12 +214,12 @@ compute_did <- function(fm_prep, dat_panel, outcome, treatment,
       ## estimate DID and sDID
       ## -------------------------------
       dat_did <- did_panel_data(
-        fm_prep$var_outcome, fm_prep$var_treat, fm_prep$var_covars,
+        formula$var_outcome, formula$var_treat, formula$var_covars,
         var_cluster_pre, id_unit = "id_subject", id_time = "id_time", dat_use
       )
 
       for (ll in 1:length(lead)) {
-        est_did[[iter]][[ll]]  <- ddid_fit(fm_prep$fm_did, dat_did, lead = lead[ll])
+        est_did[[iter]][[ll]]  <- ddid_fit(formula$fm_did, dat_did, lead = lead[ll])
       }
 
       ## -------------------------------

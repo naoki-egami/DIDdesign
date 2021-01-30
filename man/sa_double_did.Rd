@@ -6,6 +6,17 @@
 \usage{
 sa_double_did(formula, dat_panel, treatment, outcome, option)
 }
+\arguments{
+\item{formula}{A formula.}
+
+\item{dat_panel}{A panel data.}
+
+\item{treatment}{Name of the treatment variable.}
+
+\item{outcome}{Name of the outcome variable.}
+
+\item{option}{A list of options.}
+}
 \value{
 A vector of two elements: Time-weighted DID (the first element) and time-weighted sequential DID (second).
 }

@@ -10,6 +10,7 @@
 #' @param check_fit An output from \code{did_check} function.
 #' @param band A boolean argument. If \code{TRUE}, confidence intervals are shown with \code{geom_ribbon} function.
 #' @param ... Other parameters. Currently not supported.
+#' @return A plot of ggplot2 object.
 plot.DIDdesign <- function(x, check_fit = NULL, band = FALSE, ...) {
 
   if (!is.null(check_fit)) {

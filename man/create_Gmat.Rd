@@ -9,6 +9,9 @@ create_Gmat(dat_panel, treatment)
 \arguments{
 \item{dat_panel}{A class of \code{panelr} object.}
 }
+\value{
+A matrix of the treatment assignment timing.
+}
 \description{
 Create a G matrix
 }

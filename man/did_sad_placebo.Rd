@@ -4,7 +4,21 @@
 \alias{did_sad_placebo}
 \title{SA Placebo Regression}
 \usage{
-did_sad_placebo(fm_prep, dat_panel, treatment, outcome, option)
+did_sad_placebo(formula, dat_panel, treatment, outcome, option)
+}
+\arguments{
+\item{formula}{A formula.}
+
+\item{dat_panel}{A panel data.}
+
+\item{treatment}{Name of the treatment variable.}
+
+\item{outcome}{Name of the outcome variable.}
+
+\item{option}{A list of options.}
+}
+\value{
+A matrix of placebo estimates.
 }
 \description{
 SA Placebo Regression

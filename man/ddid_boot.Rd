@@ -6,6 +6,18 @@
 \usage{
 ddid_boot(fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel, lead)
 }
+\arguments{
+\item{dat_did}{Panel data.}
+
+\item{var_cluster}{A variable used for clustering standard errors.}
+
+\item{is_panel}{A boolean argument to indicate if data is in the panel format or the repeated cross-section format.}
+
+\item{lead}{A vector of lead parameters.}
+}
+\value{
+A list of DID and sDID estimates.
+}
 \description{
 Bootstrap
 }

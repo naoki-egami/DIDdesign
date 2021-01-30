@@ -6,6 +6,14 @@
 \usage{
 sa_calc_cov(obj, lead)
 }
+\arguments{
+\item{obj}{A list of bootstrap outputs.}
+
+\item{lead}{A vector of the lead parameter.}
+}
+\value{
+Estimate of the variance covariance matrix.
+}
 \description{
 Compute lead specific variance covariance matrix
 }

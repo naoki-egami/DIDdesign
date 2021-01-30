@@ -1,6 +1,8 @@
 
 
 #' DID check function for the basic design
+#' @inheritParams did_std
+#' @return A list of placebo estimates and plots.
 #' @keywords internal
 #' @importFrom stats sd
 did_check_std <- function(

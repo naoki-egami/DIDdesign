@@ -6,6 +6,19 @@
 \usage{
 double_did_compute(fit, weights, lead, se_boot = FALSE)
 }
+\arguments{
+\item{fit}{A lift of fitted objects.}
+
+\item{weights}{A list of double DID weights.}
+
+\item{lead}{A vector of lead parameters.}
+
+\item{se_boot}{A boolean argument to indicate if standard errors are computed based on the bootstrap-based (i.e., empirical variance),
+or based on the asymptotic approximation.}
+}
+\value{
+A list of estimates and weights.
+}
 \description{
 Compute Point and Variance Estimates
 }

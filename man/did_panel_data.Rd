@@ -26,6 +26,9 @@ This should be left as \code{NULL} is no covariates are specified in formula.}
 
 \item{data}{A data frame.}
 }
+\value{
+A data frame.
+}
 \description{
 Prepare data for the DID design with panel data
 }

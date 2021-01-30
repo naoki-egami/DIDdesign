@@ -1,6 +1,7 @@
 #' Create a G matrix
 #'
 #' @param dat_panel A class of \code{panelr} object.
+#' @return A matrix of the treatment assignment timing.
 #' @importFrom rlang sym !!
 #' @importFrom dplyr %>% select mutate case_when group_by ungroup
 #' @importFrom tidyr pivot_wider
@@ -28,6 +29,7 @@ create_Gmat <- function(dat_panel, treatment) {
 #' Obtain periods used for the analysis
 #' @param Gmat G matrix produced in \code{create_Gmat()}.
 #' @param thres A minimum number of treated units for the period included in the analysis. Default is 2.
+#' @return A list of time indices.
 #' @keywords internal
 get_periods <- function(Gmat, thres = 3) {
   ## check which periods to use
@@ -46,6 +48,7 @@ get_periods <- function(Gmat, thres = 3) {
 #' Obtain subject index for each periods
 #' @param Gamt G matrix created by \code{create_Gmat()}.
 #' @param id_time_use A vector of time index. Should be normalized.
+#' @return A list of unit indices.
 #' @keywords internal
 get_subjects <- function(Gmat, id_time_use) {
   id_use <- list(); iter <- 1
@@ -62,6 +65,7 @@ get_subjects <- function(Gmat, id_time_use) {
 #' Compute time-specific weights
 #' @param Gmat G matrix.
 #' @param id_time_use A vector of time index (normalized). Output of \code{get_periods}.
+#' @return A vector of time weights.
 #' @keywords internal
 get_time_weight <- function(Gmat, id_time_use) {
   n_treated   <- sum(Gmat[,id_time_use] == 1)

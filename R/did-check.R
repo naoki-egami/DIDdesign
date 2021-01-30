@@ -1,6 +1,8 @@
 
 #' Assessing Assumptions for Difference-in-differences
 #' @inheritParams did
+#' @return An object of \code{DIDdesign_check} class.
+#'  It is a list object consists of placebo estimates and plots for checking the parallel trends assumption.
 #' @export
 #' @importFrom dplyr mutate select %>%
 #' @importFrom stats qnorm
@@ -50,6 +52,7 @@ did_check <- function(
 #' @export
 #' @param x An output from \code{did_check} function.
 #' @param ... Other parameters. Currently not supported.
+#' @return A plot of ggplot2 object.
 #' @import patchwork
 #' @importFrom ggplot2 theme
 plot.DIDdesign_check <- function(x, ...) {
