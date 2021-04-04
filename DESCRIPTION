@@ -1,8 +1,8 @@
 Package: DIDdesign
 Type: Package
 Title: Analyzing and Diagnosing the Difference-in-Differences Design
-Version: 0.3.3
-Date: 2021-02-25
+Version: 0.3.4
+Date: 2021-04-03
 Authors@R: c(
   person("Naoki", "Egami", email = "naoki.egami5@gmail.com", role = c("aut"),
     comment = c(ORCID = "0000-0002-5491-2174")
