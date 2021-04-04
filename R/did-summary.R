@@ -1,9 +1,10 @@
 #' Summarize DIDdesign output
 #' @param object An object of \code{DIDdesign} class.
+#' @param estimator A vector of estimators to print. For example, \code{estimator = c("DID", "sDID")}.
 #' @param ... Other parameters. Currently not supported.
 #' @importFrom stats pnorm
 #' @export
-summary.DIDdesign <- function(object, ...) {
+summary.DIDdesign <- function(object, estimator = NULL, ...) {
 
   if (!("DIDdesign" %in% class(object))) stop("object should the output of did funciton.")
   out <- object$estimates
@@ -12,6 +13,12 @@ summary.DIDdesign <- function(object, ...) {
 
   out <- out[, c("estimator", "lead", "estimate", "std.error", "statistic", "p_value")]
 
+  if (!is.null(estimator)) {
+    ## check
+    name_check <- estimator %in% c("Double-DID", "DID", "sDID", "SA-Double-DID", "SA-DID", "SA-sDID")
+    if (!all(name_check)) stop("Not supported estimator(s): ", estimator[!name_check])
+    out <- out[out$estimator %in% estimator, ]
+  }
   # ## add weights
   # weights <- c(NA, object$weights$weight_did, object$weights$weight_sdid)
   # out$ddid_weights <- weights

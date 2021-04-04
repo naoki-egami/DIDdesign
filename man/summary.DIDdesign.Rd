@@ -4,10 +4,12 @@
 \alias{summary.DIDdesign}
 \title{Summarize DIDdesign output}
 \usage{
-\method{summary}{DIDdesign}(object, ...)
+\method{summary}{DIDdesign}(object, estimator = NULL, ...)
 }
 \arguments{
 \item{object}{An object of \code{DIDdesign} class.}
+
+\item{estimator}{A vector of estimators to print. For example, \code{estimator = c("DID", "sDID")}.}
 
 \item{...}{Other parameters. Currently not supported.}
 }
