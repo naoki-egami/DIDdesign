@@ -1,6 +1,6 @@
 <p align="center">
 
-<img src="man/figures/logo.png" width=200 height=250><br/>
+<img src="man/figures/logo.png" width=200 height=250 align='center'><br/>
 DIDdesign:Analyzing Difference-in-Differences Design
 
 </p>
