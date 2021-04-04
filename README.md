@@ -1,9 +1,4 @@
-<p align="center">
-
-<img src="man/figures/logo.png" width=200 height=250 align='center'><br/>
-DIDdesign:Analyzing Difference-in-Differences Design
-
-</p>
+<img src="man/figures/logo.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- badges: start -->
 

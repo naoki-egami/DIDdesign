@@ -20,10 +20,13 @@ knitr::opts_chunk$set(
 
 
 
-<p align="center">
-<img src="man/figures/logo.png" width=200 height=250 align='center'><br/>
-DIDdesign:Analyzing Difference-in-Differences Design
-</p>
+```{r, echo=FALSE, fig.align='center', width=200, height=250, fig.caption="DIDdesign:Analyzing Difference-in-Differences Design"}
+knitr::include_graphics("man/figures/logo.png")
+```
+
+
+
+
 
 
 <!-- badges: start -->
