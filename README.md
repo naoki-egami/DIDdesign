@@ -1,4 +1,4 @@
-# DIDdesign: Analyzing Difference-in-Differences Design
+# DIDdesign <img src="man/figures/logo.png" align="right" width="72" height="88" />
 
 <!-- badges: start -->
 
