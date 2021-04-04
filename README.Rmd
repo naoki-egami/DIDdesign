@@ -20,12 +20,9 @@ knitr::opts_chunk$set(
 
 
 
-```{r, echo=FALSE, fig.align='center', width=200, height=250, fig.caption="DIDdesign:Analyzing Difference-in-Differences Design"}
-knitr::include_graphics("man/figures/logo.png")
-```
-
-
-
+<center>
+![DIDdesign:Analyzing Difference-in-Differences Design](man/figures/logo.png =200x250)
+</center>
 
 
 

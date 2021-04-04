@@ -1,4 +1,9 @@
-<img src="man/figures/logo.png" width="100%" style="display: block; margin: auto;" />
+<center>
+
+![DIDdesign:Analyzing Difference-in-Differences
+Design](man/figures/logo.png%20=200x250)
+
+</center>
 
 <!-- badges: start -->
 
