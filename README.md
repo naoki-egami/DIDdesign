@@ -1,9 +1,9 @@
-<center>
+<p align="center">
 
-![DIDdesign:Analyzing Difference-in-Differences
-Design](man/figures/logo.png%20=200x250)
+<img src="man/figures/logo.png" align="center" alt="logo" width="200" height="250"/><br />
+DIDdesign:Analyzing Difference-in-Differences Design
 
-</center>
+</p>
 
 <!-- badges: start -->
 
