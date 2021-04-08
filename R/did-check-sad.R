@@ -196,7 +196,7 @@ did_sad_pattern <- function(data, treatment, Gmat) {
                         decreasing = TRUE)
   data <- data %>%
     mutate(id_subject = factor(.data$id_subject, levels = treat_timing),
-           treatment  = ifelse(.data$treatment == 1, "treated", "control"))
+           treatment  = ifelse(!!sym(treatment) == 1, "treated", "control"))
   gg <- ggplot(data, aes(x = .data$id_time, y = .data$id_subject, fill = !!sym(treatment))) +
     geom_tile() +
     scale_fill_manual(values = c("lightgray", '#1E88A8')) +
