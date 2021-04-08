@@ -239,8 +239,20 @@ compute_did <- function(formula, dat_panel, outcome, treatment,
   for (ll in 1:length(lead)) {
     did_est <- map_dbl(est_did, ~.x[[ll]][1])
     sdid_est <- map_dbl(est_did, ~.x[[ll]][2])
-    did_vec[[ll]] <- did_est %*% (time_weight_new / sum(time_weight_new))
-    sdid_vec[[ll]] <- sdid_est %*% (time_weight_new / sum(time_weight_new))
+
+    ##
+    ## check if did_est and sdid_est has NA:
+    ##  if there are not sufficient number of post-treatment periods
+    ##  did_est/sdid_est would contain  NA.
+    ##
+    did_remove_na <- did_est[!is.na(did_est)]
+    sdid_remove_na <- sdid_est[!is.na(sdid_est)]
+    did_weight <- time_weight_new[!is.na(did_est)]
+    sdid_weight <- time_weight_new[!is.na(sdid_est)]
+    
+    ## compute time-averages
+    did_vec[[ll]] <- did_remove_na %*% (did_weight / sum(did_weight))
+    sdid_vec[[ll]] <- sdid_remove_na %*% (sdid_weight / sum(sdid_weight))
   }
 
 
