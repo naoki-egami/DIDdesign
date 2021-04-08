@@ -249,7 +249,7 @@ compute_did <- function(formula, dat_panel, outcome, treatment,
     sdid_remove_na <- sdid_est[!is.na(sdid_est)]
     did_weight <- time_weight_new[!is.na(did_est)]
     sdid_weight <- time_weight_new[!is.na(sdid_est)]
-    
+
     ## compute time-averages
     did_vec[[ll]] <- did_remove_na %*% (did_weight / sum(did_weight))
     sdid_vec[[ll]] <- sdid_remove_na %*% (sdid_weight / sum(sdid_weight))
