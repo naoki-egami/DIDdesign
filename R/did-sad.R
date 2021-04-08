@@ -6,27 +6,31 @@
 #' @param id_subject A character variable indicating subject index.
 #' @param id_time A character variable indicating time index.
 #' @return Double DID estimates.
-#' @importFrom dplyr %>% as_tibble group_by arrange
+#' @importFrom dplyr %>% as_tibble group_by arrange select all_of
 #' @importFrom tibble tibble
 #' @importFrom future.apply future_lapply
 #' @importFrom future plan multicore sequential
 #' @keywords internal
 did_sad <- function(formula, data, id_subject, id_time, option) {
 
+  ## subset data to variables that are relatd
+  var_cluster <- option$id_cluster
+  vars_use <- c(all.vars(formula), id_subject, id_time, var_cluster)
+  data <- as_tibble(data) %>% select(all_of(vars_use))
+
   ## keep track of long-form data with panel class from \code{panelr} package
   # dat_panel <- panel_data(data, id = id_subject, wave = id_time)
   ## assign group index
   ## normalize the time index
-  dat_panel <- as_tibble(data) %>%
+  dat_panel <- data %>%
     rename(id_subject = !!sym(id_subject), id_time = !!sym(id_time)) %>%
-    mutate(id_time = as.numeric(as.factor(id_time))) %>%
+    mutate(id_time = as.numeric(as.factor(id_time)),
+           id_subject = as.numeric(as.factor(id_subject))) %>%
     arrange(id_subject, id_time)
 
-  is_panel <- TRUE
-  var_cluster <- option$id_cluster
-  if (is.null(var_cluster) && isTRUE(is_panel)) {
-    var_cluster <- "id_unit"
-    option$var_cluster_pre <- id_subject
+  if (is.null(var_cluster)) {
+    var_cluster <- "id_subject"
+    option$var_cluster_pre <- "id_subject"
   }
 
   ## extract variable informations
@@ -39,7 +43,7 @@ did_sad <- function(formula, data, id_subject, id_time, option) {
   treatment <- all_vars[2]
 
   ## prepare custom formula
-  fm_prep <- did_formula(formula, is_panel)
+  fm_prep <- did_formula(formula, is_panel = TRUE)
 
   ## --------------------------------------
   ## obtain point estimates
