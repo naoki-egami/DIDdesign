@@ -246,12 +246,21 @@ double_did_compute <- function(fit, boot, lead, se_boot) {
 
     ## variance estimate for Double DID
     if (isTRUE(se_boot)) {
-      ## bootstrap based variance
+      ## bootstrap-based variance
       ddid_boot <- purrr::map_dbl(boot_est, ~ as.vector(weights[[ll]]$weights %*% .x[[ll]]))
       ddid_var  <- var(ddid_boot, na.rm = TRUE)
+
+      ## compute the confidence internvals
+      boot_did_l <- do.call(rbind, map(boot_est, ~.x[[ll]]))
+      ci_did <- apply(boot_did_l, 2, function(x) quantile(x, prob = c(0.025, 0.975)))
+      ci_ddid <- quantile(ddid_boot, prob = c(0.025, 0.975))
     } else {
-      ## asymptotic variance
+      ## asymptotic variance formula
       ddid_var <- (1 / sum(weights[[ll]]$W))
+
+      ci_ddid <- c(ddid - qnorm(0.975) * sqrt(ddid_var), ddid + qnorm(0.975) * sqrt(ddid_var) )
+      ci_did  <- cbind( fit[[ll]] - qnorm(0.975) * sqrt(c(var_did, var_sdid)),
+                        fit[[ll]] + qnorm(0.975) * sqrt(c(var_did, var_sdid)) ) 
     }
 
     ## summarize estimates
@@ -260,6 +269,8 @@ double_did_compute <- function(fit, boot, lead, se_boot) {
       lead        = lead[ll],
       estimate    = c(ddid, fit[[ll]]),
       std.error   = c(sqrt(ddid_var), sqrt(var_did), sqrt(var_sdid)),
+      ci.low      = c(ci_ddid[1], ci_did[1,]),
+      ci.high     = c(ci_ddid[2], ci_did[2,]),
       ddid_weight = c(NA, weights[[ll]]$weights)
     )
 
