@@ -141,8 +141,8 @@ did_compute_weights <- function(
     for (ll in 1:length(option$lead)) {
       tmp <- do.call(rbind, map(est_boot, ~.x[[ll]]))
       W <- cov(tmp)
-      w_did  <- (W[1,1] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
-      w_sdid <- (W[2,2] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
+      w_did  <- (W[1,1] + W[1,2]) / sum(W)
+      w_sdid <- (W[2,2] + W[1,2]) / sum(W)
       weights_save[[ll]] <- list(W = solve(W), vcov = W, weights = c(w_did, w_sdid))
     }
   } else {
@@ -164,8 +164,8 @@ did_compute_weights <- function(
 
       ## variance covariance matrix of τ[DID] and τ[s-DID]
       W <- tmp[c(4, 8), c(4, 8)]
-      w_did  <- (W[1,1] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
-      w_sdid <- (W[2,2] - W[1,2]) / (W[1,1] + W[2,2] - 2 * W[1,2])
+      w_did  <- (W[1,1] + W[1,2]) / (W[1,1] + W[2,2] + 2 * W[1,2])
+      w_sdid <- (W[2,2] + W[1,2]) / (W[1,1] + W[2,2] + 2 * W[1,2])
       weights_save[[ll]] <- list(W = solve(W), vcov = W, weights = c(w_did, w_sdid))
     }
 
@@ -260,7 +260,7 @@ double_did_compute <- function(fit, boot, lead, se_boot) {
 
       ci_ddid <- c(ddid - qnorm(0.975) * sqrt(ddid_var), ddid + qnorm(0.975) * sqrt(ddid_var) )
       ci_did  <- cbind( fit[[ll]] - qnorm(0.975) * sqrt(c(var_did, var_sdid)),
-                        fit[[ll]] + qnorm(0.975) * sqrt(c(var_did, var_sdid)) ) 
+                        fit[[ll]] + qnorm(0.975) * sqrt(c(var_did, var_sdid)) )
     }
 
     ## summarize estimates

@@ -128,8 +128,8 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
     W <- sa_calc_cov(obj_boot, lead[ll]+1)
 
     ## compute weight from Vcov
-    w_did  <- (W[1,1] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
-    w_sdid <- (W[2,2] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
+    w_did  <- (W[1,1] + W[1,2]) / (sum(diag(W)) + 2 * W[1,2])
+    w_sdid <- (W[2,2] + W[1,2]) / (sum(diag(W)) + 2 * W[1,2])
     w_vec  <- c(w_did, w_sdid)
 
     ## compute double did
