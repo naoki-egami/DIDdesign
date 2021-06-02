@@ -164,8 +164,8 @@ did_compute_weights <- function(
 
       ## variance covariance matrix of τ[DID] and τ[s-DID]
       W <- tmp[c(4, 8), c(4, 8)]
-      w_did  <- (W[1,1] + W[1,2]) / (W[1,1] + W[2,2] + 2 * W[1,2])
-      w_sdid <- (W[2,2] + W[1,2]) / (W[1,1] + W[2,2] + 2 * W[1,2])
+      w_did  <- (W[1,1] + W[1,2]) / sum(W)
+      w_sdid <- (W[2,2] + W[1,2]) / sum(W)
       weights_save[[ll]] <- list(W = solve(W), vcov = W, weights = c(w_did, w_sdid))
     }
 
