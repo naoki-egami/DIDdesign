@@ -11,7 +11,7 @@ summary.DIDdesign <- function(object, estimator = NULL, ...) {
   out$statistic <- out$estimate / out$std.error
   out$p_value   <- 2 * pnorm(abs(out$statistic), lower.tail = FALSE)
 
-  out <- out[, c("estimator", "lead", "estimate", "std.error", "statistic", "p_value")]
+  out <- out[, c("estimator", "lead", "estimate", "std.error", "statistic", "p_value", "ci.low", "ci.high")]
 
   if (!is.null(estimator)) {
     ## check

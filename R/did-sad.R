@@ -118,7 +118,15 @@ sa_calc_cov <- function(obj, lead) {
 sa_calc_ddid_var <- function(obj, lead, w_did, w_sdid) {
   tmp <- purrr::map_dbl(obj, ~(w_did * .x$DID[[lead]] + w_sdid * .x$sDID[[lead]]))
   var_ddid <- var(tmp)
-  return(var_ddid)
+  ci <- quantile(tmp, prob = c(0.025, 0.975))
+
+  ## comupute CI for DID and sDID
+  DID  <- purrr::map_dbl(obj, ~.x$DID[[lead]])
+  sDID <- purrr::map_dbl(obj, ~.x$sDID[[lead]])
+  ci_did <- quantile(DID, prob = c(0.025, 0.975))
+  ci_sdid <- quantile(sDID, prob = c(0.025, 0.975))
+  return(list(var = var_ddid, ci_low = c(ci[1], ci_did[1], ci_sdid[1]),
+              ci_high = c(ci[2], ci_did[2], ci_sdid[2])))
 }
 
 
@@ -151,7 +159,8 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
 
     ## variance
     # var_ddid <- as.vector(t(w_vec^2) %*% diag(W))
-    var_ddid <- sa_calc_ddid_var(obj_boot, lead[ll]+1, w_did, w_sdid)
+    ddid_boot <- sa_calc_ddid_var(obj_boot, lead[ll]+1, w_did, w_sdid)
+    var_ddid  <- ddid_boot$var
 
     ## save weights
     estimates[[ll]] <- data.frame(
@@ -159,6 +168,8 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
       lead        = lead[ll],
       estimate    = c(ddid, est),
       std.error   = sqrt(c(var_ddid, diag(W))),
+      ci.low      = ddid_boot$ci_low,
+      ci.high     = ddid_boot$ci_high,
       ddid_weight = c(NA, w_vec)
     )
 
