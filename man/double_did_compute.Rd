@@ -4,12 +4,12 @@
 \alias{double_did_compute}
 \title{Compute Point and Variance Estimates}
 \usage{
-double_did_compute(fit, weights, lead, se_boot = FALSE)
+double_did_compute(fit, boot, lead, se_boot)
 }
 \arguments{
 \item{fit}{A lift of fitted objects.}
 
-\item{weights}{A list of double DID weights.}
+\item{boot}{An output from bootstrap.}
 
 \item{lead}{A vector of lead parameters.}
 

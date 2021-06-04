@@ -4,14 +4,14 @@
 #' @keywords internal
 set_option <- function(option) {
 
-  if (!exists('n_boot', option)) option$n_boot <- 30
-  if (!exists('parallel', option)) option$parallel <- TRUE
-  if (!exists('se_boot', option)) option$se_boot <- FALSE
+  if (!exists('n_boot', option)) option$n_boot         <- 30
+  if (!exists('parallel', option)) option$parallel     <- TRUE
+  if (!exists('se_boot', option)) option$se_boot       <- TRUE
   if (!exists('id_cluster', option)) option$id_cluster <- NULL
-  if (!exists('lead', option)) option$lead <- 0
-  if (!exists('thres', option)) option$thres <- 2
-  if (!exists('lag', option)) option$lag <- 1
-  if (!exists('stdz', option)) option$stdz <- TRUE
+  if (!exists('lead', option)) option$lead             <- 0
+  if (!exists('thres', option)) option$thres           <- 2
+  if (!exists('lag', option)) option$lag               <- 1
+  if (!exists('stdz', option)) option$stdz             <- TRUE
   return(option)
 }
 

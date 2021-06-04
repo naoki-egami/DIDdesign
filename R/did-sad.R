@@ -109,6 +109,19 @@ sa_calc_cov <- function(obj, lead) {
 }
 
 
+#' Compute Bootstrap-based Variance for the SA-Double-DID Estimator
+#' @keywords internal
+#' @param obj A list of bootstrap outputs.
+#' @param lead A vector of the lead parameter.
+#' @param w_did Estimated weight for the DID estimator
+#' @param w_sdid Estimated weight for the sequential DID estimator
+sa_calc_ddid_var <- function(obj, lead, w_did, w_sdid) {
+  tmp <- purrr::map_dbl(obj, ~(w_did * .x$DID[[lead]] + w_sdid * .x$sDID[[lead]]))
+  var_ddid <- var(tmp)
+  return(var_ddid)
+}
+
+
 #' Convert estimates into double did
 #' @keywords internal
 #' @param obj_point Point estimates.
@@ -128,8 +141,8 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
     W <- sa_calc_cov(obj_boot, lead[ll]+1)
 
     ## compute weight from Vcov
-    w_did  <- (W[1,1] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
-    w_sdid <- (W[2,2] - W[1,2]) / (sum(diag(W)) - 2 * W[1,2])
+    w_did  <- (W[1,1] + W[1,2]) / sum(W)
+    w_sdid <- (W[2,2] + W[1,2]) / sum(W)
     w_vec  <- c(w_did, w_sdid)
 
     ## compute double did
@@ -137,14 +150,15 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
     ddid <- t(w_vec) %*% est
 
     ## variance
-    var_ddid <- as.vector(t(w_vec^2) %*% diag(W))
+    # var_ddid <- as.vector(t(w_vec^2) %*% diag(W))
+    var_ddid <- sa_calc_ddid_var(obj_boot, lead[ll]+1, w_did, w_sdid)
 
     ## save weights
     estimates[[ll]] <- data.frame(
-      estimator = c("SA-Double-DID", "SA-DID", "SA-sDID"),
-      lead      = lead[ll],
-      estimate  = c(ddid, est),
-      std.error = sqrt(c(var_ddid, diag(W))),
+      estimator   = c("SA-Double-DID", "SA-DID", "SA-sDID"),
+      lead        = lead[ll],
+      estimate    = c(ddid, est),
+      std.error   = sqrt(c(var_ddid, diag(W))),
       ddid_weight = c(NA, w_vec)
     )
 
