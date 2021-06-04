@@ -1,6 +1,8 @@
 <p align="center">
+
     <img src="man/figures/logo.png" align="center" alt="logo" width="200" height="250"><br/><br/>
-    DIDdesign: Analyzing Difference-in-Differences Design
+    DIDdesign:Analyzing Difference-in-Differences Design
+
 </p>
 
 <!-- badges: start -->
@@ -23,7 +25,7 @@ Reference:
 ## Installation Instructions:
 
   - Downloading the most recent version of `DIDdesign` from Github
-
+    
     ``` r
     ## need to install `devtools` if necessary
     require(devtools)
@@ -143,21 +145,21 @@ plot(check_panel)
 <img src="man/figures/README-panel_check_plot-1.png" width="100%" style="display: block; margin: auto;" />
 
   - Data used to generate the above plot are available via
-
+    
     ``` r
     ## data for the trend-plot
     check_panel$plot[[1]]$dat_plot
-
+    
     ## data for the equivalence plot
     check_panel$plot[[2]]$dat_plot
     ```
 
   - Individual plots are also available via
-
+    
     ``` r
     ## trend plot
     check_panel$plot[[1]]$plot
-
+    
     ## equivalence plot
     check_panel$plot[[2]]$plot
     ```
@@ -200,13 +202,13 @@ Users can obtain the estimates via `summary()` function.
 summary(fit_panel)
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>    estimator lead estimate std.error statistic p_value
-#> 1 Double-DID    0  -0.0041    0.0026      -1.6  0.1149
+#> 1 Double-DID    0  -0.0050    0.0036      -1.4  0.1584
 #> 2        DID    0  -0.0062    0.0027      -2.3  0.0194
 #> 3       sDID    0  -0.0044    0.0044      -1.0  0.3179
-#> 4 Double-DID    1  -0.0067    0.0032      -2.1  0.0370
+#> 4 Double-DID    1  -0.0071    0.0033      -2.2  0.0289
 #> 5        DID    1  -0.0115    0.0036      -3.2  0.0016
 #> 6       sDID    1  -0.0031    0.0039      -0.8  0.4260
-#> 7 Double-DID    2  -0.0051    0.0043      -1.2  0.2376
+#> 7 Double-DID    2  -0.0050    0.0043      -1.2  0.2420
 #> 8        DID    2  -0.0115    0.0049      -2.3  0.0196
 #> 9       sDID    2   0.0015    0.0049       0.3  0.7664
 ```
@@ -317,7 +319,7 @@ ff_rcs <- did(
 summary(ff_rcs)
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>    estimator lead estimate std.error statistic p_value
-#> 1 Double-DID    0    0.077     0.050      1.53    0.13
+#> 1 Double-DID    0    0.063     0.069      0.91    0.36
 #> 2        DID    0    0.054     0.055      0.98    0.33
 #> 3       sDID    0    0.068     0.081      0.85    0.40
 ```
@@ -415,10 +417,10 @@ fit_sa <- did(
 head(summary(fit_sa))
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>       estimator lead estimate std.error statistic p_value
-#> 1 SA-Double-DID    0   0.0137     0.017     0.823    0.41
+#> 1 SA-Double-DID    0   0.0124     0.015     0.847    0.40
 #> 2        SA-DID    0   0.0110     0.014     0.792    0.43
 #> 3       SA-sDID    0   0.0137     0.016     0.832    0.41
-#> 4 SA-Double-DID    1  -0.0053     0.014    -0.387    0.70
+#> 4 SA-Double-DID    1  -0.0040     0.014    -0.291    0.77
 #> 5        SA-DID    1   0.0011     0.013     0.084    0.93
 #> 6       SA-sDID    1  -0.0072     0.017    -0.414    0.68
 ```
