@@ -140,10 +140,10 @@ did_compute_weights <- function(
     weights_save <- vector("list", length = length(option$lead))
     for (ll in 1:length(option$lead)) {
       tmp <- do.call(rbind, map(est_boot, ~.x[[ll]]))
-      W <- cov(tmp)
+      W <- solve(cov(tmp))
       w_did  <- (W[1,1] + W[1,2]) / sum(W)
       w_sdid <- (W[2,2] + W[1,2]) / sum(W)
-      weights_save[[ll]] <- list(W = solve(W), vcov = W, weights = c(w_did, w_sdid))
+      weights_save[[ll]] <- list(W = W, vcov = cov(tmp), weights = c(w_did, w_sdid))
     }
   } else {
     ##
