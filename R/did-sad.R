@@ -149,7 +149,7 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
     VC <- sa_calc_cov(obj_boot, lead[ll]+1)
     W  <- solve(VC)
 
-    ## compute weight from Vcov
+    ## compute weight from W matrix
     w_did  <- (W[1,1] + W[1,2]) / sum(W)
     w_sdid <- (W[2,2] + W[1,2]) / sum(W)
     w_vec  <- c(w_did, w_sdid)
@@ -159,7 +159,6 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
     ddid <- t(w_vec) %*% est
 
     ## variance
-    # var_ddid <- as.vector(t(w_vec^2) %*% diag(W))
     ddid_boot <- sa_calc_ddid_var(obj_boot, lead[ll]+1, w_did, w_sdid)
     var_ddid  <- ddid_boot$var
 
