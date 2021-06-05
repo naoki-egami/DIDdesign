@@ -146,7 +146,8 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
     tmp <- matrix(NA, nrow = 3, ncol = 3)
 
     ## compute variance covariance matrix
-    W <- solve(sa_calc_cov(obj_boot, lead[ll]+1)) # i added solve
+    VC <- sa_calc_cov(obj_boot, lead[ll]+1)
+    W  <- solve(VC)
 
     ## compute weight from Vcov
     w_did  <- (W[1,1] + W[1,2]) / sum(W)
@@ -167,13 +168,13 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
       estimator   = c("SA-Double-DID", "SA-DID", "SA-sDID"),
       lead        = lead[ll],
       estimate    = c(ddid, est),
-      std.error   = sqrt(c(var_ddid, diag(W))),
+      std.error   = sqrt(c(var_ddid, diag(VC))),
       ci.low      = ddid_boot$ci_low,
       ci.high     = ddid_boot$ci_high,
       ddid_weight = c(NA, w_vec)
     )
 
-    W_save[[ll]] <- solve(W)
+    W_save[[ll]] <- W
   }
 
   ## summarise
