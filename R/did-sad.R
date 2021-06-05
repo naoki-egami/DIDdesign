@@ -146,7 +146,7 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
     tmp <- matrix(NA, nrow = 3, ncol = 3)
 
     ## compute variance covariance matrix
-    W <- sa_calc_cov(obj_boot, lead[ll]+1)
+    W <- solve(sa_calc_cov(obj_boot, lead[ll]+1)) # i added solve
 
     ## compute weight from Vcov
     w_did  <- (W[1,1] + W[1,2]) / sum(W)
@@ -201,7 +201,7 @@ compute_did <- function(formula, dat_panel, outcome, treatment,
   est_did <- list()
   iter <- 1
 
-  ## we need to renormalize weights if past periods is not avaialbe
+  ## we need to renormalize weights if past periods is not available
   time_weight_new <- list()
   max_time <- max(dat_panel$id_time)
 
