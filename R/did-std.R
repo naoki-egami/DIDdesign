@@ -57,7 +57,7 @@ did_std <- function(
   boot_out  <- did_compute_weights(fm_prep, dat_did, var_cluster, is_panel, option)
 
   ## compute double did estimate and variance
-  estimates <- double_did_compute(fit_did, boot_out, option$lead, option$se_boot)
+  estimates <- double_did_compute(fit_did, boot_out, option$lead, option$se_boot_gmm)
 
   ## compute double did estimate
   return(estimates)
@@ -226,12 +226,12 @@ ddid_boot <- function(
 #' @param fit A lift of fitted objects.
 #' @param boot An output from bootstrap.
 #' @param lead A vector of lead parameters.
-#' @param se_boot A boolean argument to indicate if standard errors are computed based on the bootstrap-based (i.e., empirical variance),
+#' @param se_boot_gmm A boolean argument to indicate if standard errors are computed based on the bootstrap-based (i.e., empirical variance),
 #'                 or based on the asymptotic approximation.
 #' @return A list of estimates and weights.
 #' @keywords internal
 #' @importFrom dplyr as_tibble bind_rows
-double_did_compute <- function(fit, boot, lead, se_boot) {
+double_did_compute <- function(fit, boot, lead, se_boot_gmm) {
 
   weights  <- boot$weights
   boot_est <- boot$estimates
@@ -245,7 +245,7 @@ double_did_compute <- function(fit, boot, lead, se_boot) {
     var_sdid <- weights[[ll]]$vcov[2,2]
 
     ## variance estimate for Double DID
-    if (isTRUE(se_boot)) {
+    if (isTRUE(se_boot_gmm)) {
       ## bootstrap-based variance
       ddid_boot <- purrr::map_dbl(boot_est, ~ as.vector(weights[[ll]]$weights %*% .x[[ll]]))
       ddid_var  <- var(ddid_boot, na.rm = TRUE)
