@@ -1,6 +1,8 @@
 <p align="center">
+
     <img src="man/figures/logo.png" align="center" alt="logo" width="200" height="250"><br/><br/>
     DIDdesign:Analyzing Difference-in-Differences Design
+
 </p>
 
 <!-- badges: start -->
@@ -23,7 +25,7 @@ Reference:
 ## Installation Instructions:
 
   - Downloading the most recent version of `DIDdesign` from Github
-
+    
     ``` r
     ## need to install `devtools` if necessary
     require(devtools)
@@ -143,21 +145,21 @@ plot(check_panel)
 <img src="man/figures/README-panel_check_plot-1.png" width="100%" style="display: block; margin: auto;" />
 
   - Data used to generate the above plot are available via
-
+    
     ``` r
     ## data for the trend-plot
     check_panel$plot[[1]]$dat_plot
-
+    
     ## data for the equivalence plot
     check_panel$plot[[2]]$dat_plot
     ```
 
   - Individual plots are also available via
-
+    
     ``` r
     ## trend plot
     check_panel$plot[[1]]$plot
-
+    
     ## equivalence plot
     check_panel$plot[[2]]$plot
     ```
@@ -415,12 +417,12 @@ fit_sa <- did(
 head(summary(fit_sa))
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>       estimator lead estimate std.error statistic p_value ci.low ci.high
-#> 1 SA-Double-DID    0  0.01094     0.014   7.9e-01    0.43 -0.017   0.038
-#> 2        SA-DID    0  0.01098   136.959   8.0e-05    1.00 -0.017   0.039
-#> 3       SA-sDID    0  0.01365   115.754   1.2e-04    1.00 -0.014   0.045
-#> 4 SA-Double-DID    1 -0.00083     0.012  -6.8e-02    0.95 -0.021   0.021
-#> 5        SA-DID    1  0.00107    88.252   1.2e-05    1.00 -0.022   0.026
-#> 6       SA-sDID    1 -0.00725    64.276  -1.1e-04    1.00 -0.041   0.031
+#> 1 SA-Double-DID    0  0.01094     0.014     0.790    0.43 -0.017   0.038
+#> 2        SA-DID    0  0.01098     0.014     0.792    0.43 -0.017   0.039
+#> 3       SA-sDID    0  0.01365     0.016     0.832    0.41 -0.014   0.045
+#> 4 SA-Double-DID    1 -0.00083     0.012    -0.068    0.95 -0.021   0.021
+#> 5        SA-DID    1  0.00107     0.013     0.084    0.93 -0.022   0.026
+#> 6       SA-sDID    1 -0.00725     0.017    -0.414    0.68 -0.041   0.031
 ```
 
 ``` r
