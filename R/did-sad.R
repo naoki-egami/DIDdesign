@@ -146,9 +146,10 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
     tmp <- matrix(NA, nrow = 3, ncol = 3)
 
     ## compute variance covariance matrix
-    W <- sa_calc_cov(obj_boot, lead[ll]+1)
+    VC <- sa_calc_cov(obj_boot, lead[ll]+1)
+    W  <- solve(VC)
 
-    ## compute weight from Vcov
+    ## compute weight from W matrix
     w_did  <- (W[1,1] + W[1,2]) / sum(W)
     w_sdid <- (W[2,2] + W[1,2]) / sum(W)
     w_vec  <- c(w_did, w_sdid)
@@ -158,7 +159,6 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
     ddid <- t(w_vec) %*% est
 
     ## variance
-    # var_ddid <- as.vector(t(w_vec^2) %*% diag(W))
     ddid_boot <- sa_calc_ddid_var(obj_boot, lead[ll]+1, w_did, w_sdid)
     var_ddid  <- ddid_boot$var
 
@@ -167,13 +167,13 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
       estimator   = c("SA-Double-DID", "SA-DID", "SA-sDID"),
       lead        = lead[ll],
       estimate    = c(ddid, est),
-      std.error   = sqrt(c(var_ddid, diag(W))),
+      std.error   = sqrt(c(var_ddid, diag(VC))),
       ci.low      = ddid_boot$ci_low,
       ci.high     = ddid_boot$ci_high,
       ddid_weight = c(NA, w_vec)
     )
 
-    W_save[[ll]] <- solve(W)
+    W_save[[ll]] <- W
   }
 
   ## summarise
@@ -201,7 +201,7 @@ compute_did <- function(formula, dat_panel, outcome, treatment,
   est_did <- list()
   iter <- 1
 
-  ## we need to renormalize weights if past periods is not avaialbe
+  ## we need to renormalize weights if past periods is not available
   time_weight_new <- list()
   max_time <- max(dat_panel$id_time)
 
