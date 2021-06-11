@@ -113,64 +113,30 @@ did_compute_weights <- function(
   ## --------------------------------------------
   ## Compute weights
   ## --------------------------------------------
+  ## setup worker
+  setup_parallel(option$parallel)
 
-  if (isTRUE(option$se_boot)) {
-    ##
-    ## bootstrap to compute weights
-    ##
+  ## use future_lapply to implement the bootstrap parallel
+  est_boot <- future_lapply(1:option$n_boot, function(i) {
+    tryCatch({
+      ddid_boot(formula, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead)
+    }, error = function(e) {
+      NULL
+    })
+  }, future.seed = TRUE)
+  est_boot <- est_boot[lengths(est_boot) != 0]
 
-    ## setup worker
-    if (isTRUE(option$parallel)) {
-      plan(multicore)
-    } else {
-      plan(sequential)
-    }
+  ## convert VCVO to weights
+  weights_save <- vector("list", length = length(option$lead))
+  for (ll in 1:length(option$lead)) {
+    tmp    <- do.call(rbind, map(est_boot, ~.x[[ll]]))
+    VCOV   <- cov(tmp)
+    W      <- solve(VCOV)
 
-    ## use future_lapply to implement the bootstrap parallel
-    est_boot <- future_lapply(1:option$n_boot, function(i) {
-      tryCatch({
-        ddid_boot(formula, dat_did, id_cluster_vec, var_cluster, is_panel, option$lead)
-      }, error = function(e) {
-        NULL
-      })
-    }, future.seed = TRUE)
-    est_boot <- est_boot[lengths(est_boot) != 0]
-
-    ## convert VCVO to weights
-    weights_save <- vector("list", length = length(option$lead))
-    for (ll in 1:length(option$lead)) {
-      tmp <- do.call(rbind, map(est_boot, ~.x[[ll]]))
-      W <- solve(cov(tmp))
-      w_did  <- (W[1,1] + W[1,2]) / sum(W)
-      w_sdid <- (W[2,2] + W[1,2]) / sum(W)
-      weights_save[[ll]] <- list(W = W, vcov = cov(tmp), weights = c(w_did, w_sdid))
-    }
-  } else {
-    ##
-    ## analytically compute weights
-    ##
-    weights_save <- vector("list", length = length(option$lead))
-    for (ll in 1:length(option$lead)) {
-      ## obtain residuals
-      resid <- ddid_resid(formula$fm_did, dat_did, lead = option$lead[[ll]])
-      ep_vcov  <- get_vcov(resid, dat_did, var_cluster = NULL)
-
-      ## obtain design matrix
-      X <- model.matrix(formula$fm_did[[1]], data = dat_did)
-
-      ## compute variance covariance matrix
-      XX_inv <- solve( t(X) %*% X )
-      tmp <- XX_inv %*% ( t(X) %*% ep_vcov %*% X) %*% XX_inv
-
-      ## variance covariance matrix of τ[DID] and τ[s-DID]
-      W <- tmp[c(4, 8), c(4, 8)]
-      w_did  <- (W[1,1] + W[1,2]) / sum(W)
-      w_sdid <- (W[2,2] + W[1,2]) / sum(W)
-      weights_save[[ll]] <- list(W = solve(W), vcov = W, weights = c(w_did, w_sdid))
-    }
-
-    ## compute variance covariance matrix
-
+    ## compute weights based on W
+    w_did  <- (W[1,1] + W[1,2]) / sum(W)
+    w_sdid <- (W[2,2] + W[1,2]) / sum(W)
+    weights_save[[ll]] <- list(W = W, vcov = VCOV, weights = c(w_did, w_sdid))
   }
 
   return(list(weights = weights_save, estimates = est_boot))
@@ -226,12 +192,14 @@ ddid_boot <- function(
 #' @param fit A lift of fitted objects.
 #' @param boot An output from bootstrap.
 #' @param lead A vector of lead parameters.
-#' @param se_boot_gmm A boolean argument to indicate if standard errors are computed based on the bootstrap-based (i.e., empirical variance),
-#'                 or based on the asymptotic approximation.
+#' @param se_boot
+#'    A boolean argument to indicate if standard errors are computed based on the bootstrap-based
+#'    (i.e., empirical variance), or based on the asymptotic approximation.
 #' @return A list of estimates and weights.
 #' @keywords internal
 #' @importFrom dplyr as_tibble bind_rows
-double_did_compute <- function(fit, boot, lead, se_boot_gmm) {
+#' @importFrom stats var quantile
+double_did_compute <- function(fit, boot, lead, se_boot) {
 
   weights  <- boot$weights
   boot_est <- boot$estimates
@@ -245,7 +213,7 @@ double_did_compute <- function(fit, boot, lead, se_boot_gmm) {
     var_sdid <- weights[[ll]]$vcov[2,2]
 
     ## variance estimate for Double DID
-    if (isTRUE(se_boot_gmm)) {
+    if (isTRUE(se_boot)) {
       ## bootstrap-based variance
       ddid_boot <- purrr::map_dbl(boot_est, ~ as.vector(weights[[ll]]$weights %*% .x[[ll]]))
       ddid_var  <- var(ddid_boot, na.rm = TRUE)

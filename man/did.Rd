@@ -39,19 +39,24 @@ When \code{is_panel = FALSE} (i.e., the repeated cross-section data), this can b
 
 \item{id_time}{A variable name of time (e.g., year).}
 
-\item{design}{The design to be used: either \code{"did"} (the standard difference-in-differences design) or \code{"sa"} (the staggered adoption design).
+\item{design}{The design to be used: either \code{"did"} (the standard difference-in-differences design) or
+\code{"sa"} (the staggered adoption design).
 The default is \code{"did"}.}
 
-\item{is_panel}{A boolean argument. This should be \code{TRUE} when the dataset is panel (i.e., the same units are repeatedly observed over time); This should be \code{FALSE} when the dataset is the repeated cross-section (RCS) where different sets of units are observed at each time point.}
+\item{is_panel}{A boolean argument.
+This argument should be \code{TRUE} when the dataset is panel (i.e., the same units are repeatedly observed over time);
+This should be \code{FALSE} when the dataset is the repeated cross-section (RCS),
+  where different sets of units are observed at each time point.}
 
 \item{option}{A list of the following option parameters:
 \describe{
   \item{n_boot}{The number of bootstrap iterations.}
-  \item{se_boot}{A boolean argument. If \code{TRUE} bootstrap-based critical value is used to construct the confidence intervals.
-                   Default is \code{FALSE}}
+  \item{se_boot}{A boolean argument.
+                   If \code{TRUE} bootstrap-based critical value is used to construct the confidence intervals.
+                   Default is \code{TRUE}. This option only affects the basic DID design.}
   \item{id_cluster}{A variable name of a cluster index used to conduct clustered bootstraps.
                     If left unspecified, the unit level bootstrap will be conducted.}
-  \item{parallel}{Parallel computing for the block bootstrap. Use \code{future} package.}
+  \item{parallel}{Use multiple cores for computing the weighting matrix. \code{future} package is used.}
   \item{lead}{Lead parameter. Default is 0, which estimate the instantaneous treatment effect.}
 }}
 }
@@ -111,19 +116,16 @@ paglayan2019 <- paglayan2019 \%>\%
          log_expenditure = log(pupil_expenditure + 1),
          log_salary      = log(teacher_salary + 1))
 
-## prepare data
-require(dplyr)
 # estimate effects
 set.seed(1234)
 fit_sa <- did(
-  log_expenditure ~ treatment,
+  formula = log_expenditure ~ treatment,
   data    = paglayan2019,
   id_unit = "id_subject",
   id_time = "id_time",
   design  = "sa",
-  option  = list(n_boot = 20, lead = 0:5, thres = 2, parallel = FALSE)
+  option  = list(n_boot = 20, parallel = FALSE, thres = 1, lead = 0)
 )
-
 summary(fit_sa)
 }
 

@@ -45,11 +45,7 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
   ## --------------------------------------
   ## Compute standard error via bootstrap
   ## --------------------------------------
-  if (isTRUE(option$parallel)) {
-    plan(multicore)
-  } else {
-    plan(sequential)
-  }
+  setup_parallel(option$parallel)
 
   est_boot <- future_lapply(1:option$n_boot, function(i) {
       dat_boot <- sample_panel(dat_panel)
