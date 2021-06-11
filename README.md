@@ -23,7 +23,7 @@ Reference:
 ## Installation Instructions:
 
   - Downloading the most recent version of `DIDdesign` from Github
-    
+
     ``` r
     ## need to install `devtools` if necessary
     require(devtools)
@@ -143,21 +143,21 @@ plot(check_panel)
 <img src="man/figures/README-panel_check_plot-1.png" width="100%" style="display: block; margin: auto;" />
 
   - Data used to generate the above plot are available via
-    
+
     ``` r
     ## data for the trend-plot
     check_panel$plot[[1]]$dat_plot
-    
+
     ## data for the equivalence plot
     check_panel$plot[[2]]$dat_plot
     ```
 
   - Individual plots are also available via
-    
+
     ``` r
     ## trend plot
     check_panel$plot[[1]]$plot
-    
+
     ## equivalence plot
     check_panel$plot[[2]]$plot
     ```
