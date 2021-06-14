@@ -6,8 +6,7 @@ set_option <- function(option) {
 
   if (!exists('n_boot', option)) option$n_boot         <- 30
   if (!exists('parallel', option)) option$parallel     <- TRUE
-  if (!exists('se_boot', option)) option$se_boot       <- TRUE
-  if (!exists('se_boot', option)) option$se_boot_gmm   <- FALSE
+  if (!exists('se_boot', option)) option$se_boot       <- FALSE
   if (!exists('id_cluster', option)) option$id_cluster <- NULL
   if (!exists('lead', option)) option$lead             <- 0
   if (!exists('thres', option)) option$thres           <- 2
@@ -73,5 +72,20 @@ did_formula <- function(formula, is_panel) {
     var_outcome = var_outcome, var_treat = var_treat,
     var_post = var_post, var_covars = var_covars
   ))
+
+}
+
+
+#' Setup Parallel Workers
+#' @keywords internal
+#' @param is_parallel A boolean argument. If \code{TRUE} bootstrap will be conducted on multiple cores.
+setup_parallel <- function(is_parallel) {
+  if (isTRUE(is_parallel) & parallelly::availableCores(constraints = "multicore") > 1) {
+    future::plan(future::multicore)
+  } else if (isTRUE(is_parallel) & parallelly::availableCores(constraints = "multiprocess") > 1) {
+    future::plan(future::multiprocess)
+  } else {
+    future::plan(future::sequential)
+  }
 
 }

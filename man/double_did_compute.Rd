@@ -4,7 +4,7 @@
 \alias{double_did_compute}
 \title{Compute Point and Variance Estimates}
 \usage{
-double_did_compute(fit, boot, lead, se_boot_gmm)
+double_did_compute(fit, boot, lead, se_boot)
 }
 \arguments{
 \item{fit}{A lift of fitted objects.}
@@ -13,8 +13,8 @@ double_did_compute(fit, boot, lead, se_boot_gmm)
 
 \item{lead}{A vector of lead parameters.}
 
-\item{se_boot_gmm}{A boolean argument to indicate if standard errors are computed based on the bootstrap-based (i.e., empirical variance),
-or based on the asymptotic approximation.}
+\item{se_boot}{A boolean argument to indicate if standard errors are computed based on the bootstrap-based
+(i.e., empirical variance), or based on the asymptotic approximation.}
 }
 \value{
 A list of estimates and weights.

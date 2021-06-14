@@ -56,11 +56,7 @@ did_check_std <- function(
   }
 
   ## setup worker
-  if (isTRUE(option$parallel)) {
-    plan(multicore)
-  } else {
-    plan(sequential)
-  }
+  setup_parallel(option$parallel)
 
   ## use future_lapply to implement the bootstrap parallel
   est_boot <- future_lapply(1:option$n_boot, function(i) {

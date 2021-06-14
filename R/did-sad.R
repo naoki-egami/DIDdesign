@@ -54,11 +54,7 @@ did_sad <- function(formula, data, id_subject, id_time, option) {
   ## --------------------------------------
   ## obtain the weighting matrix via bootstrap
   ## --------------------------------------
-  if (isTRUE(option$parallel)) {
-    plan(multicore)
-  } else {
-    plan(sequential)
-  }
+  setup_parallel(option$parallel)
 
   est_boot <- future_lapply(1:option$n_boot, function(i) {
       dat_boot <- sample_panel(dat_panel)
@@ -115,18 +111,21 @@ sa_calc_cov <- function(obj, lead) {
 #' @param lead A vector of the lead parameter.
 #' @param w_did Estimated weight for the DID estimator
 #' @param w_sdid Estimated weight for the sequential DID estimator
+#' @importFrom stats quantile var
 sa_calc_ddid_var <- function(obj, lead, w_did, w_sdid) {
   tmp <- purrr::map_dbl(obj, ~(w_did * .x$DID[[lead]] + w_sdid * .x$sDID[[lead]]))
   var_ddid <- var(tmp)
   ci <- quantile(tmp, prob = c(0.025, 0.975))
 
   ## comupute CI for DID and sDID
-  DID  <- purrr::map_dbl(obj, ~.x$DID[[lead]])
-  sDID <- purrr::map_dbl(obj, ~.x$sDID[[lead]])
-  ci_did <- quantile(DID, prob = c(0.025, 0.975))
+  DID     <- purrr::map_dbl(obj, ~.x$DID[[lead]])
+  sDID    <- purrr::map_dbl(obj, ~.x$sDID[[lead]])
+  ci_did  <- quantile(DID, prob = c(0.025, 0.975))
   ci_sdid <- quantile(sDID, prob = c(0.025, 0.975))
-  return(list(var = var_ddid, ci_low = c(ci[1], ci_did[1], ci_sdid[1]),
-              ci_high = c(ci[2], ci_did[2], ci_sdid[2])))
+  return(list(var     = var_ddid,
+              ci_low  = c(ci[1], ci_did[1], ci_sdid[1]),
+              ci_high = c(ci[2], ci_did[2], ci_sdid[2])
+            ))
 }
 
 
@@ -141,7 +140,7 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
 
   estimates <- W_save <- vector("list", length = length(lead))
 
-
+  ## loop over each lead time point
   for (ll in 1:length(lead)) {
     tmp <- matrix(NA, nrow = 3, ncol = 3)
 
@@ -195,8 +194,10 @@ sa_did_to_ddid <- function(obj_point, obj_boot, lead) {
 #' @importFrom dplyr lag bind_rows filter select left_join
 #' @importFrom rlang !! sym
 #' @importFrom purrr map_dbl
-compute_did <- function(formula, dat_panel, outcome, treatment,
-  id_time_use, id_subj_use, time_weight, min_time = 3, lead, var_cluster_pre) {
+compute_did <- function(
+  formula, dat_panel, outcome, treatment,
+  id_time_use, id_subj_use, time_weight, min_time = 3, lead, var_cluster_pre
+) {
 
   est_did <- list()
   iter <- 1
