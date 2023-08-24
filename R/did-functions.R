@@ -82,10 +82,9 @@ did_formula <- function(formula, is_panel) {
 setup_parallel <- function(is_parallel) {
   if (isTRUE(is_parallel) & parallelly::availableCores(constraints = "multicore") > 1) {
     future::plan(future::multicore)
-  } else if (isTRUE(is_parallel) & parallelly::availableCores(constraints = "multiprocess") > 1) {
-    future::plan(future::multiprocess)
+  } else if (isTRUE(is_parallel) & parallelly::availableCores() > 1) {
+    future::plan(future::multisession)
   } else {
     future::plan(future::sequential)
   }
-
 }
