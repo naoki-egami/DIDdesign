@@ -1,6 +1,4 @@
-on:
-  push:
-    branches: master
+on: push
 
 name: Render README
 
@@ -8,7 +6,7 @@ jobs:
   render:
     name: Render README
     runs-on: macOS-latest
-    if: "contains(toJSON(github.event.commits.*.message), '[build_readme]')"    
+    if: "contains(toJSON(github.event.commits.*.message), '[build_readme]')"
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
