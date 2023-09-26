@@ -19,7 +19,7 @@ Imports:
     cli,
     dplyr,
     Formula,
-    future,
+    future (>= 1.29.0),
     future.apply,
     ggplot2,
     patchwork,

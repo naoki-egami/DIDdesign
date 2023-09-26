@@ -208,7 +208,7 @@ compute_did <- function(
 
   ## compute individual time specific DID
   for (i in 1:length(id_time_use)) {
-    if ((id_time_use[i] >= min_time) && ((id_time_use[i] + lead) <= max_time)) {
+    if ((id_time_use[i] >= min_time) && ((id_time_use[i] + max(lead)) <= max_time)) {
 
       est_did[[iter]] <- vector("list", length = length(lead))
 
@@ -303,7 +303,7 @@ sample_panel <- function(panel_dat) {
   id_vec  <- unique(pull(panel_dat, .data$id_subject))
   id_boot <- sample(id_vec, size = length(id_vec), replace = TRUE)
 
-  ## constrcut a panel data for bootstrap
+  ## construct a panel data for bootstrap
   tmp <- as.data.frame(panel_dat)
   dat_list <- list()
   for (i in 1:length(id_boot)) {
