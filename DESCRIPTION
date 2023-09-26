@@ -7,7 +7,7 @@ Authors@R: c(
   person("Naoki", "Egami", email = "naoki.egami5@gmail.com", role = c("aut"),
     comment = c(ORCID = "0000-0002-5491-2174")
   ),
-  person("Soichiro", "Yamauchi", email = "syamauchi@g.harvard.edu", role = c("aut", "cre"),
+  person("Soichiro", "Yamauchi", email = "soichiro@alumni.princeton.edu", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0003-0554-2717")
   ))
 Description: Statistical tools for analyzing and diagnosing the difference-in-differences design and the staggered adoption design. The methods implemented in this package is proposed in Egami and Yamauchi (2019) <arXiv:2102.09948>.
