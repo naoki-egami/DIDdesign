@@ -127,7 +127,9 @@ did_std_placebo <- function(formula, data, lags) {
     ct_outcome <- dat_use %>%
       filter(.data$It == 0 & .data$Gi == 0) %>%
       pull(.data$outcome)
-    dat_use$outcome <- (dat_use$outcome - mean(ct_outcome, na.rm = TRUE)) / sd(ct_outcome, na.rm = TRUE)
+    ct_outcome_sd <- sd(ct_outcome, na.rm = TRUE)
+    if (ct_outcome_sd == 0) stop("Outcome in the control group does not have any variation.")
+    dat_use$outcome <- (dat_use$outcome - mean(ct_outcome, na.rm = TRUE)) / ct_outcome_sd
     fit_std <- lm(formula, data = dat_use)
     est_std[i] <- fit_std$coef['Gi:It']
   }
