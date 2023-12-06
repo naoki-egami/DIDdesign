@@ -48,7 +48,7 @@ Reference:
 
 	```r
 	## need to install `devtools` if necessary
-	require(devtools)
+	library(devtools)
 	install_github("naoki-egami/DIDdesign", dependencies = TRUE)
 	```
 
