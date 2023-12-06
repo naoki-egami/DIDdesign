@@ -24,7 +24,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Soichiro Yamauchi \email{syamauchi@g.harvard.edu} (\href{https://orcid.org/0000-0003-0554-2717}{ORCID})
+\strong{Maintainer}: Soichiro Yamauchi \email{soichiro@alumni.princeton.edu} (\href{https://orcid.org/0000-0003-0554-2717}{ORCID})
 
 Authors:
 \itemize{

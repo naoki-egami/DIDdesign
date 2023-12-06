@@ -1,6 +1,3 @@
-
-
-
 #' Staggered Adoption Design
 #' @inheritParams did_sad
 #' @return A list of placebo estimates and plots.
@@ -8,8 +5,6 @@
 #' @importFrom stats as.formula sd
 #' @keywords internal
 did_check_sad <- function(formula, data, id_subject, id_time, option) {
-
-
   ## --------------------------------------
   ## Prepare inputs
   ## --------------------------------------
@@ -30,8 +25,8 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
     formula <- as.formula(formula)
   }
 
-  all_vars  <- all.vars(formula)
-  outcome   <- all_vars[1]
+  all_vars <- all.vars(formula)
+  outcome <- all_vars[1]
   treatment <- all_vars[2]
 
   ## prepare custom formula
@@ -48,24 +43,24 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
   setup_parallel(option$parallel)
 
   est_boot <- future_lapply(1:option$n_boot, function(i) {
-      dat_boot <- sample_panel(dat_panel)
-      did_sad_placebo(fm_prep, dat_boot, treatment, outcome, option)
+    dat_boot <- sample_panel(dat_panel)
+    did_sad_placebo(fm_prep, dat_boot, treatment, outcome, option)
   }, future.seed = TRUE)
 
   ## --------------------------------------
   ## Summarize results
   ## --------------------------------------
-  est_boot_std <- do.call(rbind, purrr::map(est_boot, ~.x[,1]))
-  est_boot <- do.call(rbind, purrr::map(est_boot, ~.x[,2]))
+  est_boot_std <- do.call(rbind, purrr::map(est_boot, ~ .x[, 1]))
+  est_boot <- do.call(rbind, purrr::map(est_boot, ~ .x[, 2]))
 
   estimates <- vector("list", length = length(option$lag))
   for (i in 1:length(option$lag)) {
     estimates[[i]] <- data.frame(
-      estimate      = did_placebo_est[i,1],
-      lag           = option$lag[i],
-      std.error     = sd(est_boot_std[,i]),
-      estimate_orig = did_placebo_est[i,2],
-      std.error_orig= sd(est_boot[,i])
+      estimate = did_placebo_est[i, 1],
+      lag = option$lag[i],
+      std.error = sd(est_boot_std[, i]),
+      estimate_orig = did_placebo_est[i, 2],
+      std.error_orig = sd(est_boot[, i])
     )
   }
 
@@ -111,7 +106,8 @@ did_sad_placebo <- function(formula, dat_panel, treatment, outcome, option) {
     ## create did data
     dat_did <- did_panel_data(
       formula$var_outcome, formula$var_treat, formula$var_covars,
-      option$var_cluster_pre, id_unit = "id_subject", id_time = "id_time", dat_use
+      option$var_cluster_pre,
+      id_unit = "id_subject", id_time = "id_time", dat_use
     )
 
     ## fit placebo regression
@@ -128,11 +124,11 @@ did_sad_placebo <- function(formula, dat_panel, treatment, outcome, option) {
   ## -------------------------------
   estimates <- matrix(NA, nrow = length(option$lag), ncol = 2)
   for (i in 1:length(option$lag)) {
-    tmp <- est_did[,i]
-    tmp_std <- est_did_std[,i]
+    tmp <- est_did[, i]
+    tmp_std <- est_did_std[, i]
     w_use <- time_weight[!is.na(tmp)]
-    estimates[i,1] <- sum( tmp_std * (w_use / sum(w_use)) )
-    estimates[i,2] <- sum( tmp * (w_use / sum(w_use)) )
+    estimates[i, 1] <- sum(tmp_std * (w_use / sum(w_use)))
+    estimates[i, 2] <- sum(tmp * (w_use / sum(w_use)))
   }
   rownames(estimates) <- option$lag
   attr(estimates, "Gmat") <- Gmat
@@ -147,31 +143,40 @@ did_sad_placebo <- function(formula, dat_panel, treatment, outcome, option) {
 #' @importFrom ggplot2 ggplot geom_hline geom_point aes geom_errorbar labs theme_bw scale_x_continuous xlim
 #' @importFrom dplyr %>% across group_by summarise mutate ungroup select
 #' @importFrom stats qnorm
-did_sad_plot <- function(data) {
+did_sad_plot <- function(data, skip_standardize = FALSE) {
   dat_plot <- data %>%
-  mutate(
-    CI90_UB_ab = abs(.data$estimate + qnorm(0.95) * .data$std.error),
-    CI90_LB_ab = abs(.data$estimate - qnorm(0.95) * .data$std.error),
-    time_to_treat = -.data$lag
-  ) %>%
-  mutate(
-    EqCI95_LB = -pmax(.data$CI90_UB_ab, .data$CI90_LB_ab),
-    EqCI95_UB = pmax(.data$CI90_UB_ab, .data$CI90_LB_ab)
-  ) %>%
-  select(.data$estimate, .data$time_to_treat, .data$std.error,
-         .data$EqCI95_LB, .data$EqCI95_UB)
+    mutate(
+      CI90_UB_ab = abs(.data$estimate + qnorm(0.95) * .data$std.error),
+      CI90_LB_ab = abs(.data$estimate - qnorm(0.95) * .data$std.error),
+      time_to_treat = -.data$lag
+    ) %>%
+    mutate(
+      EqCI95_LB = -pmax(.data$CI90_UB_ab, .data$CI90_LB_ab),
+      EqCI95_UB = pmax(.data$CI90_UB_ab, .data$CI90_LB_ab)
+    ) %>%
+    select(
+      .data$estimate, .data$time_to_treat, .data$std.error,
+      .data$EqCI95_LB, .data$EqCI95_UB
+    )
+
+  y_lab <- "95% Standardized Equivalence CI" 
+  if (isTRUE(skip_standardize)) y_lab <- "95% Equivalence CI"
 
   gg <- ggplot(dat_plot, aes(x = .data$time_to_treat, y = .data$estimate)) +
-    geom_hline(yintercept = 0, color = 'gray50', linetype = 'dotted') +
+    geom_hline(yintercept = 0, color = "gray50", linetype = "dotted") +
     geom_errorbar(aes(ymin = .data$EqCI95_LB, ymax = .data$EqCI95_UB),
-                  width = 0.05, color = '#1E88A8') +
+      width = 0.05, color = "#1E88A8"
+    ) +
     theme_bw() +
-    labs(x = "Time relative to treatment assignment", y = "95% Standardized Equivalence CI")
+    labs(
+      x = "Time relative to treatment assignment",
+      y = y_lab
+    ) + 
+    scale_x_continuous(breaks = unique(dat_plot$time_to_treat))
 
   if (length(unique(dat_plot$time_to_treat)) == 1) {
     tt <- abs(unique(dat_plot$time_to_treat))
-    gg <- gg+ xlim(-tt-1, -tt + 1)
-    #  + scale_x_continuous(breaks = c(-tt - 1, tt, tt + 1))
+    gg <- gg + xlim(-tt - 1, -tt + 1)
   }
 
   return(list(plot = gg, dat_plot = dat_plot))
@@ -189,16 +194,21 @@ did_sad_plot <- function(data) {
 #' @keywords internal
 did_sad_pattern <- function(data, treatment, Gmat) {
   treat_timing <- order(apply(Gmat, 1, function(x) ifelse(sum(x == 1) >= 1, which(x == 1), Inf)),
-                        decreasing = TRUE)
+    decreasing = TRUE
+  )
   data <- data %>%
-    mutate(id_subject = factor(.data$id_subject, levels = treat_timing),
-           treatment  = ifelse(!!sym(treatment) == 1, "treated", "control"))
+    mutate(
+      id_subject = factor(.data$id_subject, levels = treat_timing),
+      treatment = ifelse(!!sym(treatment) == 1, "treated", "control")
+    )
   gg <- ggplot(data, aes(x = .data$id_time, y = .data$id_subject, fill = !!sym(treatment))) +
     geom_tile() +
-    scale_fill_manual(values = c("lightgray", '#1E88A8')) +
+    scale_fill_manual(values = c("lightgray", "#1E88A8")) +
     theme_bw() +
-    theme(axis.text.x = element_blank(), axis.text.y = element_blank(),
-           axis.title.x = element_text(vjust = -4),  axis.ticks.x = element_blank()) +
+    theme(
+      axis.text.x = element_blank(), axis.text.y = element_blank(),
+      axis.title.x = element_text(vjust = -4), axis.ticks.x = element_blank()
+    ) +
     labs(x = "Time", y = "Unit", fill = "Status")
 
   return(list(plot = gg, dat_plot = data))
