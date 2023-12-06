@@ -1,8 +1,9 @@
 <p align="center">
+
     <img src="man/figures/logo.png" align="center" alt="logo" width="200" height="250"><br/><br/>
     DIDdesign:Analyzing Difference-in-Differences Design
-</p>
 
+</p>
 <!-- badges: start -->
 
 [![R build
@@ -11,24 +12,25 @@ status](https://github.com/naoki-egami/DIDdesign/workflows/R-CMD-check/badge.svg
 
 Authors:
 
-  - [Naoki Egami](https://naokiegami.com/)
-  - [Soichiro Yamauchi](https://soichiroy.github.io/)
+- [Naoki Egami](https://naokiegami.com/)
+- [Soichiro Yamauchi](https://soichiroy.github.io/)
 
 Reference:
 
-  - Egami and Yamauchi (2019) “[Using Multiple Pre-treatment Periods to
-    Improve Difference-in-Differences and Staggered Adoption
-    Designs.](https://arxiv.org/pdf/2102.09948.pdf)” *arXiv*
+- Egami and Yamauchi (2023) “[Using Multiple Pre-treatment Periods to
+  Improve Difference-in-Differences and Staggered Adoption
+  Designs.](https://doi.org/10.1017/pan.2022.8)” *Political Analysis*
+  31(2):195-212.
 
 ## Installation Instructions:
 
-  - Downloading the most recent version of `DIDdesign` from Github
-    
-    ``` r
-    ## need to install `devtools` if necessary
-    require(devtools)
-    install_github("naoki-egami/DIDdesign", dependencies = TRUE)
-    ```
+- Downloading the most recent version of `DIDdesign` from Github
+
+  ``` r
+  ## need to install `devtools` if necessary
+  library(devtools)
+  install_github("naoki-egami/DIDdesign", dependencies = TRUE)
+  ```
 
 ## Table of Contents
 
@@ -43,11 +45,10 @@ Reference:
 
 ### Workflow
 
-  - **Step 1**: Assessing the parallel trends assumption via
-    `did_check()`
-      - View and visualize the output via `plot()` and `summary()`
-  - **Step 2**: Estimating the treatment effects via `did()`
-      - View and visualize the output via `plot()` and `summary()`
+- **Step 1**: Assessing the parallel trends assumption via `did_check()`
+  - View and visualize the output via `plot()` and `summary()`
+- **Step 2**: Estimating the treatment effects via `did()`
+  - View and visualize the output via `plot()` and `summary()`
 
 ## The Basic Difference-in-Differences Design with Panel Data
 
@@ -78,25 +79,25 @@ trends and computes the equivalence confidence intervals.
 set.seed(1234)
 check_panel <- did_check(
   formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
-                       ami_pc + asian_pc + black_pc + hisp_pc,
-  data    = anzia2012,
+    ami_pc + asian_pc + black_pc + hisp_pc,
+  data = anzia2012,
   id_unit = "district",
   id_time = "year",
-  option  = list(n_boot = 200, parallel = TRUE, lag = 1:3)
+  option = list(n_boot = 200, parallel = TRUE, lag = 1:3)
 )
 ```
 
 `did_check()` function takes the following arguments:
 
-| Argument   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| :--------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `formula`  | A formula specifying variables. It should follow the form of `outcome ~ treatment \| covariates`. <br /> -`treatment` should be time-varying, that is, `treatment` takes zero for everyone before the treatment assignment, and takes 1 for units who are treated. See the example for how the treatment variable should be coded.<br /> -`covariates` can be omitted as `outcome ~ treatment`.                                                                                                                          |
-| `data`     | A data frame. This can be either `data.frame` or `tibble`.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `id_unit`  | A variable name in the data that uniquely identifies units (e.g., individuals or states)                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `id_time`  | A variable name in the data that uniquely identifies time (e.g., year).                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `design`   | Design option. It should be `"did"` when the basic DID design is used.                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `is_panel` | A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeatedly overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data.                                                                                                                                                                                                                                                                               |
-| `option`   | A list of option parameters. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package. <br /> - `lag`: A vector of positive lag values. For example, when `lag = c(1, 2)`, pre-treatment trends are tested on the period between `t-2` to `t-1` (corresponding to `lag = 1`), and between `t-3` and `t-2` where `t` is when the actual treatment is assigned. Default is `lag = 1`. |
+| Argument   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+|:-----------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `formula`  | A formula specifying variables. It should follow the form of `outcome ~ treatment | covariates`. <br /> -`treatment` should be time-varying, that is, `treatment` takes zero for everyone before the treatment assignment, and takes 1 for units who are treated. See the example for how the treatment variable should be coded.<br /> -`covariates` can be omitted as `outcome ~ treatment`.                                                                                                                                                                                                                                                                                                                                                                                     |
+| `data`     | A data frame. This can be either `data.frame` or `tibble`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `id_unit`  | A variable name in the data that uniquely identifies units (e.g., individuals or states)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `id_time`  | A variable name in the data that uniquely identifies time (e.g., year).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `design`   | Design option. It should be `"did"` when the basic DID design is used.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `is_panel` | A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeatedly overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `option`   | A list of option parameters. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package. <br /> - `lag`: A vector of positive lag values. For example, when `lag = c(1, 2)`, pre-treatment trends are tested on the period between `t-2` to `t-1` (corresponding to `lag = 1`), and between `t-3` and `t-2` where `t` is when the actual treatment is assigned. Default is `lag = 1`. <br /> - `skip_standardize`: A boolena argument. If `TRUE`, use the original scale of the outcome to compute the equivalence regions. Useful when the outcome of the control group does not have any variation for some time periods. Default is `FALSE`. |
 
 #### Assessing the output from `did_check()`
 
@@ -114,20 +115,20 @@ summary(check_panel)
 #> 3 -0.000434   3   0.00271   -0.0674    0.0674
 ```
 
-  - `estimate` shows the DID estimates on the pre-treatment periods.
-    Deviation from zero suggests the possible violation of the parallel
-    trends assumption.
-  - `std.error` shows the standard errors for the estimates reported on
-    the `estimate` column.
-  - `EqCI95_LB` and `EqCI95_UB` show the upper and lower bound on the
-    95% standardized equivalence confidence intervals. Values are
-    standardized such that they can be interpreted as the standard
-    deviation from the mean of the baseline control group. For example,
-    `EqCI95_LB` for `lag = 1` can be interpreted as `EqCI95_LB` standard
-    deviation away from the mean of the control group at time `t - 2`
-    (`lag = 1` corresponds to the parallel trends check between time
-    `t-2` and `t-1`). Wider intervals suggests the possible violation of
-    the parallel trends assumption.
+- `estimate` shows the DID estimates on the pre-treatment periods.
+  Deviation from zero suggests the possible violation of the parallel
+  trends assumption.
+- `std.error` shows the standard errors for the estimates reported on
+  the `estimate` column.
+- `EqCI95_LB` and `EqCI95_UB` show the upper and lower bound on the 95%
+  standardized equivalence confidence intervals. Values are standardized
+  such that they can be interpreted as the standard deviation from the
+  mean of the baseline control group. For example, `EqCI95_LB` for
+  `lag = 1` can be interpreted as `EqCI95_LB` standard deviation away
+  from the mean of the control group at time `t - 2` (`lag = 1`
+  corresponds to the parallel trends check between time `t-2` and
+  `t-1`). Wider intervals suggests the possible violation of the
+  parallel trends assumption.
 
 The output can be also visualized by `plot()` function. By default, it
 shows a plot for the 95% standardized equivalence confidence intervals
@@ -142,25 +143,25 @@ plot(check_panel)
 
 <img src="man/figures/README-panel_check_plot-1.png" width="100%" style="display: block; margin: auto;" />
 
-  - Data used to generate the above plot are available via
-    
-    ``` r
-    ## data for the trend-plot
-    check_panel$plot[[1]]$dat_plot
-    
-    ## data for the equivalence plot
-    check_panel$plot[[2]]$dat_plot
-    ```
+- Data used to generate the above plot are available via
 
-  - Individual plots are also available via
-    
-    ``` r
-    ## trend plot
-    check_panel$plot[[1]]$plot
-    
-    ## equivalence plot
-    check_panel$plot[[2]]$plot
-    ```
+  ``` r
+  ## data for the trend-plot
+  check_panel$plot[[1]]$dat_plot
+
+  ## data for the equivalence plot
+  check_panel$plot[[2]]$dat_plot
+  ```
+
+- Individual plots are also available via
+
+  ``` r
+  ## trend plot
+  check_panel$plot[[1]]$plot
+
+  ## equivalence plot
+  check_panel$plot[[2]]$plot
+  ```
 
 ### Step 2: Estimate the treatment effect with the double DID estimator
 
@@ -172,14 +173,14 @@ can estimate the average treatment effect on the treated (ATT) via
 ## estimate treatment effect
 set.seed(1234)
 fit_panel <- did(
-  formula  = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
-                                          ami_pc + asian_pc + black_pc + hisp_pc,
-  data     = anzia2012,
-  id_unit  = "district",
-  id_time  = "year",
-  design   = "did",
+  formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
+    ami_pc + asian_pc + black_pc + hisp_pc,
+  data = anzia2012,
+  id_unit = "district",
+  id_time = "year",
+  design = "did",
   is_panel = TRUE,
-  option   = list(n_boot = 200, parallel = TRUE, lead = 0:2)
+  option = list(n_boot = 200, parallel = TRUE, lead = 0:2)
 )
 ```
 
@@ -188,7 +189,7 @@ Different from `did_check()`, `did()` takes `lead` parameter in the
 option argument.
 
 | Argument | Description                                                                                                                                                                                                                                                                   |
-| :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|:---------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `lead`   | A parameter in `option` argument. It should be a vector of non-negative lead values. For example, when `lead = c(0, 1)`, treatment effect when the treatment is assigned (`lead = 0`) as well as one-time ahead effect (`lead = 1`) will be estimated. Default is `lead = 0`. |
 
 #### Assessing the output from `did()`
@@ -211,16 +212,16 @@ summary(fit_panel)
 #> 9       sDID    2   0.0015    0.0049       0.3  0.7664 -0.0018  0.0111
 ```
 
-  - `estimator`
-      - `Double-DID` shows estimates from the double DID estimator that
-        combines the extended parallel trends assumption. This estimate
-        should be used only when the parallel trends assumption is
-        plausible.
-      - `DID` shows estimates from the standard DID estimator.
-      - `sDID` shows estimates from the sequential DID estimator that
-        requires a weaker parallel trends-in-trends assumption. When the
-        parallel trends assumption is not plausible, this estimator
-        should be used.
+- `estimator`
+  - `Double-DID` shows estimates from the double DID estimator that
+    combines the extended parallel trends assumption. This estimate
+    should be used only when the parallel trends assumption is
+    plausible.
+  - `DID` shows estimates from the standard DID estimator.
+  - `sDID` shows estimates from the sequential DID estimator that
+    requires a weaker parallel trends-in-trends assumption. When the
+    parallel trends assumption is not plausible, this estimator should
+    be used.
 
 `plot()` function for the output from `did()` can be used in two ways.
 First, it generates a treatment effect plot when the function is
@@ -239,13 +240,13 @@ pre_post_plot <- plot(fit_panel, check_fit = check_panel)
 ## show the plots side-by-side
 require(patchwork)
 (post_plot +
-  ggplot2::theme(aspect.ratio=1) +
+  ggplot2::theme(aspect.ratio = 1) +
   ggplot2::ylim(-0.015, 0.01) +
   ggplot2::labs(title = "Post-Treatment")) +
-(pre_post_plot +
-  ggplot2::theme(aspect.ratio=1) +
-  ggplot2::ylim(-0.015, 0.01) +
-  ggplot2::labs(title = "Pre- and Post-Treatment"))
+  (pre_post_plot +
+    ggplot2::theme(aspect.ratio = 1) +
+    ggplot2::ylim(-0.015, 0.01) +
+    ggplot2::labs(title = "Pre- and Post-Treatment"))
 ```
 
 <img src="man/figures/README-panel_fit_plot-1.png" width="100%" style="display: block; margin: auto;" />
@@ -268,10 +269,10 @@ data(malesky2014)
 set.seed(1234)
 check_rcs <- did_check(
   formula = vpost ~ treatment + post_treat | factor(city),
-  data    = malesky2014,
+  data = malesky2014,
   id_time = "year",
-  is_panel= FALSE,
-  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lag = 1)
+  is_panel = FALSE,
+  option = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lag = 1)
 )
 ```
 
@@ -279,7 +280,7 @@ check_rcs <- did_check(
 slightly different argument from the case of panel data.
 
 | Argument     | Description                                                                                                                                            |
-| :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+|:-------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `formula`    | It should include the post-treatment indicator, in addition to the time-invariant `treatment` variable. Covariates are supported as in the panel case. |
 | `is_panel`   | It should be `FALSE` to indicate that the data is in the repeated cross-sectional format.                                                              |
 | `id_cluster` | A parameter for `option` argument. It should be a variable name used to cluster the standard errors.                                                   |
@@ -305,10 +306,10 @@ plot(check_rcs)
 ## estimate ATT
 ff_rcs <- did(
   formula = vpost ~ treatment + post_treat | factor(city),
-  data    = malesky2014,
-  id_time = 'year',
-  is_panel= FALSE,
-  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lead = 0)
+  data = malesky2014,
+  id_time = "year",
+  is_panel = FALSE,
+  option = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lead = 0)
 )
 ```
 
@@ -337,10 +338,12 @@ require(tibble)
 ## format dataset
 paglayan2019 <- paglayan2019 %>%
   filter(!(state %in% c("WI", "DC"))) %>%
-  mutate(id_time = year,
-         id_subject = as.numeric(as.factor(state)),
-         log_expenditure = log(pupil_expenditure + 1),
-         log_salary      = log(teacher_salary + 1))
+  mutate(
+    id_time = year,
+    id_subject = as.numeric(as.factor(state)),
+    log_expenditure = log(pupil_expenditure + 1),
+    log_salary = log(teacher_salary + 1)
+  )
 ```
 
 <img src="man/figures/README-sa_plot-1.png" width="85%" />
@@ -368,7 +371,7 @@ There are a few additional arguments specific to the staggered adoption
 design.
 
 | Argument | Description                                                                                                                                                                                                                                                                                                                                                                                            |
-| :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|:---------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `design` | A design argument. It should take `design = "sa"` for the staggered adoption design                                                                                                                                                                                                                                                                                                                    |
 | `thres`  | A parameter in the `option` argument. It controls the minimum number of treated units for a particular time to be included in the treatment effect estimation. For example if `thres = 2`, the effect for Tennessee will be removed from the time-average effect because it’s the only unit who received the treatment in 1972 (i.e., the number of treated units in 1972 is less than the threshold). |
 
@@ -430,7 +433,7 @@ sa_plot <- plot(fit_sa, check_sa, band = TRUE)
 ## show plot
 sa_plot +
   ggplot2::ylim(-0.1, 0.1) +
-  ggplot2::geom_vline(xintercept = 0, color = 'red', linetype = 'dotted')
+  ggplot2::geom_vline(xintercept = 0, color = "red", linetype = "dotted")
 ```
 
 <img src="man/figures/README-sa_fit_plot-1.png" width="90%" style="display: block; margin: auto;" />
