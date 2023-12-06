@@ -19,7 +19,6 @@ did_check_std <- function(
   skip_standardize <- FALSE
   if (isTRUE(option$skip_standardize)) skip_standardize <- TRUE
 
-
   ##
   ## handle cluster variable
   ##
@@ -101,7 +100,7 @@ did_check_std <- function(
   ## generate a DID plot
   ## --------------------------------------------
   p1 <- did_std_plot(dat_did)
-  p2 <- did_sad_plot(estimates)
+  p2 <- did_sad_plot(estimates, skip_standardize)
 
   return(list(est = estimates, plot = list(p1, p2)))
 }
