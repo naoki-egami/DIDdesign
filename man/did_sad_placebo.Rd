@@ -4,7 +4,7 @@
 \alias{did_sad_placebo}
 \title{SA Placebo Regression}
 \usage{
-did_sad_placebo(formula, dat_panel, treatment, outcome, option)
+did_sad_placebo(formula, dat_panel, treatment, outcome, option, show_warning)
 }
 \arguments{
 \item{formula}{A formula.}
