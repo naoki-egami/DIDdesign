@@ -112,11 +112,13 @@ did_check_std <- function(
 #' @param data An output from \code{did_panel_data} or \code{did_rcs_data} function.
 #' @param lags A vector of non-negative lag parameters.
 #' @param skip_standardize A logical value indicating whether to skip standardization.
+#' @param show_warning A logical value indicating whether to show warnings.
 #' @importFrom dplyr %>% mutate filter pull
 #' @importFrom stats lm sd
 #' @return A list of placebo effects (\code{est}),
 #'   and standardized effects (\code{est_std})
-did_std_placebo <- function(formula, data, lags, skip_standardize) {
+did_std_placebo <- function(
+    formula, data, lags, skip_standardize, show_warning = TRUE) {
   ## remove all infeasible lag values
   lags <- abs(lags)
   max_lag <- abs(min(data$id_time_std))
@@ -146,11 +148,13 @@ did_std_placebo <- function(formula, data, lags, skip_standardize) {
     ct_outcome_mean <- mean(ct_outcome, na.rm = TRUE)
     # skip if the control group does not have any variation
     # to avoid division by zero
-    if (ct_outcome_sd == 0) {
+    if (ct_outcome_sd == 0 && isTRUE(show_warning)) {
       warning(
         "Outcome in the control group does not have any variation.\n",
-        "Suggest setting `option = list(skip_standardize = TRUE)`."
+        "Suggest setting `option = list(skip_standardize = TRUE)` in did_check()."
       )
+    }
+    if (ct_outcome_sd == 0) {
       est_std[i] <- NA
       next
     }
@@ -166,7 +170,7 @@ did_std_placebo <- function(formula, data, lags, skip_standardize) {
 
 did_std_placebo_boot <- function(
     fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel,
-    lag, skip_standardize) {
+    lag, skip_standardize, show_warning = FALSE) {
   ## sample index
   id_boot <- sample(id_cluster_vec,
     size = length(id_cluster_vec), replace = TRUE
@@ -200,7 +204,9 @@ did_std_placebo_boot <- function(
   }
 
   ## fit DID and sDID
-  est <- did_std_placebo(fm_prep$fm_did[[1]], dat_boot, lag, skip_standardize)
+  est <- did_std_placebo(
+    fm_prep$fm_did[[1]], dat_boot, lag, skip_standardize, show_warning
+  )
   return(est)
 }
 
@@ -211,7 +217,7 @@ did_std_placebo_boot <- function(
 #' @keywords internal
 #' @param data A data object from \code{did_panel_data} or \code{did_rcs_data}
 #' @return A ggplot object
-#' @importFrom ggplot2 ggplot geom_line geom_point aes geom_vline labs theme_bw 
+#' @importFrom ggplot2 ggplot geom_line geom_point aes geom_vline labs theme_bw
 #'  scale_color_manual
 #' @importFrom dplyr %>% across group_by summarise mutate ungroup select
 #' @importFrom stats qnorm
@@ -233,14 +239,15 @@ did_std_plot <- function(data) {
     data = dat_plot,
     aes(x = .data$time_to_treat, y = .data$outcome_mean, color = .data$group)
   ) +
-  geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_line() +
-  geom_point() +
-  labs(
-    x = "Time relative to treatment assignment",
-    y = "Mean Outcome",
-    color = "Group") +
-  scale_color_manual(values = c("gray50", "#1E88A8")) +
-  theme_bw()
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    geom_line() +
+    geom_point() +
+    labs(
+      x = "Time relative to treatment assignment",
+      y = "Mean Outcome",
+      color = "Group"
+    ) +
+    scale_color_manual(values = c("gray50", "#1E88A8")) +
+    theme_bw()
   return(list(plot = gg, dat_plot = dat_plot))
 }

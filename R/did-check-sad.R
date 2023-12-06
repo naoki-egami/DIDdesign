@@ -161,6 +161,7 @@ did_sad_plot <- function(data, skip_standardize = FALSE) {
 
   y_lab <- "95% Standardized Equivalence CI" 
   if (isTRUE(skip_standardize)) y_lab <- "95% Equivalence CI"
+
   gg <- ggplot(dat_plot, aes(x = .data$time_to_treat, y = .data$estimate)) +
     geom_hline(yintercept = 0, color = "gray50", linetype = "dotted") +
     geom_errorbar(aes(ymin = .data$EqCI95_LB, ymax = .data$EqCI95_UB),
@@ -170,7 +171,8 @@ did_sad_plot <- function(data, skip_standardize = FALSE) {
     labs(
       x = "Time relative to treatment assignment",
       y = y_lab
-    )
+    ) + 
+    scale_x_continuous(breaks = unique(dat_plot$time_to_treat))
 
   if (length(unique(dat_plot$time_to_treat)) == 1) {
     tt <- abs(unique(dat_plot$time_to_treat))
