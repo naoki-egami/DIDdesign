@@ -35,7 +35,8 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
   ## --------------------------------------
   ## obtain point estimates for placebo
   ## --------------------------------------
-  did_placebo_est <- did_sad_placebo(fm_prep, dat_panel, treatment, outcome, option)
+  did_placebo_est <- did_sad_placebo(
+    fm_prep, dat_panel, treatment, outcome, option, show_warning = TRUE)
 
   ## --------------------------------------
   ## Compute standard error via bootstrap
@@ -44,7 +45,8 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
 
   est_boot <- future_lapply(1:option$n_boot, function(i) {
     dat_boot <- sample_panel(dat_panel)
-    did_sad_placebo(fm_prep, dat_boot, treatment, outcome, option)
+    did_sad_placebo(
+      fm_prep, dat_boot, treatment, outcome, option, show_warning = FALSE)
   }, future.seed = TRUE)
 
   ## --------------------------------------
@@ -70,7 +72,8 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
   ## --------------------------------------
   ## plot
   ## --------------------------------------
-  p1 <- did_sad_plot(estimates)
+  p1 <- did_sad_plot(
+    estimates, skip_standardize = isTRUE(option$skip_standardize))
   p2 <- did_sad_pattern(dat_panel, treatment, attr(did_placebo_est, "Gmat"))
   return(list(est = estimates, plot = list(p1, p2)))
 }
@@ -81,7 +84,8 @@ did_check_sad <- function(formula, data, id_subject, id_time, option) {
 #' @return A matrix of placebo estimates.
 #' @keywords internal
 #' @importFrom purrr map
-did_sad_placebo <- function(formula, dat_panel, treatment, outcome, option) {
+did_sad_placebo <- function(
+  formula, dat_panel, treatment, outcome, option, show_warning) {
   ## --------------------------------------
   ## Prepare inputs
   ## --------------------------------------
@@ -90,6 +94,11 @@ did_sad_placebo <- function(formula, dat_panel, treatment, outcome, option) {
   id_time_use <- get_periods(Gmat, option$thres)
   id_subj_use <- get_subjects(Gmat, id_time_use)
   time_weight <- get_time_weight(Gmat, id_time_use)
+
+  ## Suggest skipping standardization when the control outcome does not have
+  ## any variation.
+  skip_standardize <- FALSE
+  if (isTRUE(option$skip_standardize)) skip_standardize <- TRUE
 
   ## -------------------------------
   ## Run placebo regression
@@ -111,7 +120,10 @@ did_sad_placebo <- function(formula, dat_panel, treatment, outcome, option) {
     )
 
     ## fit placebo regression
-    tmp <- did_std_placebo(formula$fm_did[[1]], dat_did, option$lag)
+    tmp <- did_std_placebo(
+      formula$fm_did[[1]], dat_did, 
+      option$lag, skip_standardize, show_warning
+    )
     est_did[[i]][seq_along(option$lag) %in% as.numeric(names(tmp$est))] <- tmp$est
     est_did_std[[i]][seq_along(option$lag) %in% as.numeric(names(tmp$est))] <- tmp$est_std
   }
@@ -159,7 +171,7 @@ did_sad_plot <- function(data, skip_standardize = FALSE) {
       .data$EqCI95_LB, .data$EqCI95_UB
     )
 
-  y_lab <- "95% Standardized Equivalence CI" 
+  y_lab <- "95% Standardized Equivalence CI"
   if (isTRUE(skip_standardize)) y_lab <- "95% Equivalence CI"
 
   gg <- ggplot(dat_plot, aes(x = .data$time_to_treat, y = .data$estimate)) +
@@ -171,7 +183,7 @@ did_sad_plot <- function(data, skip_standardize = FALSE) {
     labs(
       x = "Time relative to treatment assignment",
       y = y_lab
-    ) + 
+    ) +
     scale_x_continuous(breaks = unique(dat_plot$time_to_treat))
 
   if (length(unique(dat_plot$time_to_treat)) == 1) {
