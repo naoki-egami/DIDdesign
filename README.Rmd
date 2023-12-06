@@ -39,7 +39,8 @@ Authors:
 
 Reference:
 
-- Egami and Yamauchi (2019) “[Using Multiple Pre-treatment Periods to Improve Difference-in-Differences and Staggered Adoption Designs.](https://arxiv.org/pdf/2102.09948.pdf)” _arXiv_
+- Egami and Yamauchi (2023) “[Using Multiple Pre-treatment Periods to Improve Difference-in-Differences and Staggered Adoption Designs.](https://doi.org/10.1017/pan.2022.8)” _Political Analysis_ 31(2):195-212.
+
 
 ## Installation Instructions:
 
@@ -89,8 +90,10 @@ In `anzia2012` dataset, the treatment assignment happens in 2007.
 ```{r basic_did_plot, echo=FALSE, dpi=250, warning=FALSE, out.width="85%", message=FALSE}
 basic_did <- anzia2012 %>%
   select(district, year, oncycle) %>%
-  pivot_wider(id_cols = "district", names_prefix = "year",
-              names_from = year, values_from = oncycle) %>%
+  pivot_wider(
+    id_cols = "district", names_prefix = "year",
+    names_from = year, values_from = oncycle
+  ) %>%
   column_to_rownames(var = "district") %>%
   arrange(desc(year2007)) %>%
   data.matrix()
@@ -98,20 +101,24 @@ basic_did <- basic_did[c(1:20, 300:350), ]
 
 ## plot
 par(mar = c(2, 2, 0.5, 0.5))
-image(t(apply(basic_did, 2, rev)), col = c("lightgray", '#1E88A8'),
-      xaxt = "n", yaxt = "n")
-axis(1, at = seq(0, 1, length.out = ncol(basic_did)),
-        labels = str_remove(colnames(basic_did), "year"),
-        las = 1, cex.axis = 0.8, tick = FALSE, mgp = c(0, 0, 0.2))
+image(t(apply(basic_did, 2, rev)),
+  col = c("lightgray", "#1E88A8"),
+  xaxt = "n", yaxt = "n"
+)
+axis(1,
+  at = seq(0, 1, length.out = ncol(basic_did)),
+  labels = str_remove(colnames(basic_did), "year"),
+  las = 1, cex.axis = 0.8, tick = FALSE, mgp = c(0, 0, 0.2)
+)
 # axis(2, at = seq(0, 1, length.out = nrow(basic_did)),
 #         labels = rownames(basic_did),
 #         las = 2, cex.axis = 0.65, tick = FALSE, mgp = c(0, 0, 0.2))
 title(ylab = "District", line = 1)
 diff_h <- min(diff(seq(0, 1, length.out = nrow(basic_did))))
 diff_v <- min(diff(seq(0, 1, length.out = ncol(basic_did))))
-abline(h = seq(0, 1, length.out = nrow(basic_did)) + diff_h/2, lty = 1, col = 'white', lwd = 0.3)
-abline(v = seq(0, 1, length.out = ncol(basic_did)) + diff_v/ 2, lty = 1, col = 'white', lwd = 0.3)
-legend("topright", legend = c("Treated", "Control"), fill = c('#1E88A8', 'lightgray'), bg = 'white', cex = 0.8)
+abline(h = seq(0, 1, length.out = nrow(basic_did)) + diff_h / 2, lty = 1, col = "white", lwd = 0.3)
+abline(v = seq(0, 1, length.out = ncol(basic_did)) + diff_v / 2, lty = 1, col = "white", lwd = 0.3)
+legend("topright", legend = c("Treated", "Control"), fill = c("#1E88A8", "lightgray"), bg = "white", cex = 0.8)
 box(lwd = 1.1)
 ```
 
@@ -127,11 +134,11 @@ and computes the equivalence confidence intervals.
 set.seed(1234)
 check_panel <- did_check(
   formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
-                       ami_pc + asian_pc + black_pc + hisp_pc,
-  data    = anzia2012,
+    ami_pc + asian_pc + black_pc + hisp_pc,
+  data = anzia2012,
   id_unit = "district",
   id_time = "year",
-  option  = list(n_boot = 200, parallel = TRUE, lag = 1:3)
+  option = list(n_boot = 200, parallel = TRUE, lag = 1:3)
 )
 ```
 
@@ -145,7 +152,7 @@ check_panel <- did_check(
 | `id_time` | A variable name in the data that uniquely identifies time (e.g., year). |
 | `design`  | Design option. It should be `"did"` when the basic DID design is used. |
 | `is_panel`| A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeatedly overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data. |
-| `option`  | A list of option parameters. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package.  <br /> - `lag`: A vector of positive lag values. For example, when `lag = c(1, 2)`, pre-treatment trends are tested on the period between `t-2` to `t-1` (corresponding to `lag = 1`), and between `t-3` and `t-2` where `t` is when the actual treatment is assigned. Default is `lag = 1`. |
+| `option`  | A list of option parameters. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package.  <br /> - `lag`: A vector of positive lag values. For example, when `lag = c(1, 2)`, pre-treatment trends are tested on the period between `t-2` to `t-1` (corresponding to `lag = 1`), and between `t-3` and `t-2` where `t` is when the actual treatment is assigned. Default is `lag = 1`. <br /> - `skip_standardize`: A boolena argument. If `TRUE`, use the original scale of the outcome to compute the equivalence regions. Useful when the outcome of the control group does not have any variation for some time periods. Default is `FALSE`.|
 
 
 #### Assessing the output from `did_check()`
@@ -201,14 +208,14 @@ we can estimate the average treatment effect on the treated (ATT) via `did()`.
 ## estimate treatment effect
 set.seed(1234)
 fit_panel <- did(
-  formula  = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
-                                          ami_pc + asian_pc + black_pc + hisp_pc,
-  data     = anzia2012,
-  id_unit  = "district",
-  id_time  = "year",
-  design   = "did",
+  formula = lnavgsalary_cpi ~ oncycle | teachers_avg_yrs_exper +
+    ami_pc + asian_pc + black_pc + hisp_pc,
+  data = anzia2012,
+  id_unit = "district",
+  id_time = "year",
+  design = "did",
   is_panel = TRUE,
-  option   = list(n_boot = 200, parallel = TRUE, lead = 0:2)
+  option = list(n_boot = 200, parallel = TRUE, lead = 0:2)
 )
 ```
 
@@ -251,13 +258,13 @@ pre_post_plot <- plot(fit_panel, check_fit = check_panel)
 ## show the plots side-by-side
 require(patchwork)
 (post_plot +
-  ggplot2::theme(aspect.ratio=1) +
+  ggplot2::theme(aspect.ratio = 1) +
   ggplot2::ylim(-0.015, 0.01) +
   ggplot2::labs(title = "Post-Treatment")) +
-(pre_post_plot +
-  ggplot2::theme(aspect.ratio=1) +
-  ggplot2::ylim(-0.015, 0.01) +
-  ggplot2::labs(title = "Pre- and Post-Treatment"))
+  (pre_post_plot +
+    ggplot2::theme(aspect.ratio = 1) +
+    ggplot2::ylim(-0.015, 0.01) +
+    ggplot2::labs(title = "Pre- and Post-Treatment"))
 ```
 
 
@@ -279,10 +286,10 @@ data(malesky2014)
 set.seed(1234)
 check_rcs <- did_check(
   formula = vpost ~ treatment + post_treat | factor(city),
-  data    = malesky2014,
+  data = malesky2014,
   id_time = "year",
-  is_panel= FALSE,
-  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lag = 1)
+  is_panel = FALSE,
+  option = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lag = 1)
 )
 ```
 
@@ -314,10 +321,10 @@ plot(check_rcs)
 ## estimate ATT
 ff_rcs <- did(
   formula = vpost ~ treatment + post_treat | factor(city),
-  data    = malesky2014,
-  id_time = 'year',
-  is_panel= FALSE,
-  option  = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lead = 0)
+  data = malesky2014,
+  id_time = "year",
+  is_panel = FALSE,
+  option = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lead = 0)
 )
 ```
 
@@ -341,10 +348,12 @@ require(tibble)
 ## format dataset
 paglayan2019 <- paglayan2019 %>%
   filter(!(state %in% c("WI", "DC"))) %>%
-  mutate(id_time = year,
-         id_subject = as.numeric(as.factor(state)),
-         log_expenditure = log(pupil_expenditure + 1),
-         log_salary      = log(teacher_salary + 1))
+  mutate(
+    id_time = year,
+    id_subject = as.numeric(as.factor(state)),
+    log_expenditure = log(pupil_expenditure + 1),
+    log_salary = log(teacher_salary + 1)
+  )
 ```
 
 ```{r sa_plot, echo=FALSE, dpi=250, warning=FALSE, message=FALSE, out.width="85%"}
@@ -357,27 +366,36 @@ treatment_variation <- paglayan2019 %>%
   mutate(treatment_sum = sum(treatment)) %>%
   arrange(desc(treatment_sum), state, year) %>%
   select(-treatment_sum) %>%
-  pivot_wider(id_cols = "state", names_prefix = "year",
-              names_from = year, values_from = treatment) %>%
-  ungroup() %>%  column_to_rownames(var = "state") %>%
+  pivot_wider(
+    id_cols = "state", names_prefix = "year",
+    names_from = year, values_from = treatment
+  ) %>%
+  ungroup() %>%
+  column_to_rownames(var = "state") %>%
   data.matrix()
 
 
 ## plot
 par(mar = c(2, 2, 0.5, 0.5))
-image(t(apply(treatment_variation, 2, rev)), col = c("lightgray", '#1E88A8'),
-      xaxt = "n", yaxt = "n")
-axis(1, at = seq(0, 1, length.out = ncol(treatment_variation)),
-        labels = str_remove(colnames(treatment_variation), "year"),
-        las = 2, cex.axis = 0.8, tick = FALSE, mgp = c(0, 0, 0.2))
-axis(2, at = seq(0, 1, length.out = nrow(treatment_variation)),
-        labels = rownames(treatment_variation),
-        las = 2, cex.axis = 0.65, tick = FALSE, mgp = c(0, 0, 0.2))
+image(t(apply(treatment_variation, 2, rev)),
+  col = c("lightgray", "#1E88A8"),
+  xaxt = "n", yaxt = "n"
+)
+axis(1,
+  at = seq(0, 1, length.out = ncol(treatment_variation)),
+  labels = str_remove(colnames(treatment_variation), "year"),
+  las = 2, cex.axis = 0.8, tick = FALSE, mgp = c(0, 0, 0.2)
+)
+axis(2,
+  at = seq(0, 1, length.out = nrow(treatment_variation)),
+  labels = rownames(treatment_variation),
+  las = 2, cex.axis = 0.65, tick = FALSE, mgp = c(0, 0, 0.2)
+)
 diff_h <- min(diff(seq(0, 1, length.out = nrow(treatment_variation))))
 diff_v <- min(diff(seq(0, 1, length.out = ncol(treatment_variation))))
-abline(h = seq(0, 1, length.out = nrow(treatment_variation)) + diff_h/2, lty = 1, col = 'white', lwd = 0.3)
-abline(v = seq(0, 1, length.out = ncol(treatment_variation)) + diff_v/ 2, lty = 1, col = 'white', lwd = 0.3)
-legend("topright", legend = c("Treated", "Control"), fill = c('#1E88A8', 'lightgray'), bg = 'white', cex = 0.8)
+abline(h = seq(0, 1, length.out = nrow(treatment_variation)) + diff_h / 2, lty = 1, col = "white", lwd = 0.3)
+abline(v = seq(0, 1, length.out = ncol(treatment_variation)) + diff_v / 2, lty = 1, col = "white", lwd = 0.3)
+legend("topright", legend = c("Treated", "Control"), fill = c("#1E88A8", "lightgray"), bg = "white", cex = 0.8)
 box(lwd = 1.1)
 ```
 
@@ -452,5 +470,5 @@ sa_plot <- plot(fit_sa, check_sa, band = TRUE)
 ## show plot
 sa_plot +
   ggplot2::ylim(-0.1, 0.1) +
-  ggplot2::geom_vline(xintercept = 0, color = 'red', linetype = 'dotted')
+  ggplot2::geom_vline(xintercept = 0, color = "red", linetype = "dotted")
 ```
