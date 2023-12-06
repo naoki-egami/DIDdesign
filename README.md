@@ -1,8 +1,6 @@
 <p align="center">
-
     <img src="man/figures/logo.png" align="center" alt="logo" width="200" height="250"><br/><br/>
     DIDdesign:Analyzing Difference-in-Differences Design
-
 </p>
 <!-- badges: start -->
 
