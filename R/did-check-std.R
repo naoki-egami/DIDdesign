@@ -170,7 +170,7 @@ did_std_placebo <- function(
 
 did_std_placebo_boot <- function(
     fm_prep, dat_did, id_cluster_vec, var_cluster, is_panel,
-    lag, skip_standardize, show_warning = FALSE) {
+    lag, skip_standardize) {
   ## sample index
   id_boot <- sample(id_cluster_vec,
     size = length(id_cluster_vec), replace = TRUE
@@ -205,7 +205,7 @@ did_std_placebo_boot <- function(
 
   ## fit DID and sDID
   est <- did_std_placebo(
-    fm_prep$fm_did[[1]], dat_boot, lag, skip_standardize, show_warning
+    fm_prep$fm_did[[1]], dat_boot, lag, skip_standardize, show_warning = FALSE
   )
   return(est)
 }
