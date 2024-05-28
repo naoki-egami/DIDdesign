@@ -211,7 +211,8 @@ double_did_compute <- function(fit, boot, lead, se_boot) {
     ## variance estimate for Double DID
     if (isTRUE(se_boot)) {
       ## bootstrap-based variance
-      ddid_boot <- purrr::map_dbl(boot_est, ~ as.vector(weights[[ll]]$weights %*% .x[[ll]]))
+      ddid_boot <- purrr::map_dbl(
+        boot_est, ~ as.vector(weights[[ll]]$weights %*% .x[[ll]]))
       ddid_var  <- var(ddid_boot, na.rm = TRUE)
       ci_ddid <- quantile(ddid_boot, prob = c(0.025, 0.975))
 
@@ -230,7 +231,10 @@ double_did_compute <- function(fit, boot, lead, se_boot) {
       var_did  <- weights[[ll]]$vcov[1,1]
       var_sdid <- weights[[ll]]$vcov[2,2]
 
-      ci_ddid <- c(ddid - qnorm(0.975) * sqrt(ddid_var), ddid + qnorm(0.975) * sqrt(ddid_var) )
+      ci_ddid <- c(
+        ddid - qnorm(0.975) * sqrt(ddid_var),
+        ddid + qnorm(0.975) * sqrt(ddid_var)
+      )
       ci_did  <- rbind(
         fit[[ll]] - qnorm(0.975) * sqrt(c(var_did, var_sdid)),
         fit[[ll]] + qnorm(0.975) * sqrt(c(var_did, var_sdid))
