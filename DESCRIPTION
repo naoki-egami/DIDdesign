@@ -1,8 +1,8 @@
 Package: DIDdesign
 Type: Package
 Title: Analyzing and Diagnosing the Difference-in-Differences Design
-Version: 0.3.6-1
-Date: 2023-09-26
+Version: 0.3.6-2
+Date: 2024-05-28
 Authors@R: c(
   person("Naoki", "Egami", email = "naoki.egami5@gmail.com", role = c("aut"),
     comment = c(ORCID = "0000-0002-5491-2174")
@@ -14,7 +14,7 @@ Description: Statistical tools for analyzing and diagnosing the difference-in-di
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports:
     cli,
     dplyr,

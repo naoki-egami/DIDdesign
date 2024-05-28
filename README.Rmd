@@ -152,7 +152,7 @@ check_panel <- did_check(
 | `id_time` | A variable name in the data that uniquely identifies time (e.g., year). |
 | `design`  | Design option. It should be `"did"` when the basic DID design is used. |
 | `is_panel`| A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeatedly overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data. |
-| `option`  | A list of option parameters. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package.  <br /> - `lag`: A vector of positive lag values. For example, when `lag = c(1, 2)`, pre-treatment trends are tested on the period between `t-2` to `t-1` (corresponding to `lag = 1`), and between `t-3` and `t-2` where `t` is when the actual treatment is assigned. Default is `lag = 1`. <br /> - `skip_standardize`: A boolena argument. If `TRUE`, use the original scale of the outcome to compute the equivalence regions. Useful when the outcome of the control group does not have any variation for some time periods. Default is `FALSE`.|
+| `option`  | A list of option parameters. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package.  <br /> - `lag`: A vector of positive lag values. For example, when `lag = c(1, 2)`, pre-treatment trends are tested on the period between `t-2` to `t-1` (corresponding to `lag = 1`), and between `t-3` and `t-2` where `t` is when the actual treatment is assigned. Default is `lag = 1`. <br /> - `skip_standardize`: A boolean argument. If `TRUE`, use the original scale of the outcome to compute the equivalence regions. Useful when the outcome of the control group does not have any variation for some time periods. Default is `FALSE`.|
 
 
 #### Assessing the output from `did_check()`
@@ -215,7 +215,7 @@ fit_panel <- did(
   id_time = "year",
   design = "did",
   is_panel = TRUE,
-  option = list(n_boot = 200, parallel = TRUE, lead = 0:2)
+  option = list(n_boot = 200, parallel = TRUE, lead = 0:2, se_boot = TRUE)
 )
 ```
 
@@ -324,7 +324,10 @@ ff_rcs <- did(
   data = malesky2014,
   id_time = "year",
   is_panel = FALSE,
-  option = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lead = 0)
+  option = list(
+    n_boot = 200, parallel = TRUE, se_boot = TRUE,
+    id_cluster = "id_district", lead = 0
+  )
 )
 ```
 

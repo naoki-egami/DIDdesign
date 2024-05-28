@@ -215,7 +215,7 @@ double_did_compute <- function(fit, boot, lead, se_boot) {
       ddid_var  <- var(ddid_boot, na.rm = TRUE)
       ci_ddid <- quantile(ddid_boot, prob = c(0.025, 0.975))
 
-      ## compute the confidence internvals
+      ## compute the confidence intervals 
       boot_did_l <- do.call(rbind, map(boot_est, ~.x[[ll]]))
       var_tmp <- apply(boot_did_l, 2, var)
       var_did <- var_tmp[1]
