@@ -8,7 +8,7 @@ did_check_std <- function(
   ## input check
   if (isFALSE(is_panel)) id_unit <- NULL
   if (isTRUE(is_panel) && is.null(id_unit)) {
-    stop("A vaiable name should be provided to id_unit.")
+    stop("A variable name should be provided to id_unit.")
   }
 
   ## prepare formulas

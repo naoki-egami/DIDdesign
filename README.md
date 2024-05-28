@@ -1,6 +1,7 @@
 <p align="center">
     <img src="man/figures/logo.png" align="center" alt="logo" width="200" height="250"><br/><br/>
     DIDdesign:Analyzing Difference-in-Differences Design
+
 </p>
 <!-- badges: start -->
 
@@ -95,7 +96,7 @@ check_panel <- did_check(
 | `id_time`  | A variable name in the data that uniquely identifies time (e.g., year).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `design`   | Design option. It should be `"did"` when the basic DID design is used.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | `is_panel` | A boolean argument to indicate the type of the data. When the dataset is panel (i.e., same observations are measured repeatedly overtime), it should take `TRUE`. See the next section for how to analyze the repeated cross-section data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `option`   | A list of option parameters. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package. <br /> - `lag`: A vector of positive lag values. For example, when `lag = c(1, 2)`, pre-treatment trends are tested on the period between `t-2` to `t-1` (corresponding to `lag = 1`), and between `t-3` and `t-2` where `t` is when the actual treatment is assigned. Default is `lag = 1`. <br /> - `skip_standardize`: A boolena argument. If `TRUE`, use the original scale of the outcome to compute the equivalence regions. Useful when the outcome of the control group does not have any variation for some time periods. Default is `FALSE`. |
+| `option`   | A list of option parameters. <br /> - `n_boot`: Number of bootstrap iterations to estimate weighting matrix. <br /> - `parallel`: A boolean argument. If `TRUE`, bootstrap is conducted in parallel using `future` package. <br /> - `lag`: A vector of positive lag values. For example, when `lag = c(1, 2)`, pre-treatment trends are tested on the period between `t-2` to `t-1` (corresponding to `lag = 1`), and between `t-3` and `t-2` where `t` is when the actual treatment is assigned. Default is `lag = 1`. <br /> - `skip_standardize`: A boolean argument. If `TRUE`, use the original scale of the outcome to compute the equivalence regions. Useful when the outcome of the control group does not have any variation for some time periods. Default is `FALSE`. |
 
 #### Assessing the output from `did_check()`
 
@@ -178,7 +179,7 @@ fit_panel <- did(
   id_time = "year",
   design = "did",
   is_panel = TRUE,
-  option = list(n_boot = 200, parallel = TRUE, lead = 0:2)
+  option = list(n_boot = 200, parallel = TRUE, lead = 0:2, se_boot = TRUE)
 )
 ```
 
@@ -200,14 +201,14 @@ summary(fit_panel)
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>    estimator lead estimate std.error statistic p_value  ci.low ci.high
 #> 1 Double-DID    0  -0.0065    0.0026      -2.5  0.0131 -0.0116 -0.0014
-#> 2        DID    0  -0.0062    0.0027      -2.3  0.0194 -0.0114 -0.0130
-#> 3       sDID    0  -0.0044    0.0044      -1.0  0.3179 -0.0010  0.0042
+#> 2        DID    0  -0.0062    0.0027      -2.3  0.0194 -0.0114 -0.0010
+#> 3       sDID    0  -0.0044    0.0044      -1.0  0.3179 -0.0130  0.0042
 #> 4 Double-DID    1  -0.0079    0.0032      -2.4  0.0146 -0.0142 -0.0016
-#> 5        DID    1  -0.0115    0.0036      -3.2  0.0016 -0.0187 -0.0108
-#> 6       sDID    1  -0.0031    0.0039      -0.8  0.4260 -0.0044  0.0046
+#> 5        DID    1  -0.0115    0.0036      -3.2  0.0016 -0.0187 -0.0044
+#> 6       sDID    1  -0.0031    0.0039      -0.8  0.4260 -0.0108  0.0046
 #> 7 Double-DID    2  -0.0049    0.0043      -1.1  0.2502 -0.0134  0.0035
-#> 8        DID    2  -0.0115    0.0049      -2.3  0.0196 -0.0211 -0.0081
-#> 9       sDID    2   0.0015    0.0049       0.3  0.7664 -0.0018  0.0111
+#> 8        DID    2  -0.0115    0.0049      -2.3  0.0196 -0.0211 -0.0018
+#> 9       sDID    2   0.0015    0.0049       0.3  0.7664 -0.0081  0.0111
 ```
 
 - `estimator`
@@ -307,7 +308,10 @@ ff_rcs <- did(
   data = malesky2014,
   id_time = "year",
   is_panel = FALSE,
-  option = list(n_boot = 200, parallel = TRUE, id_cluster = "id_district", lead = 0)
+  option = list(
+    n_boot = 200, parallel = TRUE, se_boot = TRUE,
+    id_cluster = "id_district", lead = 0
+  )
 )
 ```
 
@@ -317,8 +321,8 @@ summary(ff_rcs)
 #> ── ATT Estimates ───────────────────────────────────────────────────────────────
 #>    estimator lead estimate std.error statistic p_value ci.low ci.high
 #> 1 Double-DID    0    0.046     0.050      0.91    0.36 -0.053    0.14
-#> 2        DID    0    0.054     0.055      0.98    0.33 -0.054   -0.09
-#> 3       sDID    0    0.068     0.081      0.85    0.40  0.162    0.23
+#> 2        DID    0    0.054     0.055      0.98    0.33 -0.054    0.16
+#> 3       sDID    0    0.068     0.081      0.85    0.40 -0.090    0.23
 ```
 
 ## The Staggered Adoption Design
@@ -376,7 +380,7 @@ design.
 ``` r
 ## view estimates
 summary(check_sa)
-#> ── Estimates for assessing parallel trends assumption ──────────────────────────
+#> ── Estimates for assessing parallel trends assumption ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 #>   estimate lag std.error EqCI95_LB EqCI95_UB
 #> 1 -0.00267   1   0.00864    -0.109     0.109
 #> 2 -0.01245   2   0.00886    -0.162     0.162
@@ -414,7 +418,7 @@ fit_sa <- did(
 
 ``` r
 head(summary(fit_sa))
-#> ── ATT Estimates ───────────────────────────────────────────────────────────────
+#> ── ATT Estimates ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 #>       estimator lead estimate std.error statistic p_value ci.low ci.high
 #> 1 SA-Double-DID    0  0.01094     0.014     0.790    0.43 -0.017   0.038
 #> 2        SA-DID    0  0.01098     0.014     0.792    0.43 -0.017   0.039
